@@ -53,9 +53,7 @@ Os endpoints abaixo responderam com sucesso, mas **não li o conteúdo de cada u
 | Folha de pagamento por mês | `/servidores/remuneracoes/{ano}/{mes}` | Salário do senador (~5 MB por mês) |
 | Votações, autorias, comissões, discursos etc. | `legis.senado.leg.br/dadosabertos/senador/{codigo}/...` | Versão 2 |
 
-**Salário:** na folha de setembro de 2026, o senador Alan Rick aparece com remuneração básica de R$ 46.366,19 e líquido de R$ 29.048,49. Só conferi **um** senador. A folha não usa o código do parlamentar, então a ligação é pelo nome completo (cuidado com homônimos).
-
-**Equipe do gabinete:** para o mesmo senador, o resumo oficial indica 17 pessoas no gabinete e 20 no escritório de apoio, e a lista de servidores indica 18 e 20. A diferença de uma pessoa **não foi explicada**.
+O que foi medido de cada um está em [Achados: perfil, salário e gabinete](#achados-perfil-salário-e-gabinete).
 
 ## Achados com a API completa (2008 a 2026)
 
@@ -109,6 +107,35 @@ Há também uns 60 registros recentes com o documento em formato fora do padrão
 
 Antes de baixar tudo, usei uma amostra pequena em `data/raw/`: CSV de 2008 inteiro e o começo dos CSVs de 2015 e 2024 (cerca de 400 KB cada, com 6 e 9 senadores, os primeiros em ordem alfabética). Ela **errou** em alguns números porque era enviesada: indicou 99% de descrição em 2015 (real: 84,4%) e 30% em 2024 (real: 40,1%). Fica registrada como lição: **não tirar conclusões de amostra enviesada**.
 
+## Achados: perfil, salário e gabinete
+
+Baixei também, para `data/raw/` (fora do git), a lista de senadores das legislaturas 53 a 57, os benefícios, os escritórios de apoio, o resumo de recursos de cada um dos 81 senadores em exercício, a folha de setembro de 2026 e a lista de servidores ativos.
+
+### Perfil: quem é cada senador
+- Os códigos das legislaturas 53 a 57 somam **681 parlamentares**. Eles cobrem **100% dos 331 códigos** que aparecem nas despesas de 2008 a 2026. Ou seja, todo gasto pode ser ligado a um nome.
+- **Atenção:** essas listas de legislatura trazem só nome, nome completo e sexo. **Partido e UF existem apenas para os 81 senadores em exercício.** Para ex-senadores, seria preciso consultar endpoints por senador (filiações, mandatos), que existem mas ainda não foram lidos.
+- Dos 81 em exercício, 70 são titulares e 11 são suplentes.
+
+### Salário
+- Ligando a folha de setembro de 2026 ao senador pelo **nome completo**, 78 dos 81 foram encontrados, sem nenhum nome repetido.
+- **77 têm a mesma remuneração básica: R$ 46.366,19.** Um titular tem R$ 44.820,65. A diferença **não foi explicada**, então não vale afirmar que o salário é igual para todos.
+- O líquido varia de cerca de R$ 26,1 mil a R$ 37,1 mil, com mediana de R$ 33,8 mil, por causa de descontos e vantagens.
+- Os 3 sem correspondência são suplentes em exercício. Podem não estar na folha normal ou ter o nome escrito de outra forma. Também **não foi explicado**.
+- Ligar por nome funciona, mas é frágil: precisa de validação a cada mês.
+
+### Gabinete
+- O resumo oficial por senador soma **1.723 pessoas nos 81 gabinetes** (cerca de 21 por gabinete). Todos os resumos têm a mesma estrutura.
+- A lista de servidores traz **uma pessoa a mais** que o resumo em 72 dos 81 gabinetes, nenhuma a mais em 5, e duas em 3. A regularidade sugere uma diferença de critério (por exemplo, um cargo contado só na lista), mas a causa **não foi confirmada**.
+- Um senador não foi localizado pela lotação, por diferença de nome.
+- Decisão: usar o resumo oficial como número principal ([D015](decisoes.md#d015-gabinete-pelo-resumo-oficial)).
+
+### Cota de 2026 (resumo oficial)
+Total acumulado no ano, por senador: mínimo R$ 0, mediana cerca de R$ 335 mil e máximo cerca de R$ 531 mil. O zero indica alguém que acabou de assumir ou ainda não usou a cota.
+
+### Benefícios e escritórios
+- A lista de benefícios tem 85 nomes (inclui suplentes). **Auxílio-moradia: 1.** **Imóvel funcional: 63.**
+- Há 81 escritórios de apoio em 75 senadores.
+
 ### Comparação CSV × API (2008)
 
 - As duas fontes têm as **mesmas 2.449 linhas**, e todo `COD_DOCUMENTO` do CSV tem par na API.
@@ -146,7 +173,9 @@ Do Plano de Dados Abertos (33 páginas), busquei palavras-chave de licença e ci
 - Entender os 344 registros sem categoria e os ~60 documentos em formato fora do padrão.
 - Confirmar o que são os valores negativos (estornos?) e a diferença de 8 valores entre CSV e API em 2008.
 - Confirmar o endpoint de ex-senadores.
-- Entender a diferença de contagem da equipe do gabinete.
+- Entender a diferença de uma pessoa entre o resumo oficial e a lista de servidores (gabinete).
+- Entender por que um titular tem remuneração básica diferente e por que 3 suplentes não aparecem na folha.
+- Obter partido e UF de ex-senadores (endpoints de filiações e mandatos).
 - Confirmar com o Senado o nome da licença (opcional).
 - Ler o Plano de Dados Abertos por inteiro.
 

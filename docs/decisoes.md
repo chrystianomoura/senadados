@@ -120,3 +120,18 @@ Data de todas as decisões iniciais: 11/11/2026.
 - **Decisão:** `data/raw/` fica no `.gitignore`. O repositório guarda o código que gera os dados, não os dados.
 - **Por quê:** evita publicar CPFs de pessoas físicas, mantém o repositório leve e deixa claro que a fonte é o Senado.
 - **Status:** aceita.
+
+## D015: Gabinete pelo resumo oficial
+
+- **Contexto:** há duas fontes para o tamanho do gabinete. O resumo oficial soma 1.723 pessoas; a lista de servidores traz, em geral, uma a mais por gabinete, por motivo não confirmado.
+- **Decisão:** o site usa o número do resumo oficial e cita a data. A lista de servidores só serve para conferência e para agregados de custo, nunca para exibir nomes (D007).
+- **Por quê:** é o número que o próprio Senado apresenta por senador, e a ligação não depende de casar nomes.
+- **Status:** aceita; revisar quando a diferença for explicada.
+
+## D016: Salário ligado pelo nome completo, com validação mensal
+
+- **Contexto:** a folha de pagamento não usa o código do parlamentar. Pelo nome completo, 78 dos 81 senadores foram encontrados, sem repetições. O salário básico é de R$ 46.366,19 para 77 deles e diferente para um.
+- **Decisão:** ligar pelo nome completo (normalizado, sem acento) e, a cada atualização, registrar quem ficou sem correspondência em vez de ignorar em silêncio. Mostrar o salário de cada senador como ele aparece na folha, sem supor que seja igual para todos.
+- **Por quê:** o número exibido precisa ser o real, e erros de ligação devem ficar visíveis.
+- **Status:** aceita.
+
