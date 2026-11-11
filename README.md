@@ -58,7 +58,7 @@ Todos vêm do **próprio Senado Federal**, são públicos e **não exigem login 
 - Os dados de 2026 estão incompletos, porque o ano ainda está em andamento.
 - Os arquivos têm sujeira (formatos de número misturados, datas fora do ano, valores negativos que parecem estornos). Parte do trabalho do projeto é tratar isso.
 - O Senado pode corrigir dados antigos. Rodar o projeto hoje e daqui a seis meses pode dar valores ligeiramente diferentes.
-- Os anos antigos têm menos informação: na amostra de 2008, **nenhuma despesa traz o CNPJ/CPF do fornecedor nem a data da nota**. Ainda falta descobrir a partir de que ano isso existe.
+- Os anos antigos têm menos informação: em **2008 nenhuma despesa traz o CNPJ/CPF do fornecedor nem a data da nota**. De 2009 em diante o fornecedor existe. A descrição da despesa também falha: está vazia até 2010 e vem preenchida em só cerca de 35 a 40% dos registros recentes.
 - Os termos de uso exigem, no máximo, **citar a fonte**; a licença não tem nome. Detalhes em [docs/fontes-de-dados.md](docs/fontes-de-dados.md).
 - A página de navegação dos dados abertos do Senado exigiu login quando testei, mas os arquivos e as APIs em si baixaram sem nenhuma autenticação.
 
@@ -117,10 +117,10 @@ A regra do projeto: **nenhuma tecnologia entra "porque é moderna"**. Cada uma r
 **Observação:** o plano gratuito de hospedagem dorme quando fica parado, então a primeira chamada pode levar até um minuto. Por isso o site **não depende** dela.
 
 ### scikit-learn (Isolation Forest): o modelo que aponta o incomum
-**Status:** escolha **provisória** ([decisão D006](docs/decisoes.md#d006-modelo-de-anomalias-provisório)).
+**Status:** ponto de partida, ainda sem teste de qualidade ([decisão D006](docs/decisoes.md#d006-modelo-de-anomalias)).
 **Em uma frase:** aprende o que é "normal" para cada senador e destaca o que foge disso.
 **Por quê:** comparar cada mês com o histórico do próprio senador é mais justo, não depende de texto e é fácil de explicar. Cada alerta mostra o motivo, por exemplo: "gasto 3 vezes acima da média dele em passagens".
-**Por que provisória:** a descrição da despesa varia muito por ano (0% preenchida em 2008; 99% na amostra de 2015; 30% na de 2024). Se, com todos os senadores, ela se mostrar boa o bastante, classificar o texto pode complementar o modelo. Isso só será decidido depois de medir.
+**Por que não usar o texto como base:** a descrição da despesa está vazia até 2010, passa de 80% entre 2013 e 2018 e cai para cerca de 35 a 40% nos anos recentes, que são os que mais interessam. Classificar o texto pode complementar o modelo em alguns anos, mas não sustentá-lo.
 **Cuidado:** "fora do padrão" **não** significa "irregular".
 
 ### Next.js (React) com TypeScript: o site
@@ -173,7 +173,7 @@ Documentos:
 | Versão | O que entra |
 |---|---|
 | **Primeiros passos** | Baixar amostras, medir o tamanho real dos dados, conferir colunas e formatos |
-| **MVP (versão 1)** | Perfil do senador, salário, despesas por categoria e mês, principais fornecedores (a partir do ano em que o CNPJ/CPF passa a existir; esse ano ainda será descoberto), tamanho do gabinete, ranking e comparação, alertas do modelo |
+| **MVP (versão 1)** | Perfil do senador, salário, despesas por categoria e mês, principais fornecedores (de 2009 em diante), tamanho do gabinete, ranking e comparação, alertas do modelo |
 | **Versão 2** | Atuação parlamentar (votações, projetos, comissões) e histórico desde 2008 |
 | **Versão 3 (talvez)** | Dados de outras fontes públicas, como o TSE. Aumenta muito o escopo e a responsabilidade |
 
