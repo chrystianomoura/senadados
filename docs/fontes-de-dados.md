@@ -125,9 +125,16 @@ Baixei também, para `data/raw/` (fora do git), a lista de senadores das legisla
 
 ### Gabinete
 - O resumo oficial por senador soma **1.723 pessoas nos 81 gabinetes** (cerca de 21 por gabinete). Todos os resumos têm a mesma estrutura.
-- A lista de servidores traz **uma pessoa a mais** que o resumo em 72 dos 81 gabinetes, nenhuma a mais em 5, e duas em 3. A regularidade sugere uma diferença de critério (por exemplo, um cargo contado só na lista), mas a causa **não foi confirmada**.
-- Um senador não foi localizado pela lotação, por diferença de nome.
+- **A diferença de uma pessoa foi explicada:** a lista de servidores inclui o **próprio senador** (vínculo "PARLAMENTAR", 80 registros) entre os lotados no gabinete. Sem ele, a lista soma **1.722 pessoas**, contra 1.723 do resumo oficial, uma diferença de uma pessoa em 81 gabinetes que não foi explicada.
+- Os vínculos na lista: 1.585 comissionados, 136 efetivos e 1 requisitado, além dos 80 parlamentares.
+- Pessoas por gabinete (sem o senador): mínimo 8, mediana 17 e máximo 70. O máximo é um caso fora da curva que **não investiguei**.
 - Decisão: usar o resumo oficial como número principal ([D015](decisoes.md#d015-gabinete-pelo-resumo-oficial)).
+
+**Custo mensal da equipe (estimativa):** ligando a lista de servidores à folha de setembro de 2026, foi possível estimar o custo de cada gabinete somando remuneração básica, função comissionada e vantagens pessoais.
+- **A ligação é só por nome**, porque o campo `sequencial` coincide apenas para os 136 efetivos; os comissionados têm outro número em cada base.
+- Ficaram ligados **96,9%** dos 1.722 servidores (12 têm nome repetido na folha e 42 não têm linha).
+- Resultado: mediana de cerca de **R$ 321 mil por mês por gabinete** (mínimo R$ 66 mil, máximo R$ 701 mil), somando cerca de R$ 28 milhões por mês nos 81 gabinetes.
+- É um valor **aproximado e parcial**: não inclui auxílios, encargos nem outras parcelas, e deve ser apresentado como estimativa ([D017](decisoes.md#d017-custo-de-gabinete-como-estimativa-agregada)).
 
 ### Cota de 2026 (resumo oficial)
 Total acumulado no ano, por senador: mínimo R$ 0, mediana cerca de R$ 335 mil e máximo cerca de R$ 531 mil. O zero indica alguém que acabou de assumir ou ainda não usou a cota.
@@ -135,6 +142,41 @@ Total acumulado no ano, por senador: mínimo R$ 0, mediana cerca de R$ 335 mil e
 ### Benefícios e escritórios
 - A lista de benefícios tem 85 nomes (inclui suplentes). **Auxílio-moradia: 1.** **Imóvel funcional: 63.**
 - Há 81 escritórios de apoio em 75 senadores.
+
+## Achados: atuação parlamentar e histórico
+
+Baixei, por senador, dados leves para os 81 em exercício (mandatos, filiações, comissões, cargos, licenças, profissão, formação e lideranças, sem falhas), uma amostra pesada de 5 senadores (votações, autorias, relatorias, discursos e apartes) e as filiações e mandatos dos **252 ex-senadores** que aparecem nas despesas.
+
+### Partido e UF ao longo do tempo (resolve a lacuna do perfil)
+- Pelas **filiações** (data de entrada em cada partido) e pelos **mandatos** (UF), dá para saber o partido e o estado de cada senador em cada ano.
+- Para os 1.767 pares senador-ano das despesas: **partido conhecido em 97,8%** e **UF em 100%**. Ficam sem partido 36 parlamentares, que ainda não investiguei.
+- Seis senadores têm mais de uma UF no histórico. O partido do ano foi calculado pela filiação mais recente até 1º de julho, o que é uma regra simples e precisa ser validada ([D018](decisoes.md#d018-partido-do-ano-pela-filiação-mais-recente)).
+- **Cuidado:** a API converte XML em JSON, e itens únicos podem vir como objeto em vez de lista. O pipeline precisa tratar os dois casos (nas 81 respostas testadas, `Mandato` veio sempre como lista).
+
+### Cobertura dos dados leves (81 senadores)
+| Dado | Preenchido | Observação |
+|---|---|---|
+| Filiações | 81 de 81 | Base do partido por ano |
+| Lideranças | 72 de 81 | |
+| Cargos | 77 de 81 | |
+| **Profissão** | **31 de 81** | Pouco confiável para o MVP |
+| **Formação** | **34 de 81** | Pouco confiável para o MVP |
+| Comissões | todos | Mediana de 84 por senador (máximo 220) |
+| Licenças | todos | Mediana de 32 (máximo 435) |
+
+As listas de comissões e licenças parecem **históricas e muito longas**, o que seria ruído. Antes de exibir, é preciso filtrar o que está em vigor; o conteúdo de cada item não foi analisado.
+
+### Atuação (amostra de 5 senadores)
+| Dado | Resultado |
+|---|---|
+| Votações | De 408 a 3.339 por senador, com histórico desde 1995 para os mais antigos. Mais da metade é votação secreta |
+| Autorias | De 390 a 1.138, e entre 119 e 741 como autor principal |
+| Relatorias | De 85 a 364 |
+| Discursos | A API devolve só os últimos 30 dias por padrão (0 a 3 resultados). Uma janela maior **não foi testada** |
+| Apartes | De 7 a 111 |
+
+- Os votos aparecem com códigos como `Sim`, `Não`, `Votou`, `P-NRV`, `AP`, `MIS`, `LS`. O significado de `P-NRV`, `AP`, `MIS` e `LS` **não foi verificado**. Sem isso, não dá para calcular presença ou ausência com segurança (veja [D019](decisoes.md#d019-atuação-parlamentar-na-versão-2)).
+- **Volume:** a amostra de 5 senadores ocupa cerca de 20 MB. Extrapolando, os 81 somariam algo como 300 MB só de votações, autorias e relatorias em JSON (*estimativa; a amostra é pequena e variável*). Guardar isso cru não cabe no Neon, então só os resumos (contagens, participação) devem ir para o banco.
 
 ### Comparação CSV × API (2008)
 
@@ -173,7 +215,7 @@ Do Plano de Dados Abertos (33 páginas), busquei palavras-chave de licença e ci
 - Entender os 344 registros sem categoria e os ~60 documentos em formato fora do padrão.
 - Confirmar o que são os valores negativos (estornos?) e a diferença de 8 valores entre CSV e API em 2008.
 - Confirmar o endpoint de ex-senadores.
-- Entender a diferença de uma pessoa entre o resumo oficial e a lista de servidores (gabinete).
+- Entender a diferença de uma pessoa entre o resumo oficial e a lista de servidores (sem o senador) e o gabinete com 70 pessoas.
 - Entender por que um titular tem remuneração básica diferente e por que 3 suplentes não aparecem na folha.
 - Obter partido e UF de ex-senadores (endpoints de filiações e mandatos).
 - Confirmar com o Senado o nome da licença (opcional).

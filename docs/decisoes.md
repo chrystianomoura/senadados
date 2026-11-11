@@ -123,15 +123,36 @@ Data de todas as decisões iniciais: 11/11/2026.
 
 ## D015: Gabinete pelo resumo oficial
 
-- **Contexto:** há duas fontes para o tamanho do gabinete. O resumo oficial soma 1.723 pessoas; a lista de servidores traz, em geral, uma a mais por gabinete, por motivo não confirmado.
+- **Contexto:** há duas fontes para o tamanho do gabinete. O resumo oficial soma 1.723 pessoas. A lista de servidores inclui o próprio senador entre os lotados no gabinete (80 registros); sem ele, soma 1.722.
 - **Decisão:** o site usa o número do resumo oficial e cita a data. A lista de servidores só serve para conferência e para agregados de custo, nunca para exibir nomes (D007).
 - **Por quê:** é o número que o próprio Senado apresenta por senador, e a ligação não depende de casar nomes.
-- **Status:** aceita; revisar quando a diferença for explicada.
+- **Status:** aceita. A diferença de uma pessoa entre os dois números está praticamente explicada.
 
 ## D016: Salário ligado pelo nome completo, com validação mensal
 
 - **Contexto:** a folha de pagamento não usa o código do parlamentar. Pelo nome completo, 78 dos 81 senadores foram encontrados, sem repetições. O salário básico é de R$ 46.366,19 para 77 deles e diferente para um.
 - **Decisão:** ligar pelo nome completo (normalizado, sem acento) e, a cada atualização, registrar quem ficou sem correspondência em vez de ignorar em silêncio. Mostrar o salário de cada senador como ele aparece na folha, sem supor que seja igual para todos.
 - **Por quê:** o número exibido precisa ser o real, e erros de ligação devem ficar visíveis.
+- **Status:** aceita.
+
+## D017: Custo de gabinete como estimativa agregada
+
+- **Contexto:** é possível estimar o custo mensal da equipe ligando a lista de servidores à folha. A ligação só funciona por nome, e o resultado cobre 96,9% dos servidores e só algumas parcelas da remuneração.
+- **Decisão:** exibir o custo do gabinete como **valor aproximado**, agregado por gabinete, com a explicação do que está e do que não está incluído. Nunca exibir remuneração individual de assessores (D007).
+- **Por quê:** o número ajuda o cidadão a entender o peso da equipe, mas apresentá-lo como exato seria enganoso.
+- **Status:** aceita; revisar a metodologia antes de publicar.
+
+## D018: Partido do ano pela filiação mais recente
+
+- **Contexto:** o perfil com partido e UF só existe para quem está em exercício. Para os demais, é possível reconstruir o partido a partir das datas de filiação e a UF a partir dos mandatos (cobertura de 97,8% e 100% dos pares senador-ano).
+- **Decisão:** o partido de um senador em um ano é a filiação mais recente até 1º de julho daquele ano; os casos sem filiação ficam como "não informado".
+- **Por quê:** regra simples, reproduzível e documentada. A escolha do dia 1º de julho é arbitrária, e quem trocou de partido no meio do ano pode aparecer com o partido "errado" em parte do ano.
+- **Status:** aceita; validar com casos conhecidos de troca de partido.
+
+## D019: Atuação parlamentar na versão 2
+
+- **Contexto:** votações, autorias, relatorias, discursos e apartes existem e são volumosos (estimativa de cerca de 300 MB em JSON para os 81 senadores). O significado de vários códigos de voto não foi verificado, e os discursos vêm só dos últimos 30 dias por padrão.
+- **Decisão:** deixar a atuação para a versão 2 e guardar no banco apenas resumos (contagens e participação), nunca o JSON cru.
+- **Por quê:** o MVP já cobre quem é, quanto ganha, quanto gasta, para onde vai e quem trabalha com o senador. Calcular presença com códigos que não entendemos geraria números errados sobre pessoas reais.
 - **Status:** aceita.
 
