@@ -58,7 +58,8 @@ Todos vêm do **próprio Senado Federal**, são públicos e **não exigem login 
 - Os dados de 2026 estão incompletos, porque o ano ainda está em andamento.
 - Os arquivos têm sujeira (formatos de número misturados, datas fora do ano, valores negativos que parecem estornos). Parte do trabalho do projeto é tratar isso.
 - O Senado pode corrigir dados antigos. Rodar o projeto hoje e daqui a seis meses pode dar valores ligeiramente diferentes.
-- Ainda **não li os termos de uso** dos dados nem a forma de citação exigida. Isso está pendente.
+- Os anos antigos têm menos informação: na amostra de 2008, **nenhuma despesa traz o CNPJ/CPF do fornecedor nem a data da nota**. Ainda falta descobrir a partir de que ano isso existe.
+- Os termos de uso exigem, no máximo, **citar a fonte**; a licença não tem nome. Detalhes em [docs/fontes-de-dados.md](docs/fontes-de-dados.md).
 - A página de navegação dos dados abertos do Senado exigiu login quando testei, mas os arquivos e as APIs em si baixaram sem nenhuma autenticação.
 
 ---
@@ -157,7 +158,11 @@ O diferencial do Senadados é a **coerência documental do início ao fim**:
 - **Cada dado mostrado indica a fonte e a data.**
 - **O histórico é padronizado.** As mensagens de commit seguem sempre o mesmo formato, descrito em [AGENTS.md](AGENTS.md), para o histórico poder ser lido como um diário do projeto.
 
-Documentos previstos (ainda a criar): `docs/escopo.md` (telas e versões), `docs/fontes-de-dados.md` (o que cada fonte entrega) e `docs/decisoes.md` (registro de decisões e motivos).
+Documentos:
+
+- [docs/fontes-de-dados.md](docs/fontes-de-dados.md): o que cada fonte entrega, o que a amostra mostrou e os termos de uso.
+- [docs/decisoes.md](docs/decisoes.md): cada decisão do projeto com o seu motivo.
+- `docs/escopo.md` (telas e versões): ainda a criar.
 
 ---
 
@@ -178,4 +183,6 @@ Este roadmap é uma intenção, não uma promessa, e será revisado conforme os 
 
 ## Licença e citação dos dados
 
-*Pendente.* É preciso ler os termos de uso do Senado e escolher a licença do código.
+**Dados:** pertencem ao Senado Federal, que os disponibiliza para livre uso exigindo, no máximo, a citação da fonte. O Senadados cita a fonte e a data de atualização em cada página.
+
+**Código:** licença ainda não escolhida. A escolha será registrada em [docs/decisoes.md](docs/decisoes.md).

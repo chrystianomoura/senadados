@@ -92,7 +92,9 @@ senador fica errada.
 - **Contexto antes de comparação.** Ao comparar senadores, considere que a cota varia por estado. Indique isso na interface.
 - **Reembolsado não é gasto total.** Sempre deixe claro o que está e o que não está nos números.
 - **Toda informação exibida indica fonte e data de atualização.**
-- **Termos de uso e forma de citação do Senado:** ainda pendentes. Não publique nada antes de resolver.
+- **CPF nunca é exibido por inteiro.** A coluna `CNPJ_CPF` traz CPFs completos de pessoas físicas. Veja a decisão D008 em [docs/decisoes.md](docs/decisoes.md).
+- **Citação da fonte:** os termos do Senado exigem, no máximo, citar a proveniência. Toda página mostra a fonte e a data de atualização (D009). Detalhes dos termos em [docs/fontes-de-dados.md](docs/fontes-de-dados.md).
+- **Fonte principal é a API;** o CSV serve para conferência (D005).
 
 ## 7. Stack aprovada
 
