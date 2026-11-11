@@ -23,7 +23,7 @@ Para responder, em segundos, perguntas simples sobre cada senador:
 | **Quem é?** | Foto, partido, estado, mandato |
 | **Quanto ganha?** | Salário bruto e líquido |
 | **Quanto gasta?** | Total da verba usada no ano, por categoria |
-| **Para onde vai o dinheiro?** | Os fornecedores que mais recebem |
+| **Para onde vai o dinheiro?** | Os fornecedores que mais recebem (só nos anos em que o dado existe; veja as limitações) |
 | **Quem trabalha com ele?** | Quantas pessoas há no gabinete e quanto custa a equipe |
 | **O que faz no mandato?** | Votações, projetos e comissões (numa versão futura) |
 | **Algo saiu do normal?** | Meses em que o gasto fugiu do padrão daquele senador |
@@ -117,8 +117,10 @@ A regra do projeto: **nenhuma tecnologia entra "porque é moderna"**. Cada uma r
 **Observação:** o plano gratuito de hospedagem dorme quando fica parado, então a primeira chamada pode levar até um minuto. Por isso o site **não depende** dela.
 
 ### scikit-learn (Isolation Forest): o modelo que aponta o incomum
+**Status:** escolha **provisória** ([decisão D006](docs/decisoes.md#d006-modelo-de-anomalias-provisório)).
 **Em uma frase:** aprende o que é "normal" para cada senador e destaca o que foge disso.
-**Por quê:** os dados quase não têm texto livre, então classificar descrições não funciona. Comparar cada mês com o histórico do próprio senador é mais justo e mais fácil de explicar. Cada alerta mostra o motivo, por exemplo: "gasto 3 vezes acima da média dele em passagens".
+**Por quê:** comparar cada mês com o histórico do próprio senador é mais justo, não depende de texto e é fácil de explicar. Cada alerta mostra o motivo, por exemplo: "gasto 3 vezes acima da média dele em passagens".
+**Por que provisória:** a descrição da despesa varia muito por ano (0% preenchida em 2008; 99% na amostra de 2015; 30% na de 2024). Se, com todos os senadores, ela se mostrar boa o bastante, classificar o texto pode complementar o modelo. Isso só será decidido depois de medir.
 **Cuidado:** "fora do padrão" **não** significa "irregular".
 
 ### Next.js (React) com TypeScript: o site
@@ -171,7 +173,7 @@ Documentos:
 | Versão | O que entra |
 |---|---|
 | **Primeiros passos** | Baixar amostras, medir o tamanho real dos dados, conferir colunas e formatos |
-| **MVP (versão 1)** | Perfil do senador, salário, despesas por categoria e mês, principais fornecedores, tamanho do gabinete, ranking e comparação, alertas do modelo |
+| **MVP (versão 1)** | Perfil do senador, salário, despesas por categoria e mês, principais fornecedores (a partir do ano em que o CNPJ/CPF passa a existir; esse ano ainda será descoberto), tamanho do gabinete, ranking e comparação, alertas do modelo |
 | **Versão 2** | Atuação parlamentar (votações, projetos, comissões) e histórico desde 2008 |
 | **Versão 3 (talvez)** | Dados de outras fontes públicas, como o TSE. Aumenta muito o escopo e a responsabilidade |
 

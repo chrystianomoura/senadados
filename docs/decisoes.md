@@ -68,9 +68,11 @@ Data de todas as decisões iniciais: 11/11/2026.
 ## D008: CPF nunca é exibido por inteiro
 
 - **Contexto:** a coluna `CNPJ_CPF` traz CPFs completos de pessoas físicas que receberam reembolsos (por exemplo, aluguel pago a uma pessoa).
-- **Decisão:** o site nunca mostra CPF inteiro. Para pessoa física, exibe o nome do fornecedor, ou o CPF mascarado quando necessário. Dados crus ficam fora do git.
-- **Por quê:** CPF é dado pessoal. O Senado o publica, mas republicá-lo em um site facilita uso indevido.
-- **Status:** aceita. *A definição final de como tratar pessoas físicas está pendente.*
+- **Decisão:** o site nunca mostra CPF inteiro, em nenhuma tela. Dados crus ficam fora do git. Para fornecedores que são pessoas físicas, a regra **proposta** é: nome e CPF não aparecem; elas entram agrupadas como "Pessoas físicas", com a quantidade de pagamentos e o total. Empresas (CNPJ) aparecem com nome.
+- **Como distinguir:** pelo formato do número (CNPJ tem 14 dígitos; CPF tem 11).
+- **Por quê:** CPF é dado pessoal, e quem recebe o reembolso (um locador, um prestador autônomo) não é agente político. O Senado publica o dado, mas republicá-lo com nome em um site facilita exposição e uso indevido. O custo é perder transparência sobre pagamentos a pessoas físicas, que podem ser relevantes. Esse equilíbrio é o ponto que o mantenedor precisa confirmar.
+- **Alternativa:** mostrar o nome da pessoa física e ocultar só o CPF. Dá mais transparência, com mais risco de exposição.
+- **Status:** **provisória.** A regra proposta vale até o mantenedor confirmar.
 
 ## D009: Citação da fonte em toda página
 
