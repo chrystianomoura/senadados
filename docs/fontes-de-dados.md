@@ -91,7 +91,7 @@ A amostra está em `data/raw/` (fora do git): CSV de 2008 inteiro; começo dos C
 - Ano `0204` em uma data (erro de digitação).
 - Notas de 2023 e 2025 dentro do arquivo de 2024. O campo `ANO` é a competência do reembolso, não a data do gasto.
 - Valores negativos (provavelmente estornos).
-- **CPF de pessoas físicas** aparecem completos na coluna `CNPJ_CPF`. Veja [D008](decisoes.md#d008-cpf-nunca-é-exibido-por-inteiro).
+- **CPF de pessoas físicas** aparecem completos na coluna `CNPJ_CPF`. Veja [D008](decisoes.md#d008-pessoas-físicas-agrupadas-e-cpf-nunca-exibido).
 
 ## Termos de uso
 

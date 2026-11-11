@@ -65,14 +65,20 @@ Data de todas as decisões iniciais: 11/11/2026.
 - **Por quê:** são pessoas comuns, não os agentes políticos que o projeto fiscaliza. Reduz risco com a LGPD.
 - **Status:** aceita.
 
-## D008: CPF nunca é exibido por inteiro
+## D008: Pessoas físicas agrupadas e CPF nunca exibido
 
-- **Contexto:** a coluna `CNPJ_CPF` traz CPFs completos de pessoas físicas que receberam reembolsos (por exemplo, aluguel pago a uma pessoa).
-- **Decisão:** o site nunca mostra CPF inteiro, em nenhuma tela. Dados crus ficam fora do git. Para fornecedores que são pessoas físicas, a regra **proposta** é: nome e CPF não aparecem; elas entram agrupadas como "Pessoas físicas", com a quantidade de pagamentos e o total. Empresas (CNPJ) aparecem com nome.
-- **Como distinguir:** pelo formato do número (CNPJ tem 14 dígitos; CPF tem 11).
-- **Por quê:** CPF é dado pessoal, e quem recebe o reembolso (um locador, um prestador autônomo) não é agente político. O Senado publica o dado, mas republicá-lo com nome em um site facilita exposição e uso indevido. O custo é perder transparência sobre pagamentos a pessoas físicas, que podem ser relevantes. Esse equilíbrio é o ponto que o mantenedor precisa confirmar.
-- **Alternativa:** mostrar o nome da pessoa física e ocultar só o CPF. Dá mais transparência, com mais risco de exposição.
-- **Status:** **provisória.** A regra proposta vale até o mantenedor confirmar.
+- **Contexto:** a coluna `CNPJ_CPF` traz CPFs completos de pessoas físicas que receberam reembolsos (por exemplo, aluguel pago a uma pessoa). Mostrar o nome permitiria, em tese, notar fornecedores com o mesmo sobrenome do senador, mas expõe pessoas comuns e pode gerar pedidos de remoção com base na LGPD.
+- **Decisão (MVP):**
+  - O site nunca mostra CPF, em nenhuma tela. Dados crus ficam fora do git.
+  - Pessoas físicas **não aparecem com nome**. Entram agrupadas como "Pessoas físicas", com a quantidade de pagamentos, o total e o maior valor individual. Empresas (CNPJ) aparecem com nome.
+  - Pessoa física e empresa são distinguidas pelo tamanho do número (CPF tem 11 dígitos; CNPJ tem 14).
+  - Cada despesa aponta para a fonte oficial, para quem quiser conferir os detalhes no Senado (*a existência de uma página por documento ainda não foi verificada*).
+  - O projeto **não terá** detector público de sobrenome igual ao do senador: gera falsos positivos (sobrenomes comuns) e sugere acusação, contra a regra de linguagem neutra (D010). Se for investigado, será como pesquisa à parte, e só se publica com prova externa.
+- **Por quê:** a decisão é assimétrica. Esconder o nome agora pode ser desfeito depois; publicar não, porque o nome pode ser copiado, indexado e arquivado. O custo é perder transparência sobre pagamentos a pessoas físicas, atenuado pela indicação da fonte oficial.
+- **Alternativa descartada por ora:** mostrar o nome e ocultar só o CPF. Mais transparência, mais risco de exposição.
+- **Gatilho de revisão:** reavaliar depois de consulta a alguém com conhecimento jurídico em LGPD. Se o nome passar a ser exibido, entram as proteções: nunca CPF; páginas com nome de pessoa física sem indexação por buscadores (`noindex`) e sem busca por nome; canal de contato e procedimento escrito de remoção; base legal documentada (dado já público, finalidade de controle social).
+- **Observação:** esta decisão não é aconselhamento jurídico. As afirmações sobre a LGPD não foram conferidas neste projeto.
+- **Status:** aceita para o MVP, sujeita à revisão acima.
 
 ## D009: Citação da fonte em toda página
 
