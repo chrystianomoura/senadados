@@ -6,7 +6,9 @@ Instruções para qualquer agente (humano ou de IA) que trabalhe neste repositó
 
 **Senadados** transforma os dados oficiais de gastos e perfil dos senadores em páginas que qualquer cidadão entende. É um projeto de portfólio, **sem orçamento** (tudo precisa ser gratuito) e com **coerência documental** como diferencial. Veja o [README.md](README.md) para o contexto completo.
 
-**Estado atual:** planejamento, sem código. O README descreve o que o projeto *vai* ser e muda com o tempo.
+**Escopo de pessoas:** só os **senadores em exercício**, pela lista oficial do Senado (D026). Quem sai do mandato sai do site.
+
+**Estado atual (12/11/2026):** escopo, regras e protótipo da página fechados; fontes e conferências documentadas; **ainda sem código de pipeline, API ou site**. Próximo passo: o pipeline (ordem de construção em [docs/escopo.md](docs/escopo.md)). Índice dos documentos em [docs/README.md](docs/README.md).
 
 ## 2. Princípios inegociáveis
 
@@ -16,6 +18,8 @@ Instruções para qualquer agente (humano ou de IA) que trabalhe neste repositó
 4. **Zero custo.** Não adote serviço, biblioteca paga, domínio ou plano pago sem **perguntar antes**. Se um plano gratuito exigir cartão, pergunte também.
 5. **Neutralidade.** O projeto aponta o que é *incomum*, nunca o que é *irregular, ilegal ou suspeito*. Veja a seção 6.
 6. **Simplicidade.** Não adicione ferramenta, camada ou abstração que o volume de dados não justifique. Na dúvida, escolha a opção mais simples e registre por quê.
+7. **Só o comprovado (D025).** Nenhum número aparece sem origem oficial, consulta documentada, teste e data. Se duas fontes do Senado divergem sem explicação, o número **não aparece**. Nada de estimativas.
+8. **Sem camada jurídica (D024).** O projeto mostra valores e ajuda a interpretá-los. **Nunca afirme se algo está dentro ou fora da lei**, nunca mostre limites legais nem "quanto pode". Cada pessoa pesquisa a lei por conta própria.
 
 ## 3. Idioma
 
@@ -87,18 +91,23 @@ senador fica errada.
 - **Fontes oficiais apenas** para dados de senadores: Senado Federal (arquivos de despesas e APIs de dados abertos). Qualquer outra fonte exige aprovação e registro.
 - **Dado cru nunca vai para o git.** Fica em `data/raw/` (ignorado). O que entra no repositório é o código que o gera.
 - **Nenhum segredo no repositório:** senhas, chaves, tokens e strings de conexão ficam em variáveis de ambiente.
-- **Equipe de gabinete: só agregados.** Mostre quantidades e custos, **nunca nomes** de assessores ou servidores.
-- **Linguagem neutra.** Use "fora do padrão", "acima da média dele", "incomum". **Nunca** use "suspeito", "irregular", "fraude", "desvio de dinheiro" ou termos que sugiram culpa.
-- **Contexto antes de comparação.** Ao comparar senadores, considere que a cota varia por estado. Indique isso na interface.
-- **Reembolsado não é gasto total.** Sempre deixe claro o que está e o que não está nos números.
+- **Equipe de gabinete: só o número de pessoas**, vindo do resumo oficial. **Nunca nomes** de assessores ou servidores e **nunca custo estimado** (D025).
+- **Linguagem neutra.** Descreva fatos: "o maior mês foi março", "acima da média dele". **Nunca** use "suspeito", "irregular", "fraude", "desvio de dinheiro" ou termos que sugiram culpa.
+- **Referência vinda dos dados.** Ao comparar senadores, use só números do próprio grupo (posição entre os senadores em exercício, histórico do próprio senador). Não cite limites nem regras para justificar uma comparação.
+- **Diga o que cada número cobre.** A verba mostrada é só o que o Senado reembolsa pela cota; não é tudo o que o Senado paga.
+- **Regra de agregado (D026).** Nenhum total, mediana ou ranking é apresentado como "do Senado". Sempre "entre os senadores em exercício em [data]".
+- **O que aparece:** número idêntico nas bases, ou com divergência explicada, ou de fonte única que passou nas checagens. **O que não se comprova não aparece**, sem caixa de aviso e sem selos como "comprovado" ou "fonte única".
+- **"De onde vem este número"** segue sempre o mesmo molde, em linguagem simples (sem "API", "consulta" ou siglas sem explicação): **onde o Senado publica**, **como chegamos neste número** e **atualizado em**, com o link para o portal do Senado.
+- **Tudo ou nada (D025, D031).** Um dado que vale para todos os senadores só aparece se todos em exercício o tiverem e os dados baterem para todos. Se um só falhar, ninguém o recebe. **Exceção:** dados de contato (telefone, e-mail) aparecem para quem os tem.
+- **Falhe fechado.** Se uma verificação quebrar, o número fica oculto e o motivo vai para o relatório de verificações. A prova real mostra consistência entre bases, não é auditoria; o site diz isso.
 - **Toda informação exibida indica fonte e data de atualização.**
-- **CPF nunca é exibido por inteiro, e pessoas físicas aparecem agrupadas, sem nome** (decisão D008, aceita para o MVP; só muda após revisão jurídica). A coluna `CNPJ_CPF` traz CPFs completos de pessoas físicas. Veja a decisão D008 em [docs/decisoes.md](docs/decisoes.md).
+- **CPF nunca é exibido por inteiro, e pessoas físicas aparecem agrupadas, sem nome** (decisão D008; o mantenedor aceitou o risco de LGPD por serem dados públicos, e as proteções continuam). A coluna `CNPJ_CPF` traz CPFs completos de pessoas físicas. Veja a decisão D008 em [docs/decisoes.md](docs/decisoes.md).
 - **Citação da fonte:** os termos do Senado exigem, no máximo, citar a proveniência. Toda página mostra a fonte e a data de atualização (D009). Detalhes dos termos em [docs/fontes-de-dados.md](docs/fontes-de-dados.md).
 - **Fonte principal é a API;** o CSV serve para conferência (D005).
 
 ## 7. Stack aprovada
 
-Python (Pandas, Pandera, scikit-learn) para pipeline e modelo; PostgreSQL no Neon como banco; FastAPI para a API; Next.js com TypeScript como site, exportado de forma estática no Cloudflare Pages; GitHub Actions para atualização diária; pytest, ruff e uv para qualidade. O motivo de cada escolha está no [README.md](README.md).
+Python (Pandas, Pandera) para pipeline e verificação (scikit-learn só se o modelo voltar na versão 2); PostgreSQL no Neon como banco; FastAPI para a API; Next.js com TypeScript como site, exportado de forma estática no Cloudflare Pages; GitHub Actions para atualização diária; pytest, ruff e uv para qualidade. O motivo de cada escolha está no [README.md](README.md).
 
 Não troque nem acrescente tecnologia sem registrar a decisão e o motivo. Os limites dos planos gratuitos foram pesquisados em 11/11/2026, em grande parte em fontes secundárias, e precisam ser reconfirmados nas páginas oficiais antes de publicar.
 
@@ -118,12 +127,13 @@ Não troque nem acrescente tecnologia sem registrar a decisão e o motivo. Os li
 senadados/
 ├── README.md        # o que é o projeto e por que as escolhas
 ├── AGENTS.md        # este arquivo
-├── docs/            # escopo, fontes de dados, registro de decisões
-├── pipeline/        # coleta, limpeza e modelo (Python)
-├── api/             # FastAPI
-├── web/             # site (Next.js)
-├── data/raw/        # dados brutos (fora do git)
-└── .github/         # automações
+├── docs/            # índice, escopo, decisões, fontes de dados, verificações
+├── design/          # protótipo da página do senador, folha da marca e favicon
+├── data/            # README versionado; data/raw/ (dados baixados) fora do git
+├── pipeline/        # (a criar) coleta, limpeza e verificação (Python)
+├── api/             # (a criar) FastAPI
+├── web/             # (a criar) site (Next.js)
+└── .github/         # (a criar) automações
 ```
 
-Estas pastas serão criadas conforme forem necessárias, não antes.
+As pastas "a criar" nascem quando forem necessárias, não antes. Toda pasta criada ganha um `README.md` curto dizendo o que é ([D032](docs/decisoes.md#d032-organização-do-repositório-e-dos-documentos)).

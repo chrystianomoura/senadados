@@ -1,8 +1,8 @@
 # Senadados
 
-> Os gastos dos senadores, explicados para qualquer pessoa.
+> Os valores que o Senado publica sobre os senadores em exercício, explicados para qualquer pessoa.
 
-**Status:** em planejamento (dia 1, 11/11/2026). Ainda não existe código. Este documento descreve o que o projeto **vai ser** e, por isso, **vai mudar** conforme aprendermos mais. Cada mudança relevante é registrada com o motivo (veja [Como este projeto é documentado](#como-este-projeto-é-documentado)).
+**Status (12/11/2026):** escopo e protótipo da página fechados, fontes conferidas; **o código ainda não existe**. Este documento descreve o que o projeto **vai ser** e **vai mudar** conforme aprendermos mais. Cada mudança relevante é registrada com o motivo (veja [Como este projeto é documentado](#como-este-projeto-é-documentado)).
 
 ---
 
@@ -12,7 +12,11 @@ O Senado Federal publica, na internet, quanto cada senador gasta e quem recebe e
 
 O **Senadados** pega esses dados oficiais, limpa, organiza e mostra de um jeito que qualquer cidadão entende, sem precisar saber o que é um CSV, uma API ou uma planilha.
 
-Pense assim: o Senado entrega uma pilha de notas fiscais. O Senadados arruma essa pilha, calcula os totais e conta a história em poucos gráficos e frases.
+Pense assim: o Senado entrega uma pilha de notas fiscais. O Senadados arruma essa pilha, soma os valores e conta a história em poucos gráficos e frases.
+
+O projeto faz **duas coisas**: **mostrar os valores** e **ajudar a interpretá-los** (o que é cada número, de onde vem, como se compara). **Não julga se algo está dentro ou fora da lei.** Quem quiser investigar isso pesquisa por conta própria, e o site indica onde começar.
+
+E só aparece o que **se comprova**: se uma informação não tem prova nos dados do Senado, ou duas bases do Senado discordam sem explicação, ela não é mostrada.
 
 ## Para que serve?
 
@@ -21,12 +25,14 @@ Para responder, em segundos, perguntas simples sobre cada senador:
 | Pergunta | O que o site mostra |
 |---|---|
 | **Quem é?** | Foto, partido, estado, mandato |
-| **Quanto ganha?** | Salário bruto e líquido |
-| **Quanto gasta?** | Total da verba usada no ano, por categoria |
+| **Quanto ganha?** | A remuneração, quando a ligação com o senador é comprovada |
+| **Quanto usou da verba (a cota)?** | O total por mês, por ano e por categoria, e a posição entre os outros senadores |
 | **Para onde vai o dinheiro?** | Os fornecedores que mais recebem (só nos anos em que o dado existe; veja as limitações) |
-| **Quem trabalha com ele?** | Quantas pessoas há no gabinete e quanto custa a equipe |
+| **Quem trabalha com ele?** | Quantas pessoas há no gabinete (só o número, sem estimativa de custo) |
+| **Como falar com ele?** | O endereço do gabinete, o telefone e o e-mail oficiais, para quem os tem |
+| **Tem benefício de moradia?** | Imóvel funcional e auxílio-moradia, mês a mês |
 | **O que faz no mandato?** | Votações, projetos e comissões (numa versão futura) |
-| **Algo saiu do normal?** | Meses em que o gasto fugiu do padrão daquele senador |
+| **Qual foi o mês de maior valor?** | O mês de maior uso da verba, destacado no gráfico mês a mês (só o fato, sem julgamento) |
 
 ## Qual é o objetivo?
 
@@ -37,10 +43,29 @@ Para responder, em segundos, perguntas simples sobre cada senador:
 
 ## O que o Senadados **não** é
 
-- **Não é um acusador.** O sistema aponta o que é *incomum*, não o que é *irregular*. Um gasto alto pode ser uma viagem legítima. Nada aqui afirma que alguém fez algo errado.
+- **Não é um acusador nem um intérprete da lei.** O sistema aponta o que é *incomum*, não o que é *irregular*. Um valor alto pode ser legítimo. Nada aqui afirma que alguém fez algo errado, nem que algo está dentro ou fora da lei.
 - **Não é uma fonte oficial.** É uma leitura independente de dados oficiais. Cada informação mostra de onde veio e quando foi atualizada.
-- **Não mostra o gasto total do senador.** Os dados cobrem principalmente a verba reembolsada (a chamada cota parlamentar), mais alguns itens complementares. O site precisa deixar claro o que está dentro e o que está fora.
-- **Não expõe pessoas comuns.** A equipe do gabinete aparece só em números (quantidade, custo). Nomes de assessores não são exibidos.
+- **Não é uma auditoria do Senado.** Verificamos se as bases do Senado **concordam entre si** e mostramos o resultado, mas não conferimos se os dados do Senado estão certos.
+- **Não mostra tudo o que o Senado paga.** Mostra o que o Senado publica em dados abertos, e diz o que está dentro e o que está fora de cada número.
+- **Não faz estimativas.** Nada é calculado por inferência que não se possa provar.
+- **Não expõe pessoas comuns.** A equipe do gabinete aparece só em número de pessoas. Nomes de assessores não são exibidos.
+
+## Quem aparece no site
+
+Só os **senadores em exercício**, conforme a lista oficial do Senado (hoje, 81: 70 titulares e 11 suplentes). Quem deixa o mandato sai do site, e quem assume entra sozinho. Nenhum total ou comparação é apresentado como "do Senado": sempre diz "entre os senadores em exercício".
+
+## Só o comprovado (a prova real)
+
+Todo número tem origem oficial, uma consulta que o reproduz e uma data. Quando o Senado publica o mesmo número em dois lugares, os dois precisam bater:
+
+- **Idêntico:** o número aparece.
+- **Diferente, mas explicado:** aparece com a explicação.
+- **Diferente e sem explicação:** não aparece.
+- **Só uma fonte:** aparece, e a página explica de onde vem em palavras simples.
+- **Tudo ou nada:** uma informação que compara senadores só aparece se todos a tiverem e os dados baterem para todos. Se um só falhar, ninguém a recebe. Exceção: dados de contato (telefone, e-mail) aparecem para quem os tem.
+- **Sem selos na tela:** o que não se comprova simplesmente não é mostrado. A lista do que está pendente fica na página de verificações.
+
+O primeiro teste: a cota de 2026, das despesas detalhadas contra o resumo do Senado. **72 de 79 senadores batem no centavo**, e as 7 diferenças são exatamente linhas sem categoria que o resumo não conta. Os resultados ficam numa página pública de verificações.
 
 ---
 
@@ -51,7 +76,8 @@ Todos vêm do **próprio Senado Federal**, são públicos e **não exigem login 
 | Fonte | O que traz |
 |---|---|
 | Arquivos de despesas da cota (CEAPS), de 2008 a 2026 | Cada nota fiscal reembolsada: senador, categoria, fornecedor, valor, data |
-| API de dados abertos administrativos do Senado | Despesas, perfil dos senadores, equipe dos gabinetes, escritórios de apoio, auxílio-moradia, folha de pagamento |
+| API de dados abertos administrativos do Senado | Despesas, perfil dos senadores, resumo de recursos por senador, equipe dos gabinetes, escritórios de apoio, moradia, folha de pagamento |
+| Página de transparência de cada senador | Os mesmos valores por ano (2023 a 2026) e o uso de moradia mês a mês, usados para conferir |
 | API de dados abertos legislativos do Senado | Foto, nome completo, partido, votações, projetos, comissões |
 
 **Limitações conhecidas**
@@ -59,6 +85,7 @@ Todos vêm do **próprio Senado Federal**, são públicos e **não exigem login 
 - Os arquivos têm sujeira (formatos de número misturados, datas fora do ano, valores negativos que parecem estornos). Parte do trabalho do projeto é tratar isso.
 - O Senado pode corrigir dados antigos. Rodar o projeto hoje e daqui a seis meses pode dar valores ligeiramente diferentes.
 - Os anos antigos têm menos informação: em **2008 nenhuma despesa traz o CNPJ/CPF do fornecedor nem a data da nota**. De 2009 em diante o fornecedor existe. A descrição da despesa também falha: está vazia até 2010 e vem preenchida em só cerca de 35 a 40% dos registros recentes.
+- O Senado deixa de fora do resumo algumas linhas de despesa sem categoria (60 linhas em 2026, R$ 164.450,50). O site as mostra como "Sem categoria", com a explicação.
 - Os termos de uso exigem, no máximo, **citar a fonte**; a licença não tem nome. Detalhes em [docs/fontes-de-dados.md](docs/fontes-de-dados.md).
 - A página de navegação dos dados abertos do Senado exigiu login quando testei, mas os arquivos e as APIs em si baixaram sem nenhuma autenticação.
 
@@ -78,7 +105,7 @@ Todos vêm do **próprio Senado Federal**, são públicos e **não exigem login 
           ▼
   3. GUARDAR   → grava num banco de dados organizado
           │
-          ├──► 4. ANALISAR → um modelo aponta meses fora do padrão
+          ├──► 4. DESTACAR → marca o mês de maior valor
           │
           ▼
   5. SERVIR    → uma API entrega os dados a quem pedir
@@ -116,12 +143,10 @@ A regra do projeto: **nenhuma tecnologia entra "porque é moderna"**. Cada uma r
 **Por quê:** qualquer programa, inclusive o site, pede um dado (por exemplo, "gastos do senador X em 2024") e recebe a resposta organizada. A FastAPI gera de graça uma página de documentação que explica cada pedido possível.
 **Observação:** o plano gratuito de hospedagem dorme quando fica parado, então a primeira chamada pode levar até um minuto. Por isso o site **não depende** dela.
 
-### scikit-learn (Isolation Forest): o modelo que aponta o incomum
-**Status:** ponto de partida, ainda sem teste de qualidade ([decisão D006](docs/decisoes.md#d006-modelo-de-anomalias)).
-**Em uma frase:** aprende o que é "normal" para cada senador e destaca o que foge disso.
-**Por quê:** comparar cada mês com o histórico do próprio senador é mais justo, não depende de texto e é fácil de explicar. Cada alerta mostra o motivo, por exemplo: "gasto 3 vezes acima da média dele em passagens".
-**Por que não usar o texto como base:** a descrição da despesa está vazia até 2010, passa de 80% entre 2013 e 2018 e cai para cerca de 35 a 40% nos anos recentes, que são os que mais interessam. Classificar o texto pode complementar o modelo em alguns anos, mas não sustentá-lo.
-**Cuidado:** "fora do padrão" **não** significa "irregular".
+### scikit-learn (modelo de anomalias): adiado
+**Status:** fora do MVP ([decisão D030](docs/decisoes.md#d030-destaque-do-maior-mês-no-lugar-do-alerta-fora-do-padrão)).
+**Em uma frase:** um modelo de computador que aprende o que é "normal" para cada senador e destaca o que foge disso.
+**Por que adiado:** o alerta do MVP é só o **destaque do maior mês**, um fato que qualquer pessoa confere no gráfico, sem limite escolhido por nós e sem palavra que sugira culpa. O modelo precisaria de validação antes de ser usado, e só voltaria na versão 2, se ainda fizer sentido.
 
 ### Next.js (React) com TypeScript: o site
 **Em uma frase:** é o que o cidadão vê e usa.
@@ -154,17 +179,20 @@ Spark, Airflow, Kafka, Kubernetes, Redis, contas de usuário e vários bancos de
 
 O diferencial do Senadados é a **coerência documental do início ao fim**:
 
-- **Toda decisão tem um porquê escrito.** Escolha de tecnologia, regra de limpeza, critério do modelo: nada entra sem justificativa.
+- **Toda decisão tem um porquê escrito.** Escolha de tecnologia, regra de limpeza, critério de qualidade: nada entra sem justificativa.
 - **A documentação muda junto com o código.** Se o código muda e o texto não, o trabalho não está terminado.
 - **Dúvidas e limitações ficam visíveis.** O que não foi verificado é dito como "não verificado", não escondido.
-- **Cada dado mostrado indica a fonte e a data.**
+- **Cada dado mostrado indica a fonte e a data**, e só se mostra o que passou na prova real.
+- **Nenhum julgamento jurídico.** O projeto descreve valores, não interpreta leis.
 - **O histórico é padronizado.** As mensagens de commit seguem sempre o mesmo formato, descrito em [AGENTS.md](AGENTS.md), para o histórico poder ser lido como um diário do projeto.
 
-Documentos:
+Documentos (índice completo em [docs/README.md](docs/README.md)):
 
-- [docs/fontes-de-dados.md](docs/fontes-de-dados.md): o que cada fonte entrega, o que a amostra mostrou e os termos de uso.
+- [docs/escopo.md](docs/escopo.md): telas, versões, regras de exibição e ordem de construção.
 - [docs/decisoes.md](docs/decisoes.md): cada decisão do projeto com o seu motivo.
-- `docs/escopo.md` (telas e versões): ainda a criar.
+- [docs/fontes-de-dados.md](docs/fontes-de-dados.md): o que cada fonte entrega, a qualidade e os termos de uso.
+- [docs/verificacoes.md](docs/verificacoes.md): resultado de cada conferência entre bases do Senado.
+- [design/](design/): protótipo da página do senador e identidade visual (abra os `.html` no navegador).
 
 ---
 
@@ -172,16 +200,16 @@ Documentos:
 
 | Versão | O que entra |
 |---|---|
-| **Primeiros passos** | Baixar amostras, medir o tamanho real dos dados, conferir colunas e formatos |
-| **MVP (versão 1)** | Perfil do senador, salário, despesas por categoria e mês, principais fornecedores (de 2009 em diante), tamanho do gabinete, ranking e comparação, alertas do modelo |
-| **Versão 2** | Atuação parlamentar (votações, projetos, comissões) e histórico desde 2008 |
+| **Primeiros passos** (feito) | Baixar os dados, medir o tamanho real, conferir colunas, formatos e a prova real; definir escopo e protótipo |
+| **MVP (versão 1)** | Perfil do senador, verba por categoria e mês, principais fornecedores (de 2009 em diante), número de pessoas na equipe, moradia mês a mês, salário (quando comprovado), ranking e comparação entre os senadores em exercício, destaque do maior mês e a página de verificações |
+| **Versão 2** | Atuação parlamentar (votações, projetos, comissões), histórico desde 2008 e, se fizer sentido, um modelo de anomalias |
 | **Versão 3 (talvez)** | Dados de outras fontes públicas, como o TSE. Aumenta muito o escopo e a responsabilidade |
 
 Este roadmap é uma intenção, não uma promessa, e será revisado conforme os dados reais mostrarem o que é possível.
 
 ## Como rodar
 
-*Em breve.* O projeto ainda não tem código.
+*Em breve.* O projeto ainda não tem código. Para ver o protótipo, abra `design/perfil-do-senador.html` no navegador.
 
 ## Licença e citação dos dados
 
