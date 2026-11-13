@@ -1,12 +1,15 @@
 # Fontes de dados
 
-Registro do que cada fonte entrega, como foi verificado e quais são as limitações. Tudo aqui foi conferido em **11/11/2026**, a menos que esteja marcado como *não verificado*. Quando uma fonte mudar, este arquivo deve mudar junto.
+Registro do que cada fonte entrega, como foi verificado e quais são as limitações. Tudo aqui foi conferido em **11 e 12/11/2026**, a menos que esteja marcado como *não verificado*. Quando uma fonte mudar, este arquivo deve mudar junto.
 
 ## Resumo
 
 - Todas as fontes são do **Senado Federal** e são públicas, **sem login, chave ou cadastro**.
 - A **API é a fonte principal**; os CSVs servem para conferência (veja [decisão D005](decisoes.md#d005-api-como-fonte-principal-csv-para-conferência)).
 - Os dados vão de **2008 a 2026**. O ano de 2026 está incompleto.
+- **Escopo de pessoas:** só os **senadores em exercício** ([D026](decisoes.md#d026-só-senadores-em-exercício)). Dados de ex-senadores **não entram no site**.
+- **Regra de qualidade:** só se mostra o que passa na prova real ([D025](decisoes.md#d025-só-o-comprovado-a-prova-real)). As conferências feitas estão em [verificacoes.md](verificacoes.md).
+- **Sem camada jurídica** ([D024](decisoes.md#d024-sem-camada-jurídica)): este documento descreve dados, não regras. Limites legais, normas e tabelas de valores por estado foram descartados do escopo.
 
 ## Fontes verificadas
 
@@ -19,7 +22,7 @@ CEAPS é a *Cota para o Exercício da Atividade Parlamentar dos Senadores*: a ve
 | CSV anual | `https://www.senado.leg.br/transparencia/LAI/verba/despesa_ceaps_AAAA.csv` | Existe de 2008 a 2026. O endereço antigo `senado.gov.br` só redireciona |
 | API (JSON) | `https://adm.senado.gov.br/adm-dadosabertos/api/v1/senadores/despesas_ceaps/{ano}` | Traz o código do senador e o tipo de documento. Há também a versão `/csv` |
 
-**Colunas do CSV** (11, iguais em 2008, 2015 e 2024 nas amostras):
+**Colunas do CSV** (11, iguais nos anos testados):
 `ANO`, `MES`, `SENADOR`, `TIPO_DESPESA`, `CNPJ_CPF`, `FORNECEDOR`, `DOCUMENTO`, `DATA`, `DETALHAMENTO`, `VALOR_REEMBOLSADO`, `COD_DOCUMENTO`.
 
 **Campos da API:** `id`, `tipoDocumento`, `ano`, `mes`, `codSenador`, `nomeSenador`, `tipoDespesa`, `cpfCnpj`, `fornecedor`, `documento`, `data`, `detalhamento`, `valorReembolsado`.
@@ -38,26 +41,24 @@ CEAPS é a *Cota para o Exercício da Atividade Parlamentar dos Senadores*: a ve
 | API administrativa | `https://adm.senado.gov.br/adm-dadosabertos/api/v1/senadores` | Código, nome, UF, partido, titular ou suplente, mandato, contato, chefe de gabinete (81 senadores) |
 | API legislativa | `https://legis.senado.leg.br/dadosabertos/senador/lista/atual` | Nome completo, sexo, foto oficial, bloco, partido, UF |
 
-Os dois usam o **mesmo código de parlamentar**, que é a chave para ligar tudo. As listas cobrem os senadores **em exercício**. Para ex-senadores das despesas antigas, o endpoint histórico ainda *não foi verificado*.
+Os dois usam o **mesmo código de parlamentar**, que é a chave para ligar tudo. As listas cobrem os senadores **em exercício**. 
 
-### 3. Outras fontes (existem; conteúdo ainda não analisado)
+### 3. Resumo de recursos, benefícios, folha e servidores
 
-Os endpoints abaixo responderam com sucesso, mas **não li o conteúdo de cada um**:
+Todos na base `https://adm.senado.gov.br/adm-dadosabertos/api/v1`. Respondem sem chave; o que foi medido de cada um está em [verificacoes.md](verificacoes.md).
 
-| Dado | Endereço (base `adm-dadosabertos/api/v1`) | Uso previsto |
+| Dado | Endereço | Uso no MVP |
 |---|---|---|
-| Resumo de recursos por senador | `/senadores/{codigo}/recursos-utilizados` | Cota, gastos fora da cota, benefícios e equipe (MVP) |
-| Auxílio-moradia e imóvel funcional | `/senadores/auxilio-moradia-imoveis-funcionais` | MVP |
-| Escritórios de apoio | `/senadores/escritorios-apoio` | Versão 2 |
-| Lotação e servidores ativos | `/servidores/servidores/ativos` | Contar a equipe de cada gabinete (só agregados) |
-| Folha de pagamento por mês | `/servidores/remuneracoes/{ano}/{mes}` | Salário do senador (~5 MB por mês) |
-| Votações, autorias, comissões, discursos etc. | `legis.senado.leg.br/dadosabertos/senador/{codigo}/...` | Versão 2 |
-
-O que foi medido de cada um está em [Achados: perfil, salário e gabinete](#achados-perfil-salário-e-gabinete).
+| Resumo de recursos por senador | `/senadores/{codigo}/recursos-utilizados` (aceita `?ano=`) | Cota por categoria, benefícios e número de pessoas na equipe |
+| Auxílio-moradia e imóvel funcional | `/senadores/auxilio-moradia-imoveis-funcionais` | Só como conferência (a página mensal do senador é o canal principal) |
+| Folha de pagamento por mês | `/servidores/remuneracoes/{ano}/{mes}` (~5 MB por mês) | Salário, quando a ligação por nome completo é comprovada |
+| Servidores ativos | `/servidores/servidores/ativos` | Só conferência da contagem de equipe (nunca nomes) |
+| Escritórios de apoio | `/senadores/escritorios-apoio` | Fora do MVP |
+| Votações, autorias, comissões etc. | `legis.senado.leg.br/dadosabertos/senador/{codigo}/...` | Versão 2 |
 
 ## Achados com a API completa (2008 a 2026)
 
-Baixei a API de despesas de **todos os anos** (174 MB em JSON, fora do git). Os números abaixo valem para os 19 anos inteiros e **substituem** os percentuais da primeira amostra, que era enviesada (veja mais abaixo).
+Baixei a API de despesas de **todos os anos** (174 MB em JSON, fora do git). Os números abaixo valem para os 19 anos inteiros. (Uma primeira amostra pequena e enviesada errou alguns percentuais; lição: **não tirar conclusões de amostra enviesada**.)
 
 **Em números**
 - **398.624 registros** e cerca de **R$ 450 milhões** reembolsados entre 2008 e 2026 (2026 incompleto).
@@ -99,92 +100,19 @@ Baixei a API de despesas de **todos os anos** (174 MB em JSON, fora do git). Os 
 
 ### CPF: a API já mascara, o CSV não
 
-Na API, o CPF de pessoa física vem mascarado (padrão `123.***.***-45`). No CSV, vem completo (44 de 1.692 linhas na amostra de 2024). Isso reforça a escolha da API como fonte principal ([D005](decisoes.md#d005-api-como-fonte-principal-csv-para-conferência)): o pipeline nunca recebe o CPF inteiro.
+Na API, o CPF de pessoa física vem mascarado (padrão `123.***.***-45`). No CSV, vem completo (44 de 1.692 linhas nos primeiros registros de 2024). Isso reforça a escolha da API como fonte principal ([D005](decisoes.md#d005-api-como-fonte-principal-csv-para-conferência)): o pipeline nunca recebe o CPF inteiro.
 
 Há também uns 60 registros recentes com o documento em formato fora do padrão (12 ou 13 dígitos, sem pontuação), que não são nem CNPJ nem CPF. Precisam de tratamento à parte.
 
-## Primeira amostra (histórico)
+## Quem está no escopo (senadores em exercício)
 
-Antes de baixar tudo, usei uma amostra pequena em `data/raw/`: CSV de 2008 inteiro e o começo dos CSVs de 2015 e 2024 (cerca de 400 KB cada, com 6 e 9 senadores, os primeiros em ordem alfabética). Ela **errou** em alguns números porque era enviesada: indicou 99% de descrição em 2015 (real: 84,4%) e 30% em 2024 (real: 40,1%). Fica registrada como lição: **não tirar conclusões de amostra enviesada**.
+- **81** em exercício em 12/11/2026: 70 titulares e 11 suplentes ([D026](decisoes.md#d026-só-senadores-em-exercício)).
+- Eles têm **153.901 dos 398.624 registros** (39%) e **47% do valor** do histórico de 2008 a 2026.
+- **79 de 81** têm despesa registrada. O primeiro ano de despesa de 33 deles é 2019, e o de 20 é 2023. Só 5 vêm de 2008.
+- **54 dos 81 mandatos terminam em 2027.** Quando um senador sai, ele e os dados dele saem do site.
+- Os códigos de parlamentar das legislaturas 53 a 57 (681 pessoas) cobrem os 331 códigos das despesas, mas essas listas trazem só nome e sexo; **partido e UF existem só para os 81 em exercício**.
 
-## Achados: perfil, salário e gabinete
-
-Baixei também, para `data/raw/` (fora do git), a lista de senadores das legislaturas 53 a 57, os benefícios, os escritórios de apoio, o resumo de recursos de cada um dos 81 senadores em exercício, a folha de setembro de 2026 e a lista de servidores ativos.
-
-### Perfil: quem é cada senador
-- Os códigos das legislaturas 53 a 57 somam **681 parlamentares**. Eles cobrem **100% dos 331 códigos** que aparecem nas despesas de 2008 a 2026. Ou seja, todo gasto pode ser ligado a um nome.
-- **Atenção:** essas listas de legislatura trazem só nome, nome completo e sexo. **Partido e UF existem apenas para os 81 senadores em exercício.** Para ex-senadores, seria preciso consultar endpoints por senador (filiações, mandatos), que existem mas ainda não foram lidos.
-- Dos 81 em exercício, 70 são titulares e 11 são suplentes.
-
-### Salário
-- Ligando a folha de setembro de 2026 ao senador pelo **nome completo**, 78 dos 81 foram encontrados, sem nenhum nome repetido.
-- **77 têm a mesma remuneração básica: R$ 46.366,19.** Um titular tem R$ 44.820,65. A diferença **não foi explicada**, então não vale afirmar que o salário é igual para todos.
-- O líquido varia de cerca de R$ 26,1 mil a R$ 37,1 mil, com mediana de R$ 33,8 mil, por causa de descontos e vantagens.
-- Os 3 sem correspondência são suplentes em exercício. Podem não estar na folha normal ou ter o nome escrito de outra forma. Também **não foi explicado**.
-- Ligar por nome funciona, mas é frágil: precisa de validação a cada mês.
-
-### Gabinete
-- O resumo oficial por senador soma **1.723 pessoas nos 81 gabinetes** (cerca de 21 por gabinete). Todos os resumos têm a mesma estrutura.
-- **A diferença de uma pessoa foi explicada:** a lista de servidores inclui o **próprio senador** (vínculo "PARLAMENTAR", 80 registros) entre os lotados no gabinete. Sem ele, a lista soma **1.722 pessoas**, contra 1.723 do resumo oficial, uma diferença de uma pessoa em 81 gabinetes que não foi explicada.
-- Os vínculos na lista: 1.585 comissionados, 136 efetivos e 1 requisitado, além dos 80 parlamentares.
-- Pessoas por gabinete (sem o senador): mínimo 8, mediana 17 e máximo 70. O máximo é um caso fora da curva que **não investiguei**.
-- Decisão: usar o resumo oficial como número principal ([D015](decisoes.md#d015-gabinete-pelo-resumo-oficial)).
-
-**Custo mensal da equipe (estimativa):** ligando a lista de servidores à folha de setembro de 2026, foi possível estimar o custo de cada gabinete somando remuneração básica, função comissionada e vantagens pessoais.
-- **A ligação é só por nome**, porque o campo `sequencial` coincide apenas para os 136 efetivos; os comissionados têm outro número em cada base.
-- Ficaram ligados **96,9%** dos 1.722 servidores (12 têm nome repetido na folha e 42 não têm linha).
-- Resultado: mediana de cerca de **R$ 321 mil por mês por gabinete** (mínimo R$ 66 mil, máximo R$ 701 mil), somando cerca de R$ 28 milhões por mês nos 81 gabinetes.
-- É um valor **aproximado e parcial**: não inclui auxílios, encargos nem outras parcelas, e deve ser apresentado como estimativa ([D017](decisoes.md#d017-custo-de-gabinete-como-estimativa-agregada)).
-
-### Cota de 2026 (resumo oficial)
-Total acumulado no ano, por senador: mínimo R$ 0, mediana cerca de R$ 335 mil e máximo cerca de R$ 531 mil. O zero indica alguém que acabou de assumir ou ainda não usou a cota.
-
-### Benefícios e escritórios
-- A lista de benefícios tem 85 nomes (inclui suplentes). **Auxílio-moradia: 1.** **Imóvel funcional: 63.**
-- Há 81 escritórios de apoio em 75 senadores.
-
-## Achados: atuação parlamentar e histórico
-
-Baixei, por senador, dados leves para os 81 em exercício (mandatos, filiações, comissões, cargos, licenças, profissão, formação e lideranças, sem falhas), uma amostra pesada de 5 senadores (votações, autorias, relatorias, discursos e apartes) e as filiações e mandatos dos **252 ex-senadores** que aparecem nas despesas.
-
-### Partido e UF ao longo do tempo (resolve a lacuna do perfil)
-- Pelas **filiações** (data de entrada em cada partido) e pelos **mandatos** (UF), dá para saber o partido e o estado de cada senador em cada ano.
-- Para os 1.767 pares senador-ano das despesas: **partido conhecido em 97,8%** e **UF em 100%**. Ficam sem partido 36 parlamentares, que ainda não investiguei.
-- Seis senadores têm mais de uma UF no histórico. O partido do ano foi calculado pela filiação mais recente até 1º de julho, o que é uma regra simples e precisa ser validada ([D018](decisoes.md#d018-partido-do-ano-pela-filiação-mais-recente)).
-- **Cuidado:** a API converte XML em JSON, e itens únicos podem vir como objeto em vez de lista. O pipeline precisa tratar os dois casos (nas 81 respostas testadas, `Mandato` veio sempre como lista).
-
-### Cobertura dos dados leves (81 senadores)
-| Dado | Preenchido | Observação |
-|---|---|---|
-| Filiações | 81 de 81 | Base do partido por ano |
-| Lideranças | 72 de 81 | |
-| Cargos | 77 de 81 | |
-| **Profissão** | **31 de 81** | Pouco confiável para o MVP |
-| **Formação** | **34 de 81** | Pouco confiável para o MVP |
-| Comissões | todos | Mediana de 84 por senador (máximo 220) |
-| Licenças | todos | Mediana de 32 (máximo 435) |
-
-As listas de comissões e licenças parecem **históricas e muito longas**, o que seria ruído. Antes de exibir, é preciso filtrar o que está em vigor; o conteúdo de cada item não foi analisado.
-
-### Atuação (amostra de 5 senadores)
-| Dado | Resultado |
-|---|---|
-| Votações | De 408 a 3.339 por senador, com histórico desde 1995 para os mais antigos. Mais da metade é votação secreta |
-| Autorias | De 390 a 1.138, e entre 119 e 741 como autor principal |
-| Relatorias | De 85 a 364 |
-| Discursos | A API devolve só os últimos 30 dias por padrão (0 a 3 resultados). Uma janela maior **não foi testada** |
-| Apartes | De 7 a 111 |
-
-- Os votos aparecem com códigos como `Sim`, `Não`, `Votou`, `P-NRV`, `AP`, `MIS`, `LS`. O significado de `P-NRV`, `AP`, `MIS` e `LS` **não foi verificado**. Sem isso, não dá para calcular presença ou ausência com segurança (veja [D019](decisoes.md#d019-atuação-parlamentar-na-versão-2)).
-- **Volume:** a amostra de 5 senadores ocupa cerca de 20 MB. Extrapolando, os 81 somariam algo como 300 MB só de votações, autorias e relatorias em JSON (*estimativa; a amostra é pequena e variável*). Guardar isso cru não cabe no Neon, então só os resumos (contagens, participação) devem ir para o banco.
-
-### Comparação CSV × API (2008)
-
-- As duas fontes têm as **mesmas 2.449 linhas**, e todo `COD_DOCUMENTO` do CSV tem par na API.
-- **8 linhas** têm valor diferente, sempre menor na API (por exemplo R$ 11.100,36 no CSV contra R$ 8.000,18 na API). A soma total difere em R$ 9.791,93 (cerca de 0,08%).
-- Hipótese *não confirmada*: correções feitas depois de 2021.
-
-## Qualidade dos dados: sujeira encontrada
+## Sujeira encontrada nos dados
 
 - Valor sem vírgula decimal misturado com valor com vírgula.
 - Ano `0204` em uma data (erro de digitação).
@@ -210,22 +138,43 @@ Do Plano de Dados Abertos (33 páginas), busquei palavras-chave de licença e ci
 
 **Como o projeto cumpre:** cita a fonte e a data de atualização em cada página e no rodapé (veja [D009](decisoes.md#d009-citação-da-fonte-em-toda-página)).
 
-## Pendências
+## Nomes das categorias de despesa
+O site usa nomes curtos, derivados do nome oficial, para o cidadão ler sem esforço. O nome completo fica na página do senador no Senado, e "De onde vem este número" avisa isso. **Se o Senado criar uma categoria nova, o site mostra o nome oficial até existir um nome curto.**
 
-- Entender os 344 registros sem categoria e os ~60 documentos em formato fora do padrão.
-- Confirmar o que são os valores negativos (estornos?) e a diferença de 8 valores entre CSV e API em 2008.
-- Confirmar o endpoint de ex-senadores.
-- Entender a diferença de uma pessoa entre o resumo oficial e a lista de servidores (sem o senador) e o gabinete com 70 pessoas.
-- Entender por que um titular tem remuneração básica diferente e por que 3 suplentes não aparecem na folha.
-- Obter partido e UF de ex-senadores (endpoints de filiações e mandatos).
-- Confirmar com o Senado o nome da licença (opcional).
-- Ler o Plano de Dados Abertos por inteiro.
+| Nome oficial no Senado | Nome curto no site |
+|---|---|
+| Locomoção, hospedagem, alimentação, combustíveis e lubrificantes | Locomoção, hospedagem e alimentação |
+| Contratação de consultorias, assessorias, pesquisas, trabalhos técnicos e outros serviços de apoio ao exercício do mandato parlamentar | Consultorias e serviços de apoio ao mandato |
+| Divulgação da atividade parlamentar | Divulgação da atividade parlamentar |
+| Aluguel de imóveis para escritório político, compreendendo despesas concernentes a eles. | Aluguel do escritório político |
+| Passagens aéreas, aquáticas e terrestres nacionais | Passagens dentro do Brasil |
+| Aquisição de material de consumo para uso no escritório político, inclusive aquisição ou locação de software, despesas postais, aquisição de publicações, locação de móveis e de equipamentos. | Material de consumo do escritório político |
+| Serviços de Segurança Privada | Segurança privada |
+| *(sem categoria)* | Sem categoria |
 
-## Como reproduzir os achados
+## Fora do MVP (registrado para não se perder)
+
+Medido em 11/11/2026 e **fora do site** pela regra de escopo (D026) ou por ficar para a versão 2 (D019):
+
+- **Atuação parlamentar** (votações, autorias, relatorias, discursos, apartes): existe por senador em `legis.senado.leg.br/dadosabertos/senador/{código}/...`. Os votos usam códigos como `P-NRV`, `AP`, `MIS` e `LS` cujo significado **não foi verificado**; sem isso não dá para falar de presença. Os dados pesados de 81 senadores seriam centenas de MB (estimativa), grandes demais para guardar crus no banco gratuito.
+- **Profissão e formação** estão preenchidas para só 31 e 34 dos 81; **comissões e licenças** vêm em listas históricas muito longas. Nenhum entra no MVP.
+- **Partido ao longo do tempo** (filiações e mandatos) existe e daria o partido de cada ano, mas só importa para a versão 2.
+- **Gastos fora da cota:** veja [verificações](verificacoes.md#fora-do-mvp-registrado-para-não-se-perder).
+- **Escritórios de apoio:** 81 na lista, em 75 senadores; fora do MVP ([D031](decisoes.md#d031-onde-fica-o-gabinete-endereço-entra-telefone-e-mail-e-escritório-de-apoio-ficam-fora)).
+- A API converte XML em JSON, e itens únicos podem vir como objeto em vez de lista; o pipeline precisa tratar os dois casos.
+
+## Como conferimos
+
+Os resultados das comparações entre bases, com o que bate, o que divergiu e o que ficou pendente, estão em [verificacoes.md](verificacoes.md).
+
+
+## Como reproduzir
+
+Os arquivos baixados ficam em `data/raw/`, que não vai para o git (veja [data/README.md](../data/README.md)). Exemplo, despesas de um ano pela API (fonte principal) e pelo CSV (conferência):
 
 ```bash
-curl -s -o ceaps_2008.csv "https://www.senado.leg.br/transparencia/LAI/verba/despesa_ceaps_2008.csv"
-curl -s -o api_2008.json  "https://adm.senado.gov.br/adm-dadosabertos/api/v1/senadores/despesas_ceaps/2008"
+curl -s -o api_2024.json "https://adm.senado.gov.br/adm-dadosabertos/api/v1/senadores/despesas_ceaps/2024"
+curl -s -o ceaps_2024.csv "https://www.senado.leg.br/transparencia/LAI/verba/despesa_ceaps_2024.csv"
 ```
 
-Os arquivos baixados ficam em `data/raw/`, que não vai para o git.
+O código que baixa e confere tudo de forma repetível (pipeline) ainda não existe; é o próximo passo ([escopo.md](escopo.md), ordem de construção).
