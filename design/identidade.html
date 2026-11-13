@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='14'%20fill='%2314110d'/%3E%3Ccircle%20cx='32'%20cy='32'%20r='19'%20fill='none'%20stroke='%23c8f53a'%20stroke-width='13'/%3E%3C/svg%3E">
+<title>Senadados · identidade visual</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Fraunces:opsz,wght@9..144,700&family=Hanken+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#faf7f2;--ink:#14110d;--ink2:#4b443d;--line:#e2dacb;--lime:#c8f53a;--limesoft:#eef8c2;--sans:'Hanken Grotesk',system-ui,sans-serif}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.5 var(--sans)}
+main{max-width:920px;margin:0 auto;padding:40px 16px 64px}
+h1{font:700 28px/1.2 'Fraunces',Georgia,serif;margin:0 0 6px}p.s{color:var(--ink2);margin:0 0 32px}
+h2{font:700 13px/1 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--ink2);margin:36px 0 12px}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.tile{border:1px solid var(--line);border-radius:14px;padding:28px 16px;display:flex;align-items:center;justify-content:center;gap:16px;min-height:120px;flex-wrap:wrap}
+.wm{font:800 40px/1 'Bricolage Grotesque',sans-serif;letter-spacing:-.05em;white-space:nowrap}
+.wm .o{display:inline-block;width:.64em;height:.64em;vertical-align:-.045em;margin:0 .005em}
+.light{background:#fff}.dark{background:var(--ink);color:#fff}.green{background:var(--lime)}
+.green .wm{color:var(--ink)}
+.sw{height:72px;border-radius:12px 12px 0 0}.sc{border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden}.sc div+div{padding:8px 12px;font-size:14px}.sc code{font-size:13px}
+.f{font-size:14px;color:var(--ink2)}
+</style></head><body><main>
+<h1>Identidade visual</h1>
+<p class="s">Logo, favicon, cores e fontes do Senadados. A logo é provisória: o anel verde, sem contorno.</p>
+<h2>Logo</h2>
+<div class="row">
+<div class="tile light"><span class="wm" data-wm></span></div>
+<div class="tile dark"><span class="wm" data-wm></span></div>
+<div class="tile green"><span class="wm" data-wm data-ink></span></div>
+</div>
+<h2>Favicon</h2>
+<div class="tile light" style="justify-content:flex-start">
+<img src="assets/favicon.svg" width="64" height="64" alt="">
+<img src="assets/favicon-512.png" width="64" height="64" alt="">
+<img src="assets/apple-touch-icon.png" width="64" height="64" alt="">
+<img src="assets/favicon-32.png" width="32" height="32" alt="">
+<span class="f">SVG · 512 · 180 (quadrado, para iOS) · 32 px</span></div>
+<h2>Cores</h2>
+<div class="row">
+<div class="sc"><div class="sw" style="background:#14110d"></div><div><b>Tinta</b> <code>#14110d</code></div></div>
+<div class="sc"><div class="sw" style="background:#c8f53a"></div><div><b>Verde</b> <code>#c8f53a</code></div></div>
+<div class="sc"><div class="sw" style="background:#eef8c2"></div><div><b>Verde suave</b> <code>#eef8c2</code></div></div>
+<div class="sc"><div class="sw" style="background:#faf7f2"></div><div><b>Fundo</b> <code>#faf7f2</code></div></div>
+<div class="sc"><div class="sw" style="background:#4b443d"></div><div><b>Texto 2</b> <code>#4b443d</code></div></div>
+<div class="sc"><div class="sw" style="background:#e2dacb"></div><div><b>Linha</b> <code>#e2dacb</code></div></div>
+</div>
+<h2>Fontes (Google Fonts, gratuitas)</h2>
+<div class="row">
+<div class="tile light"><span style="font:800 28px 'Bricolage Grotesque'">Bricolage Grotesque</span><span class="f">logo</span></div>
+<div class="tile light"><span style="font:700 28px 'Fraunces'">Fraunces</span><span class="f">títulos e números</span></div>
+<div class="tile light"><span style="font:700 28px var(--sans)">Hanken Grotesk</span><span class="f">texto</span></div>
+</div>
+</main>
+<script>
+document.querySelectorAll("[data-wm]").forEach(e=>{
+  e.innerHTML='senadad<svg class="o" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="21" fill="none" stroke="'+(e.hasAttribute("data-ink")?"#14110d":"#c8f53a")+'" stroke-width="16"/></svg>s';
+});
+</script></body></html>
