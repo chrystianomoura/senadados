@@ -51,7 +51,7 @@ Todos na base `https://adm.senado.gov.br/adm-dadosabertos/api/v1`. Respondem sem
 |---|---|---|
 | Resumo de recursos por senador | `/senadores/{codigo}/recursos-utilizados` (aceita `?ano=`) | Cota por categoria, benefícios e número de pessoas na equipe |
 | Auxílio-moradia e imóvel funcional | `/senadores/auxilio-moradia-imoveis-funcionais` | Lista de quem usa o benefício **agora**. A verificação da moradia a compara com a página mensal ([D039](decisoes.md#d039-verificação-automática-da-moradia-mês-a-mês)) |
-| Folha de pagamento por mês | `/servidores/remuneracoes/{ano}/{mes}` (~5 MB por mês) | Salário, quando a ligação por nome completo é comprovada |
+| Folha de pagamento por mês | `/servidores/remuneracoes/{ano}/{mes}` (~5 MB por mês) | Salário, depois de cinco provas ([D041](decisoes.md#d041-verificação-automática-do-salário-pela-identidade-do-senador)). A consulta de remuneração de cada servidor exige reCAPTCHA e não é usada |
 | Servidores ativos | `/servidores/servidores/ativos` | Só conferência da contagem de equipe (nunca nomes) |
 | Escritórios de apoio | `/senadores/escritorios-apoio` | Fora do MVP |
 | Votações, autorias, comissões etc. | `legis.senado.leg.br/dadosabertos/senador/{codigo}/...` | Versão 2 |

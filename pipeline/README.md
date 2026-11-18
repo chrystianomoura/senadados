@@ -1,6 +1,6 @@
 # Pipeline
 
-Código em Python que coleta, limpa e verifica os dados abertos do Senado. Hoje existem a **coleta**, a **validação e limpeza** e a **verificação da cota**, a **da equipe do gabinete**, a **da moradia** e a **do contato**; a última que falta é a do salário ([ordem de construção](../docs/escopo.md#13-ordem-de-construção)).
+Código em Python que coleta, limpa e verifica os dados abertos do Senado. Hoje existem a **coleta**, a **validação e limpeza** e a **verificação da cota**, a **da equipe do gabinete**, a **da moradia**, a **do contato** e a **do salário**; as verificações estão completas ([ordem de construção](../docs/escopo.md#13-ordem-de-construção)).
 
 ## O que a coleta faz
 
@@ -97,6 +97,19 @@ uv run python -m senadados_pipeline.contato
 - Os telefones saem da página do portal, com os números abreviados ("6187 / 6188") expandidos por uma regra mecânica.
 - Só o valor provado vai para a tabela `contato`; o que não foi provado fica vazio. O resultado de cada campo fica em `verificacao_contato`.
 - Só guarda gabinete, telefones e e-mail. Nome civil, data de nascimento e o resto da página são ignorados.
+
+## O que a verificação do salário faz
+
+Compara a remuneração de cada senador na folha de pagamento do Senado com a identidade dele, em cinco provas ([D041](../docs/decisoes.md#d041-verificação-automática-do-salário-pela-identidade-do-senador)).
+
+```bash
+uv run python -m senadados_pipeline.salario
+```
+
+- A identidade vem da página do próprio senador (vínculo, situação e UF), e o nome civil dela é a chave de ligação com a folha.
+- A folha do mês mais recente é baixada na hora; **só as linhas dos senadores são guardadas**, e os nomes dos demais servidores são descartados na hora (D007). Se um nome tem duas matrículas, as linhas nem são guardadas.
+- Resultado em `verificacao_salario`, e o valor provado (remuneração básica e líquida do mês) em `salario`, só para quem tem `exibir = 1`.
+- A consulta de remuneração do portal de servidores exige reCAPTCHA, e o pipeline **não tenta contorná-lo**.
 
 ## Testes e qualidade
 

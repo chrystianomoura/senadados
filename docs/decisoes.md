@@ -53,6 +53,7 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 | D038 | Documento público de divergências, com prova em imagem | Vale |
 | D039 | Verificação automática da moradia, mês a mês | Vale |
 | D040 | Verificação automática do contato do gabinete | Vale |
+| D041 | Verificação automática do salário pela identidade do senador | Vale (altera a ligação da D016) |
 
 ---
 
@@ -479,4 +480,22 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 - **Falhar fechado, visto na prática:** a primeira execução usou o endereço da página sem o parâmetro do ano, o portal respondeu com um redirecionamento, e os 81 senadores caíram em `sem_explicacao`, sem nenhum contato exibido. Depois da correção, passou. A regra fez o que devia: sem dado provado, nada aparece.
 - **Por quê:** o contato do gabinete é o dado mais útil para o cidadão e o mais simples de provar. Verificar campo a campo evita que um telefone divergente esconda o endereço, e o freio por campo evita que um problema numa só fonte derrube os outros.
 - **Limites:** (1) a página do portal é HTML, não uma API, e pode mudar; se mudar, o campo cai em `sem_explicacao`. (2) O motivo de a API listar menos telefones **não foi confirmado**. (3) Prova consistência entre bases do Senado, não é auditoria (D027). (4) O escritório de apoio continua fora (D031).
+- **Status:** aceita.
+
+## D041: Verificação automática do salário pela identidade do senador
+
+- **Contexto:** a D016 liga a folha de pagamento ao senador pelo **nome completo da lista legislativa**, e a D025 só aceita o que se comprova. A folha **não traz o código do parlamentar** e é a **única fonte do valor**. Em 12/11, 3 suplentes não tinham correspondência e um titular tinha valor diferente.
+- **Decisão (18/11/2026):** a verificação virou código (`python -m senadados_pipeline.salario`) e **muda a chave de ligação**. Em vez do nome da lista legislativa, usa o **nome civil da página de identificação do próprio senador**, alcançada pelo link "Subsídios do Senador" da página dele no portal (ou seja, pelo código do senador). Cada senador passa por **cinco provas**:
+  1. **Identidade:** a página de identificação diz vínculo "parlamentar", situação "ativo" e a mesma UF que o senador tem.
+  2. **Uma única matrícula** com esse nome na folha do mês. Nenhuma ou mais de uma impede a ligação, e **as linhas nem são guardadas** quando há mais de uma (podem ser de outra pessoa).
+  3. **Uma única folha normal** no mês. Folhas suplementares só são aceitas se estiverem **zeradas**.
+  4. **Conta interna:** a remuneração líquida é a soma dos 11 componentes. Conferido em **todas as 10.480 linhas normais** de outubro de 2026.
+  5. **Remuneração básica e líquida positivas.**
+- **Exibição (D037):** dado descritivo, aparece para quem passou, com o freio de segurança de 5%. O que se mostra é a **remuneração básica e a líquida do mês**, e o site deve dizer que a básica **não é o total antes dos descontos** (a folha tem outros componentes).
+- **Dados de servidores (D007):** a folha do mês é baixada na hora, **só as linhas dos senadores são guardadas**, e os nomes dos demais servidores são descartados na hora. O arquivo local `data/raw/folha/remuneracao_2026_09.json`, de 11/11, tinha os nomes e a remuneração de todos os servidores. O pipeline novo não o usava, e ele foi **apagado em 18/11/2026**, a pedido do mantenedor, junto com a cópia temporária da folha de outubro.
+- **A consulta de remuneração do portal de servidores exige reCAPTCHA.** O pipeline **não tenta contorná-lo** e lê só a identificação, que o portal mostra sem desafio. A consequência é que o valor continua com **fonte única**, provada por consistência interna e identidade, e não por uma segunda fonte.
+- **Resultado em 18/11/2026 (folha de outubro, a de novembro ainda não existe):** **79 de 81 passam**, todos com remuneração básica de **R$ 46.366,19**, e o salário aparece para 79. **2 sem explicação**, ambos suplentes que assumiram em outubro: um tem **duas matrículas com o mesmo nome** (R$ 6.686,29 e R$ 38.887,77), e o outro tem **folha suplementar com valores** (R$ 46.366,19 em vantagens indenizatórias, além da normal de R$ 47.911,73). O suplente que antes não tinha correspondência agora é ligado.
+- **Por quê:** ligar pela identidade que o próprio portal atribui ao código do senador é mais forte do que ligar por um nome vindo de outra lista, e resolve o caso do nome escrito de dois jeitos. As provas internas e a recusa de ligação ambígua substituem a segunda fonte que o reCAPTCHA impede.
+- **Limites:** (1) fonte única do valor. (2) A identificação vem do HTML do portal, que pode mudar; se mudar, o senador cai em `sem_explicacao`. (3) Suplentes que assumem no meio do mês têm folhas parciais e ficam ocultos até a folha completa. (4) Prova consistência e identidade, não é auditoria (D027). (5) O site não diz se o valor está dentro ou fora de qualquer regra (D024).
+- **Altera:** a ligação da D016 (nome completo da lista legislativa).
 - **Status:** aceita.

@@ -10,10 +10,11 @@ Esta pasta guarda os dados baixados do Senado para análise e conferência. **Na
 | `raw/recursos/{código}.json` | Resumo de recursos de cada um dos 81 senadores em exercício | API `recursos-utilizados` |
 | `raw/senadores_atuais.json` | Lista dos 81 senadores em exercício | API `senadores` |
 | `raw/perfil/` | Lista legislativa atual, auxílio-moradia e escritórios de apoio | APIs do Senado |
-| `raw/folha/` | Folha de setembro de 2026 e lotações. A lista de servidores ativos (com nomes) foi apagada em 18/11/2026 | API `servidores` |
+| `raw/folha/` | Só as lotações (unidades do Senado, sem pessoas). A folha de setembro e a lista de servidores ativos, que traziam nomes de servidores, foram apagadas em 18/11/2026 | API `servidores` |
 | `raw/equipe/` | Número de pessoas por gabinete e vínculo (lista de servidores contada na hora, **sem nomes**) e o bloco de pessoal do resumo de cada senador | Pipeline (`equipe`) |
 | `raw/moradia/` | Uso de auxílio-moradia e de imóvel funcional por senador (resumo da API, tela do portal e página mensal) e a lista do mês | Pipeline (`moradia`) |
 | `raw/contato/` | Endereço do gabinete, telefones e e-mail como a página de cada senador mostra | Pipeline (`contato`) |
+| `raw/salario/` | A folha do mês mais recente **só com as linhas dos senadores**, e a identificação de cada senador no portal | Pipeline (`salario`) |
 | `raw/coleta.json` | Data e hora de cada download da lista e das despesas por ano; serve para garantir que as bases são da mesma foto dos dados | Gerado pela coleta |
 
 Endereços completos e o que cada um traz: [docs/fontes-de-dados.md](../docs/fontes-de-dados.md).

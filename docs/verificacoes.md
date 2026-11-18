@@ -29,7 +29,7 @@ Todos gratuitos e **sem chave**.
 | 1 | Cota por ano: despesas detalhadas × resumo, por categoria | 2010 a 2026: tudo bate (2026: 73 idênticos, 7 explicados); 2008 e 2009: 5 senadores sem explicação em cada | 2010 a 2026 aparecem; 2008 e 2009 ficam ocultos |
 | 2 | Moradia: resumo da API × tela × página mensal × lista do mês | 76 idênticos, 1 explicado, 4 pendentes, 0 sem explicação (18/11/2026) | Aparece para 77; 4 ficam sem informação até o mês fechar |
 | 3 | Contato do gabinete: API × página do senador | Endereço 81 idênticos; telefones 66 idênticos e 15 explicados; e-mail 81 idênticos (2 sem e-mail nas duas fontes) (18/11/2026) | Aparecem para 81 (endereço e telefones) e 79 (e-mail) |
-| 4 | Salário: folha × senador | 78 de 81 ligados pelo nome | Os 3 sem ligação ficam sem salário |
+| 4 | Salário: folha × identidade do senador | 79 de 81 passam em todas as provas; 2 sem explicação (18/11/2026) | Aparece para 79; 2 ficam sem salário |
 | 5 | Equipe: resumo × lista de servidores, por gabinete e vínculo | 80 de 81 idênticos; 1 sem explicação (18/11/2026) | Aparece para 80; 1 gabinete oculto (D037) |
 | 6 | CSV × API em 2008 | 8 valores diferentes em 2.449 linhas | Sem impacto no MVP |
 
@@ -106,6 +106,18 @@ Comparei endereço do gabinete, telefones e e-mail da API (`senadores`) com a se
 
 ### 4. Salário
 
+**Refeita em 18/11/2026 pela verificação automática** ([D041](decisoes.md#d041-verificação-automática-do-salário-pela-identidade-do-senador)), com a folha de **outubro de 2026** (a de novembro ainda não existe). Cada senador passa por cinco provas: a identidade pelo código (vínculo "parlamentar", situação "ativo" e UF, na página de identificação que o portal liga à página dele), uma única matrícula com esse nome na folha, uma única folha normal no mês, a conta interna (o líquido é a soma dos 11 componentes) e valores positivos.
+
+- **79 de 81 passam em tudo.** Os 79 têm a mesma remuneração básica, **R$ 46.366,19**, e o líquido vai de R$ 26,1 mil a R$ 37,1 mil, por causa de descontos.
+- **2 sem explicação**, ambos suplentes que assumiram em outubro:
+  - em um deles, **há duas matrículas com o mesmo nome** na folha (uma com R$ 6.686,29 e outra com R$ 38.887,77), e não dá para saber qual é a do senador, então as linhas nem são guardadas;
+  - no outro, há uma **folha suplementar com valores** (R$ 46.366,19 em "vantagens indenizatórias") além da folha normal de R$ 47.911,73, e o total do mês não é um número só.
+- **O suplente que antes não tinha correspondência** (nome com "de" na folha e sem "de" na lista legislativa) agora é ligado, porque a chave é o nome civil da página de identificação do próprio senador, e não o da lista legislativa.
+- **A conta interna fecha em 100% das 10.480 linhas normais da folha de outubro.**
+- **A consulta de remuneração do portal de servidores exige reCAPTCHA.** O pipeline **não tenta contorná-lo** e lê só a identificação, que o portal mostra sem desafio. Por isso a folha continua sendo **fonte única do valor**.
+
+**Primeira medição (11/11/2026), superada:**
+
 - Ligando a folha de setembro de 2026 ao senador pelo **nome completo**, **78 dos 81** foram encontrados, sem nome repetido.
 - **77 têm a mesma remuneração básica: R$ 46.366,19.** Um titular tem R$ 44.820,65; a diferença **não foi explicada**, então não se afirma que o salário é igual para todos.
 - O líquido varia de cerca de R$ 26,1 mil a R$ 37,1 mil, por causa de descontos e vantagens.
@@ -140,7 +152,7 @@ Comparei endereço do gabinete, telefones e e-mail da API (`senadores`) com a se
 ## Pendências de prova
 
 - Moradia: os **4 casos** pendentes (a lista de hoje difere do último mês da página mensal; reconferir quando ela incluir novembro). A verificação diária faz isso sozinha.
-- Salário: 3 suplentes sem correspondência e um titular com valor diferente.
+- Salário: 2 suplentes que assumiram em outubro, um com duas matrículas de mesmo nome e outro com folha suplementar com valores. Ficam sem salário; a verificação reconfere quando a folha de novembro sair.
 - Equipe: 1 efetivo a mais no resumo do gabinete de Camilo Santana, sem explicação. A equipe desse gabinete fica oculta; os outros 80 aparecem.
 - Cota de 2008 e 2009: o resumo de 2008 está vazio e o de 2009 é menor que as despesas; só o Senado pode explicar. Ficam ocultos.
 - Escritórios de apoio: contagem contra a página de cada senador (hoje fora do MVP).
