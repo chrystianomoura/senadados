@@ -21,7 +21,7 @@ Regras que valem para todas as telas:
 7. **Linguagem neutra** ([D010](decisoes.md#d010-linguagem-neutra)): descreva o fato ("o maior mês foi março"), nunca "suspeito" ou "irregular".
 8. **Cada número mostra de onde vem:** o dado no Senado e a data ([D009](decisoes.md#d009-citação-da-fonte-em-toda-página)).
 9. **Funciona no celular primeiro.**
-10. **Tudo ou nada:** um dado que compara senadores só aparece se todos os senadores em exercício o tiverem e se os dados baterem para todos. **Exceção:** dados de contato (telefone, e-mail) aparecem para quem os tem.
+10. **Tudo ou nada, para o que compara senadores:** um dado que compara senadores (ranking, posição) só aparece se todos os senadores em exercício o tiverem e se os dados baterem para todos. **Dados descritivos de cada senador** (contato, equipe do gabinete) aparecem para quem foi provado, e somem para todos se mais de 5% falharem ([D037](decisoes.md#d037-exibição-por-tipo-de-dado-e-freio-de-segurança)).
 
 ## 2. Quem usa
 
@@ -107,7 +107,7 @@ Não há selos como "comprovado" ou "fonte única" na tela. As palavras técnica
 | Despesas da cota | API de despesas do Senado (2008 a 2026), com o CSV e a página de cada senador como conferência | 2026 verificado contra o resumo; outros anos a verificar |
 | Perfil e foto | APIs administrativa e legislativa | Pronto |
 | Salário | Folha de pagamento mensal | Ligação por nome; só os casos inequívocos |
-| Equipe | Resumo oficial por senador | A provar por gabinete |
+| Equipe | Resumo oficial por senador | Provada em 80 de 81 gabinetes; aparece para esses 80, e o gabinete sem explicação fica oculto ([D036](decisoes.md#d036-verificação-automática-da-equipe-do-gabinete-por-vínculo), [D037](decisoes.md#d037-exibição-por-tipo-de-dado-e-freio-de-segurança)) |
 | Moradia | Página mensal de benefícios | 9 de 12 explicados |
 | Escritórios de apoio | API administrativa | A verificar |
 
@@ -194,7 +194,7 @@ Metas a medir, não resultados já obtidos:
 |---|---|---|
 | Moradia: 3 casos sem prova | Explicação plausível (a lista é de novembro; a página mensal vai até outubro), não provada | Reconferir no mês seguinte |
 | Salário | 3 suplentes sem correspondência na folha; um titular com valor diferente | Provar a ligação ou deixar sem salário |
-| Equipe | Diferença de 1 pessoa entre o resumo e a lista; um gabinete com 70 pessoas | Provar por gabinete |
+| Equipe | **Verificada por gabinete em 18/11/2026**: 80 de 81 idênticos; o gabinete de Camilo Santana tem 1 efetivo a mais no resumo | Perguntar ao Senado; quando explicarem, a equipe desse gabinete aparece sozinha na próxima verificação |
 | Cota de outros anos | **Feito em 18/11/2026** ([D035](decisoes.md#d035-verificação-automática-da-cota-por-categoria-na-mesma-foto-dos-dados)): 2010 a 2026 batem; 2008 e 2009 não (o resumo de 2008 está vazio e o de 2009 é menor que as despesas), então ficam ocultos | Perguntar ao Senado pelo canal oficial; o histórico da cota começa em 2010 |
 | Linhas sem categoria | O Senado não explica por que o resumo as deixa de fora | Perguntar pelo canal oficial; mostrar com a explicação |
 | Internet Archive | Acusa cópia, mas não consegui listar | Testar de novo |
@@ -217,7 +217,7 @@ Metas a medir, não resultados já obtidos:
 
 Cada etapa termina com a documentação atualizada e um commit no padrão do [AGENTS.md](../AGENTS.md).
 
-**Andamento (18/11/2026):** a etapa 1 começou. A **coleta** está pronta e testada (lista de senadores e despesas por ano, só de quem está em exercício, [D033](decisoes.md#d033-coleta-local-que-só-grava-quem-está-em-exercício)). A **validação com Pandera e a limpeza** também estão prontas, com testes das regras de sujeira e banco SQLite local ([D034](decisoes.md#d034-limpeza-com-validação-em-sqlite-local-sem-nome-nem-documento-de-pessoa-física)). Falta a etapa 2, a **verificação automática** entre bases (hoje a cota de 2026 foi conferida por um roteiro avulso: 74 idênticos, 7 explicados, 0 sem explicação). A **verificação automática da cota** por categoria também está pronta ([D035](decisoes.md#d035-verificação-automática-da-cota-por-categoria-na-mesma-foto-dos-dados)).
+**Andamento (18/11/2026):** a etapa 1 começou. A **coleta** está pronta e testada (lista de senadores e despesas por ano, só de quem está em exercício, [D033](decisoes.md#d033-coleta-local-que-só-grava-quem-está-em-exercício)). A **validação com Pandera e a limpeza** também estão prontas, com testes das regras de sujeira e banco SQLite local ([D034](decisoes.md#d034-limpeza-com-validação-em-sqlite-local-sem-nome-nem-documento-de-pessoa-física)). Falta a etapa 2, a **verificação automática** entre bases (hoje a cota de 2026 foi conferida por um roteiro avulso: 74 idênticos, 7 explicados, 0 sem explicação). A **verificação automática da cota** por categoria também está pronta ([D035](decisoes.md#d035-verificação-automática-da-cota-por-categoria-na-mesma-foto-dos-dados)). A **verificação da equipe do gabinete** também ([D036](decisoes.md#d036-verificação-automática-da-equipe-do-gabinete-por-vínculo)): 80 de 81 gabinetes idênticos, 1 sem explicação.
 
 ## 14. Perguntas em aberto para o mantenedor
 

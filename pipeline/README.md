@@ -1,6 +1,6 @@
 # Pipeline
 
-Código em Python que coleta, limpa e verifica os dados abertos do Senado. Hoje existem a **coleta**, a **validação e limpeza** e a **verificação da cota**; as outras verificações (gabinete, salário, moradia) são a próxima etapa ([ordem de construção](../docs/escopo.md#13-ordem-de-construção)).
+Código em Python que coleta, limpa e verifica os dados abertos do Senado. Hoje existem a **coleta**, a **validação e limpeza** e a **verificação da cota**; a **verificação da equipe do gabinete**; as outras (salário, moradia, contato) são a próxima etapa ([ordem de construção](../docs/escopo.md#13-ordem-de-construção)).
 
 ## O que a coleta faz
 
@@ -59,6 +59,18 @@ uv run python -m senadados_pipeline.verificacao
 - **Só roda na mesma foto dos dados:** coleta, limpeza e verificação precisam ser do mesmo dia. Se não forem, ela explica o que refazer (`coleta --sobrescrever`, depois `limpeza`).
 - Resultados: `identico`, `explicado` (só faltam as linhas sem categoria) e `sem_explicacao` (o número fica oculto).
 - Demora cerca de 3 minutos para todos os anos (uma consulta por senador e ano). `--anos 2026` verifica um ano só.
+
+## O que a verificação da equipe faz
+
+Baixa o resumo de cada senador e a lista de servidores ativos **na hora** e compara, por gabinete e por vínculo, o número de pessoas ([D036](../docs/decisoes.md#d036-verificação-automática-da-equipe-do-gabinete-por-vínculo)).
+
+```bash
+uv run python -m senadados_pipeline.equipe
+```
+
+- **Nunca guarda nomes de servidores** (D007): a lista é contada por gabinete e vínculo na hora do download, e só as contagens vão para `data/raw/equipe/`.
+- Precisa do banco limpo e da lista de senadores do mesmo dia (mesma regra da cota).
+- Resultado em `verificacao_equipe` (a coluna `exibir` diz quem aparece); o resumo fica em `verificacoes` (`equipe`). A equipe aparece para os gabinetes idênticos e some para todos se mais de **5%** falharem ([D037](../docs/decisoes.md#d037-exibição-por-tipo-de-dado-e-freio-de-segurança)).
 
 ## Testes e qualidade
 

@@ -220,20 +220,25 @@ def read_spent(connection: sqlite3.Connection, years: list[int]) -> dict:
     return dict(spent)
 
 
+def ensure_verificacoes_table(connection: sqlite3.Connection) -> None:
+    """Resumo de todas as verificações (uma linha por verificação e ano)."""
+    connection.execute(
+        "CREATE TABLE IF NOT EXISTS verificacoes (nome TEXT, ano INTEGER, identicos INTEGER, "
+        "explicados INTEGER, sem_explicacao INTEGER, verificado_em TEXT, "
+        "PRIMARY KEY (nome, ano))"
+    )
+
+
 def write_results(
     connection: sqlite3.Connection, results: list[Result], years: list[int], when: datetime
 ) -> None:
     connection.execute("DROP TABLE IF EXISTS verificacao_cota")
-    connection.execute("DROP TABLE IF EXISTS verificacoes")
+    ensure_verificacoes_table(connection)
+    connection.execute("DELETE FROM verificacoes WHERE nome = 'cota'")
     connection.execute(
         "CREATE TABLE verificacao_cota (cod_senador INTEGER, ano INTEGER, "
         "despesas_centavos INTEGER, resumo_centavos INTEGER, sem_categoria_centavos INTEGER, "
         "resultado TEXT, detalhe TEXT, PRIMARY KEY (cod_senador, ano))"
-    )
-    connection.execute(
-        "CREATE TABLE verificacoes (nome TEXT, ano INTEGER, identicos INTEGER, "
-        "explicados INTEGER, sem_explicacao INTEGER, verificado_em TEXT, "
-        "PRIMARY KEY (nome, ano))"
     )
     connection.executemany(
         "INSERT INTO verificacao_cota VALUES (?, ?, ?, ?, ?, ?, ?)",

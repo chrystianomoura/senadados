@@ -30,7 +30,7 @@ Todos gratuitos e **sem chave**.
 | 2 | Moradia: resumo anual × lista do mês | 9 de 12 explicados; 3 pendentes | 9 aparecem; 3 ficam sem informação |
 | 3 | Gabinete e contato: API × página do senador | Endereço igual nos 81; telefone e e-mail com ressalvas | Veja abaixo |
 | 4 | Salário: folha × senador | 78 de 81 ligados pelo nome | Os 3 sem ligação ficam sem salário |
-| 5 | Equipe: resumo × lista de servidores | 1.723 contra 1.722 | Pendente por gabinete |
+| 5 | Equipe: resumo × lista de servidores, por gabinete e vínculo | 80 de 81 idênticos; 1 sem explicação (18/11/2026) | Aparece para 80; 1 gabinete oculto (D037) |
 | 6 | CSV × API em 2008 | 8 valores diferentes em 2.449 linhas | Sem impacto no MVP |
 
 ### 1. Cota de 2026, despesas detalhadas contra o resumo do Senado
@@ -96,6 +96,16 @@ Comparei endereço do gabinete, telefones e e-mail da API (`senadores`) com a se
 
 ### 5. Equipe do gabinete
 
+**Refeita em 18/11/2026 pela verificação automática** ([D036](decisoes.md#d036-verificação-automática-da-equipe-do-gabinete-por-vínculo)). Compara, para cada um dos 81 gabinetes, o total e a quebra por vínculo (comissionado, efetivo, requisitado) do resumo oficial com a lista de servidores ativos, sem contar o próprio senador. Os dois baixados no mesmo dia, e só as contagens são guardadas (nunca nomes).
+
+- **80 de 81 gabinetes idênticos**, no total e em cada vínculo. Isso inclui o gabinete com 70 pessoas, em que as duas bases concordam.
+- **1 sem explicação:** no gabinete de Camilo Santana, o resumo traz **1 efetivo** que a lista de ativos não tem (resumo 28 pessoas, lista 27). Resumo e lista concordam nos 27 comissionados. Soma de hoje: resumo 1.712, lista 1.711, e essa é a diferença de uma pessoa que já aparecia em 11/11.
+- **Hipóteses testadas e que não explicam:** servidor fora da lista de ativos (a lista completa de servidores, a de efetivos e a de exercício provisório não trazem esse efetivo) e servidor cedido de outro órgão (a lista de cedidos mostra 4 pessoas no gabinete, e as 4 já estão entre os 27 comissionados). Só o Senado pode explicar.
+- **Consequência ([D037](decisoes.md#d037-exibição-por-tipo-de-dado-e-freio-de-segurança)):** a equipe é um dado descritivo, então **aparece para os 80 gabinetes que batem** e fica oculta no gabinete sem explicação, que é listado aqui na página de verificações. Se mais de 5% dos gabinetes falharem, ela some para todos (freio de segurança). Quando o Senado explicar ou corrigir, o gabinete volta sozinho na próxima verificação.
+- **Ligação senador-gabinete:** é feita pelo nome (81 de 81), com uma regra para os 2 casos em que o nome do gabinete difere do nome parlamentar ("Weverton" e "Nelsinho Trad Filho"). A contagem de pessoas, que vem de outra fonte, é a segunda barreira contra uma ligação errada.
+
+**Primeira medição (11/11/2026), que ficou superada:**
+
 - O resumo oficial soma **1.723 pessoas nos 81 gabinetes** (cerca de 21 por gabinete).
 - A lista de servidores inclui o **próprio senador** (vínculo "PARLAMENTAR", 80 registros). Sem ele, soma **1.722**. A diferença de uma pessoa em 81 gabinetes **não foi explicada**.
 - Vínculos na lista: 1.585 comissionados, 136 efetivos e 1 requisitado.
@@ -112,7 +122,7 @@ Comparei endereço do gabinete, telefones e e-mail da API (`senadores`) com a se
 
 - Moradia: os **3 casos** pendentes (reconferir quando a página mensal incluir novembro).
 - Salário: 3 suplentes sem correspondência e um titular com valor diferente.
-- Equipe: a diferença de 1 pessoa e o gabinete com 70 pessoas; provar por gabinete antes de exibir.
+- Equipe: 1 efetivo a mais no resumo do gabinete de Camilo Santana, sem explicação. A equipe desse gabinete fica oculta; os outros 80 aparecem.
 - Cota de 2008 e 2009: o resumo de 2008 está vazio e o de 2009 é menor que as despesas; só o Senado pode explicar. Ficam ocultos.
 - Escritórios de apoio: contagem contra a página de cada senador (hoje fora do MVP).
 - Entender: por que o resumo deixa de fora as linhas sem categoria (276 entre 2023 e 2026, só em exercício, em 18/11/2026); o que são os valores negativos, os 56 documentos em formato fora do padrão e as 4 despesas com data no futuro; até que ano a API de recursos (`?ano=`) devolve dados.

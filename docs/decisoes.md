@@ -48,6 +48,8 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 | D033 | Coleta local que só grava quem está em exercício | Vale |
 | D034 | Limpeza com validação, em SQLite local, sem nome nem documento de pessoa física | Vale |
 | D035 | Verificação automática da cota por categoria, na mesma foto dos dados | Vale |
+| D036 | Verificação automática da equipe do gabinete, por vínculo | Vale (a consequência foi substituída pela D037) |
+| D037 | Exibição por tipo de dado e freio de segurança | Vale |
 
 ---
 
@@ -398,4 +400,33 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
   - **2008 e 2009: 5 senadores sem explicação em cada ano.** O resumo de 2008 vem vazio, e o de 2009 é menor que as despesas. **O motivo não foi confirmado**; só o Senado pode explicar. Pela D025, a cota desses anos **não aparece** e o histórico da cota começa em 2010.
 - **Por quê:** comparar por categoria é mais forte do que comparar o total (categorias trocadas com o mesmo total seriam percebidas), e o site mostra o valor por categoria. A trava de "mesma foto" impede a falha que cometi no começo da investigação.
 - **Limites:** prova consistência entre bases do mesmo sistema do Senado, não é auditoria (D027). Só cobre a cota; gabinete, salário, moradia e contato ainda não têm verificação automática. O resumo de 2008 e 2009 pode ser limitado do lado do Senado, e isso **não foi confirmado**.
+- **Status:** aceita.
+
+## D036: Verificação automática da equipe do gabinete, por vínculo
+
+- **Contexto:** a D015 manda mostrar só o **número** de pessoas do gabinete, do resumo oficial, e a D025 exige prova antes de exibir. Em 11/11 o resumo somava 1.723 pessoas e a lista de servidores 1.722, e a diferença de uma pessoa não estava explicada.
+- **Decisão (18/11/2026):**
+  - A verificação virou código (`python -m senadados_pipeline.equipe`). Para cada senador, compara o total e a quebra por vínculo (comissionado, efetivo, requisitado) do resumo oficial com a lista de servidores ativos lotados no gabinete, **sem contar o próprio senador** (vínculo "parlamentar", que consta na lista).
+  - **Nomes de servidores nunca são guardados** (D007): a lista é contada por gabinete e vínculo na hora do download, e só as contagens vão para o disco.
+  - Resultados: `identico` ou `sem_explicacao`. Não existe "explicado", porque não há diferença conhecida entre as duas fontes.
+  - **A ligação senador-gabinete é pelo nome**, porque a lista de servidores não traz o código do parlamentar. Regra: nome igual (sem acento e sem caixa) e, só quando houver uma única possibilidade, um nome inteiro dentro do outro em palavras (`Nelsinho Trad` e `Nelsinho Trad Filho`). Quem não se liga fica sem explicação. A contagem de pessoas é a segunda barreira contra uma ligação errada.
+  - Mesma regra da cota: só roda com a lista de senadores e o banco limpo do mesmo dia, e o resultado vai para o banco limpo (`verificacao_equipe`, e uma linha `equipe` em `verificacoes`).
+- **Resultado em 18/11/2026:** 81 gabinetes, **80 idênticos** (total e cada vínculo) e **1 sem explicação**: no gabinete de Camilo Santana o resumo traz 1 efetivo que a lista de ativos não tem (28 contra 27 pessoas). Testei e descartei duas hipóteses: servidor fora da lista de ativos (as listas completa, de efetivos e de exercício provisório não o trazem) e servidor cedido de outro órgão (os 4 cedidos do gabinete já estão entre os comissionados). Só o Senado pode explicar.
+- **Consequência (substituída pela [D037](decisoes.md#d037-exibição-por-tipo-de-dado-e-freio-de-segurança)):** pela regra de tudo ou nada (D025), a equipe
+- **Dados locais:** `data/raw/folha/servidores_ativos.json` (de 11/11) traz nomes de servidores. O pipeline novo não o usa, e ele pode ser apagado; não apaguei sem pedido.
+- **Limites:** prova consistência entre bases do mesmo sistema do Senado, não é auditoria (D027). A ligação por nome é frágil se um nome mudar, e nesse caso o gabinete cai em "sem explicação" em vez de receber um número errado.
+- **Status:** aceita.
+
+## D037: Exibição por tipo de dado e freio de segurança
+
+- **Contexto:** a regra "tudo ou nada" (D025) foi escrita para a comparação entre senadores: se um senador faltasse num ranking, a posição de todos ficaria distorcida. Ao verificar a equipe do gabinete (D036), 80 de 81 gabinetes bateram nas duas bases do Senado e 1 não, e a regra escondia a equipe dos 81 por causa de 1.
+- **Decisão (18/11/2026):** os dados passam a ter **duas classes**.
+  1. **Dado que compara senadores** (ranking, posição entre os senadores, mediana): segue **tudo ou nada**. Só aparece se todos em exercício o tiverem e baterem.
+  2. **Dado descritivo de cada senador** (contato, equipe do gabinete): aparece **para quem foi provado**, e fica oculto para quem não foi, sem aviso no perfil. O gabinete oculto é listado na página "Verificações".
+  - **Freio de segurança:** se mais de **5%** dos senadores falharem num dado descritivo, ele some para todos. Uma falha isolada é uma discrepância da fonte; muitas juntas indicam problema na nossa ligação ou mudança na API do Senado. O 5% é um julgamento, e não um número pesquisado. Com 81 senadores, até 4 falhas ainda permitem exibir.
+  - **Ao criar um dado novo, classificá-lo** numa das duas classes e registrar qual.
+- **Por quê:** a equipe é uma contagem descritiva e não entra em ranking, então esconder 80 números provados por causa de 1 só empobrece o site sem proteger ninguém. O que fere a credibilidade é mostrar um número que não se prova, e isso continua proibido. Mostrar o que bate e listar o que foi escondido passa mais rigor do que esconder tudo. O contato (D031) já abria esse precedente.
+- **Resultado em 18/11/2026:** a equipe aparece para os 80 gabinetes idênticos e fica oculta no de Camilo Santana (1 efetivo a mais no resumo, sem explicação). A verificação diária mostra o gabinete de volta sozinha quando o Senado explicar ou corrigir.
+- **Implementação:** a coluna `exibir` da tabela `verificacao_equipe` no banco limpo. Quem ler o banco (a API e o site) usa `exibir`, e **trata a ausência da tabela como "não verificado"**.
+- **Altera:** a consequência da D036 e o texto da regra de tudo ou nada na D025 (que continua valendo para dados que comparam).
 - **Status:** aceita.

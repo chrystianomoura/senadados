@@ -8,7 +8,7 @@ Instruções para qualquer agente (humano ou de IA) que trabalhe neste repositó
 
 **Escopo de pessoas:** só os **senadores em exercício**, pela lista oficial do Senado (D026). Quem sai do mandato sai do site.
 
-**Estado atual (18/11/2026):** escopo, regras e protótipo da página fechados; fontes e conferências documentadas; **a coleta, a validação e a limpeza do pipeline existem** (veja [pipeline/README.md](pipeline/README.md)); a **verificação automática da cota** também (D035); ainda sem as outras verificações (gabinete, salário, moradia), banco no Neon, API ou site. Próximo passo: as outras verificações e o banco (ordem de construção em [docs/escopo.md](docs/escopo.md)). Índice dos documentos em [docs/README.md](docs/README.md).
+**Estado atual (18/11/2026):** escopo, regras e protótipo da página fechados; fontes e conferências documentadas; **a coleta, a validação e a limpeza do pipeline existem** (veja [pipeline/README.md](pipeline/README.md)); a **verificação automática da cota** (D035) e a **da equipe do gabinete** (D036) também; ainda sem as outras verificações (salário, moradia, contato), banco no Neon, API ou site. Próximo passo: as outras verificações e o banco (ordem de construção em [docs/escopo.md](docs/escopo.md)). Índice dos documentos em [docs/README.md](docs/README.md).
 
 ## 2. Princípios inegociáveis
 
@@ -98,7 +98,7 @@ senador fica errada.
 - **Regra de agregado (D026).** Nenhum total, mediana ou ranking é apresentado como "do Senado". Sempre "entre os senadores em exercício em [data]".
 - **O que aparece:** número idêntico nas bases, ou com divergência explicada, ou de fonte única que passou nas checagens. **O que não se comprova não aparece**, sem caixa de aviso e sem selos como "comprovado" ou "fonte única".
 - **"De onde vem este número"** segue sempre o mesmo molde, em linguagem simples (sem "API", "consulta" ou siglas sem explicação): **onde o Senado publica**, **como chegamos neste número** e **atualizado em**, com o link para o portal do Senado.
-- **Tudo ou nada (D025, D031).** Um dado que vale para todos os senadores só aparece se todos em exercício o tiverem e os dados baterem para todos. Se um só falhar, ninguém o recebe. **Exceção:** dados de contato (telefone, e-mail) aparecem para quem os tem.
+- **Tudo ou nada (D025, D031, D037).** Um dado que **compara** senadores (ranking, posição, mediana) só aparece se todos em exercício o tiverem e os dados baterem para todos; se um só falhar, ninguém o recebe. Um dado **descritivo por senador** (contato, equipe do gabinete) aparece para quem foi provado, e some para todos se mais de 5% falharem (freio de segurança). Ao criar um dado novo, classifique-o numa das duas classes e registre qual.
 - **Falhe fechado.** Se uma verificação quebrar, o número fica oculto e o motivo vai para o relatório de verificações. A prova real mostra consistência entre bases, não é auditoria; o site diz isso.
 - **Compare bases na mesma foto dos dados.** Uma conferência entre duas bases do Senado só vale se as duas foram baixadas no mesmo dia, e o resultado registra a data. Números de dias diferentes geram divergências falsas.
 - **Toda informação exibida indica fonte e data de atualização.**

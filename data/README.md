@@ -11,6 +11,7 @@ Esta pasta guarda os dados baixados do Senado para análise e conferência. **Na
 | `raw/senadores_atuais.json` | Lista dos 81 senadores em exercício | API `senadores` |
 | `raw/perfil/` | Lista legislativa atual, auxílio-moradia e escritórios de apoio | APIs do Senado |
 | `raw/folha/` | Folha de setembro de 2026, servidores ativos e lotações | API `servidores` |
+| `raw/equipe/` | Número de pessoas por gabinete e vínculo (lista de servidores contada na hora, **sem nomes**) e o bloco de pessoal do resumo de cada senador | Pipeline (`equipe`) |
 | `raw/coleta.json` | Data e hora de cada download da lista e das despesas por ano; serve para garantir que as bases são da mesma foto dos dados | Gerado pela coleta |
 
 Endereços completos e o que cada um traz: [docs/fontes-de-dados.md](../docs/fontes-de-dados.md).
