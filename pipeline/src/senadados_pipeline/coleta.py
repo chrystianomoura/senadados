@@ -15,13 +15,14 @@ import json
 import sys
 import time
 from collections.abc import Iterable
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 
 import httpx
 
 BASE_URL = "https://adm.senado.gov.br/adm-dadosabertos/api/v1"
 FIRST_YEAR = 2008
+MANIFEST = "coleta.json"
 DEFAULT_OUTPUT = Path(__file__).resolve().parents[3] / "data" / "raw"
 
 
@@ -80,6 +81,29 @@ def write_json(path: Path, data) -> None:
     temp.replace(path)
 
 
+def read_manifest(output: Path) -> dict:
+    """Quando cada arquivo foi baixado. Serve para conferir que bases são da mesma foto."""
+    path = output / MANIFEST
+    if not path.exists():
+        return {"senadores": None, "despesas": {}}
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def update_manifest(output: Path, when: datetime, *, year: int | None = None) -> None:
+    """Registra a hora do download da lista de senadores (`year` vazio) ou de um ano."""
+    manifest = read_manifest(output)
+    stamp = when.isoformat(timespec="seconds")
+    if year is None:
+        manifest["senadores"] = stamp
+    else:
+        manifest["despesas"][str(year)] = stamp
+    write_json(output / MANIFEST, manifest)
+
+
+def now_local() -> datetime:
+    return datetime.now().astimezone()
+
+
 def collect(
     client: httpx.Client,
     output: Path,
@@ -87,10 +111,12 @@ def collect(
     *,
     overwrite: bool = False,
     log=print,
+    clock=now_local,
 ) -> dict[str, list[Path]]:
     """Baixa a lista de senadores e as despesas dos anos pedidos.
 
-    Não sobrescreve arquivo existente, a menos que `overwrite` seja verdadeiro.
+    Não sobrescreve arquivo existente, a menos que `overwrite` seja verdadeiro. Cada
+    download é registrado em `coleta.json`, com a data e a hora.
     """
     written: list[Path] = []
     skipped: list[Path] = []
@@ -103,6 +129,7 @@ def collect(
         skipped.append(list_path)
     else:
         write_json(list_path, senadores)
+        update_manifest(output, clock())
         written.append(list_path)
     log(f"{len(codes)} senadores em exercício")
 
@@ -114,6 +141,7 @@ def collect(
             continue
         rows = fetch_despesas(client, year, codes)
         write_json(path, rows)
+        update_manifest(output, clock(), year=year)
         written.append(path)
         log(f"{year}: {len(rows)} despesas")
 

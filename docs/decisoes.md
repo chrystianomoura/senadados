@@ -47,6 +47,7 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 | D032 | Organização do repositório e dos documentos | Vale |
 | D033 | Coleta local que só grava quem está em exercício | Vale |
 | D034 | Limpeza com validação, em SQLite local, sem nome nem documento de pessoa física | Vale |
+| D035 | Verificação automática da cota por categoria, na mesma foto dos dados | Vale |
 
 ---
 
@@ -272,7 +273,7 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 - **Atualização (12/11/2026):** **na tela não há selos nem avisos.** Saem as etiquetas "comprovado" e "fonte única" e a caixa "dado em verificação": o que não se comprova **simplesmente não aparece**, e a lista do que está pendente fica só na página "Verificações". Em cada número, "De onde vem este número" segue um molde fixo, em linguagem simples, com três partes: **onde o Senado publica**, **como chegamos neste número** e **atualizado em**, com o link para o portal do Senado.
 - **Atualização (12/11/2026):** **regra de grupo, "tudo ou nada".** Uma informação que vale para todos os senadores só aparece se todos os senadores em exercício a tiverem e se os dados baterem para todos. Se um só falhar, ninguém a recebe. Assim o site nunca mostra um dado para uns senadores e esconde de outros.
 - **Atualização (12/11/2026):** **exceção à regra de tudo ou nada: dados de contato.** Telefone e e-mail aparecem para quem os tem; quem não tem, simplesmente não mostra, porque é uma informação de contato e não uma comparação entre senadores.
-- **Atualização (18/11/2026):** **a conferência só vale se as duas bases forem baixadas no mesmo dia.** Ao refazer a cota de 2026 com os dados do mesmo dia, o resultado passou de "72 de 79 idênticos" para **74 de 81 idênticos e 7 explicados, nenhuma divergência sem explicação**. A diferença veio de o Senado ter atualizado os dados e de o número de linhas sem categoria da primeira medição incluir ex-senadores (agora: 59 linhas e R$ 162.260,84 entre os senadores em exercício). Detalhes em [verificacoes.md](verificacoes.md). A verificação automática do pipeline deve baixar tudo junto e registrar a data.
+- **Atualização (18/11/2026):** **a conferência só vale se as duas bases forem baixadas no mesmo dia.** Ao refazer a cota de 2026 com os dados do mesmo dia, o resultado passou de "72 de 79 idênticos" para **74 de 81 idênticos e 7 explicados, nenhuma divergência sem explicação**. A diferença veio de o Senado ter atualizado os dados e de o número de linhas sem categoria da primeira medição incluir ex-senadores (agora: 59 linhas e R$ 162.260,84 entre os senadores em exercício). Detalhes em [verificacoes.md](verificacoes.md). A verificação automática do pipeline deve baixar tudo junto e registrar a data. (A contagem foi refeita depois pelo código ([D035](#d035-verificação-automática-da-cota-por-categoria-na-mesma-foto-dos-dados)): **73 idênticos e 7 explicados, entre os 80 senadores com valores**; Jorge Kajuru, sem valores nos dois lados, não entra na conta.)
 
 ## D026: Só senadores em exercício
 
@@ -379,5 +380,21 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
   - **Formato local: SQLite** (`data/limpo/senadados.sqlite`, fora do git), gravado de forma atômica: se qualquer validação falhar, o banco anterior fica intacto.
 - **Por quê:** SQLite já vem com o Python (sem dependência nova), aceita as consultas SQL das verificações e tem o mesmo desenho que as tabelas do Neon depois. Parquet exigiria uma biblioteca grande sem ganho para 154 mil linhas. Tirar nome e documento de pessoa física na origem é mais seguro do que confiar em esconder depois.
 - **Descartado:** Parquet (dependência a mais); corrigir documentos por suposição (viola D025); apagar as linhas de data ruim (a despesa existe e entra no total, só a data não se sustenta).
-- **Resultado em 18/11/2026:** 154.298 despesas limpas (nenhuma perdida), soma de R$ 213.008.569,15 igual à dos arquivos brutos, 276 sem categoria, 34 datas fora do esperado, 56 documentos fora do padrão. A cota de 2026 conferida contra o resumo do mesmo dia deu **74 idênticos, 7 explicados e 0 sem explicação**; essa conferência foi feita por um roteiro avulso, e **a verificação automática ainda não existe**.
+- **Resultado em 18/11/2026:** 154.298 despesas limpas (nenhuma perdida), soma de R$ 213.008.569,15 igual à dos arquivos brutos, 276 sem categoria, 34 datas fora do esperado, 56 documentos fora do padrão. A cota de 2026 conferida contra o resumo do mesmo dia deu **74 idênticos, 7 explicados e 0 sem explicação**; essa conferência foi feita por um roteiro avulso, e **a verificação automática ainda não existe**. A conferência feita pelo código está em [D035](#d035-verificação-automática-da-cota-por-categoria-na-mesma-foto-dos-dados): 73 idênticos e 7 explicados, entre os 80 senadores com valores.
+- **Status:** aceita.
+
+## D035: Verificação automática da cota por categoria, na mesma foto dos dados
+
+- **Contexto:** a D025 manda provar cada número comparando bases do Senado. A cota de 2026 tinha sido conferida por um roteiro avulso, e a lição de 18/11/2026 mostrou que bases de dias diferentes geram divergências falsas.
+- **Decisão (18/11/2026):**
+  - A verificação virou código (`pipeline/`, `python -m senadados_pipeline.verificacao`). Para cada senador e ano, compara as despesas **por categoria** com o resumo oficial (`recursos-utilizados`), e não só o total. As 7 categorias do resumo têm uma tabela fixa de equivalência com os nomes oficiais das despesas.
+  - Resultados: **`identico`** (todas as categorias batem no centavo), **`explicado`** (batem, e só faltam as linhas sem categoria, que o resumo não conta) e **`sem_explicacao`** (qualquer outra diferença, categoria desconhecida ou resumo que não soma o próprio total). Esta última **oculta o número** (falhar fechado) e registra o motivo.
+  - **Mesma foto dos dados:** a coleta registra a data e a hora de cada download em `data/raw/coleta.json`. A verificação **se recusa a rodar** se a lista de senadores, as despesas do ano ou o banco limpo não forem de hoje. O resumo é baixado no momento da verificação.
+  - O resultado fica no banco limpo (`verificacao_cota`, por senador e ano, e `verificacoes`, o resumo por ano), para a página "Verificações" ler depois.
+  - Pares senador-ano sem valor nos dois lados não entram na contagem.
+- **Resultado em 18/11/2026 (2008 a 2026, 1.539 consultas de resumo, cerca de 3 minutos):**
+  - **2010 a 2026: nenhuma divergência sem explicação.** Em 2026, 73 idênticos e 7 explicados.
+  - **2008 e 2009: 5 senadores sem explicação em cada ano.** O resumo de 2008 vem vazio, e o de 2009 é menor que as despesas. **O motivo não foi confirmado**; só o Senado pode explicar. Pela D025, a cota desses anos **não aparece** e o histórico da cota começa em 2010.
+- **Por quê:** comparar por categoria é mais forte do que comparar o total (categorias trocadas com o mesmo total seriam percebidas), e o site mostra o valor por categoria. A trava de "mesma foto" impede a falha que cometi no começo da investigação.
+- **Limites:** prova consistência entre bases do mesmo sistema do Senado, não é auditoria (D027). Só cobre a cota; gabinete, salário, moradia e contato ainda não têm verificação automática. O resumo de 2008 e 2009 pode ser limitado do lado do Senado, e isso **não foi confirmado**.
 - **Status:** aceita.

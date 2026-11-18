@@ -26,7 +26,7 @@ Todos gratuitos e **sem chave**.
 
 | # | Conferência | Resultado | Classificação |
 |---|---|---|---|
-| 1 | Cota de 2026: despesas detalhadas × resumo | 74 de 81 idênticos; 7 explicados (18/11/2026) | Aparece |
+| 1 | Cota por ano: despesas detalhadas × resumo, por categoria | 2010 a 2026: tudo bate (2026: 73 idênticos, 7 explicados); 2008 e 2009: 5 senadores sem explicação em cada | 2010 a 2026 aparecem; 2008 e 2009 ficam ocultos |
 | 2 | Moradia: resumo anual × lista do mês | 9 de 12 explicados; 3 pendentes | 9 aparecem; 3 ficam sem informação |
 | 3 | Gabinete e contato: API × página do senador | Endereço igual nos 81; telefone e e-mail com ressalvas | Veja abaixo |
 | 4 | Salário: folha × senador | 78 de 81 ligados pelo nome | Os 3 sem ligação ficam sem salário |
@@ -48,6 +48,23 @@ Somei as despesas de cada senador na API e comparei com o total que o próprio S
 **Por que os números mudaram entre 11/11 e 18/11:** o Senado continuou publicando. O resumo mudou para 59 senadores (+R$ 674.349,27 no total, e 5 totais diminuíram, o maior em R$ 13.347,28, causa não investigada). Leany Lemos, que tinha resumo zero em 11/11, passou a ter uma despesa de R$ 15.200 (competência de novembro). Os arquivos antigos de despesas foram sobrescritos sem cópia, então a comparação linha a linha não é possível; o "antes" é o resumo de 11/11, que ainda está em `data/raw/recursos/`.
 
 **Lição:** conferir duas bases só faz sentido se as duas forem baixadas **na mesma foto dos dados** (mesmo dia). A verificação automática do pipeline deve baixar tudo junto e registrar a data.
+
+#### Todos os anos, pela verificação automática (18/11/2026)
+
+Agora é código (`pipeline/`, [D035](decisoes.md#d035-verificação-automática-da-cota-por-categoria-na-mesma-foto-dos-dados)), compara **por categoria** (as 7 do resumo), e só roda se coleta, limpeza e resumo forem do mesmo dia. Pares senador-ano sem valor nos dois lados (por exemplo, Jorge Kajuru, que não tem despesa nem resumo) não entram na conta.
+
+| Anos | Idênticos | Explicados (só linhas sem categoria) | Sem explicação |
+|---|---|---|---|
+| 2008 | 0 | 0 | **5** |
+| 2009 | 0 | 0 | **5** |
+| 2010 a 2018 | 5 a 15 por ano | 0 | 0 |
+| 2019 a 2022 | 50 a 53 por ano | 0 | 0 |
+| 2023 | 62 | 12 | 0 |
+| 2024 | 56 | 16 | 0 |
+| 2025 | 67 | 6 | 0 |
+| 2026 | 73 | 7 | 0 |
+
+**2008 e 2009:** em 2008 o resumo do Senado vem **vazio** (valor zero) para os 5 senadores que já tinham despesa; em 2009 o resumo é **menor** que as despesas (por exemplo, R$ 129.049,97 contra R$ 156.517,14 num caso), e a diferença não é a das linhas sem categoria. Não sabemos o motivo (o resumo pode cobrir só parte do ano, mas isso **não foi confirmado**). Pela regra da D025, a cota desses dois anos **não aparece**.
 
 ### 2. Moradia, resumo anual contra lista do mês
 
@@ -96,7 +113,7 @@ Comparei endereço do gabinete, telefones e e-mail da API (`senadores`) com a se
 - Moradia: os **3 casos** pendentes (reconferir quando a página mensal incluir novembro).
 - Salário: 3 suplentes sem correspondência e um titular com valor diferente.
 - Equipe: a diferença de 1 pessoa e o gabinete com 70 pessoas; provar por gabinete antes de exibir.
-- Cota de outros anos: repetir a conferência 1 ano a ano (2023 a 2025 têm resumo; os anteriores só têm API e CSV).
+- Cota de 2008 e 2009: o resumo de 2008 está vazio e o de 2009 é menor que as despesas; só o Senado pode explicar. Ficam ocultos.
 - Escritórios de apoio: contagem contra a página de cada senador (hoje fora do MVP).
 - Entender: por que o resumo deixa de fora as linhas sem categoria (276 entre 2023 e 2026, só em exercício, em 18/11/2026); o que são os valores negativos, os 56 documentos em formato fora do padrão e as 4 despesas com data no futuro; até que ano a API de recursos (`?ano=`) devolve dados.
 - Testemunhas fora do Senado: o **Internet Archive** acusa uma cópia do CSV de 2024 (25/10/2026), mas não consegui ler as cópias (**a testar**). O Portal da Transparência federal e o TSE **não foram verificados** como fonte de conferência.

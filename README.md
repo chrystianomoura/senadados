@@ -65,7 +65,7 @@ Todo número tem origem oficial, uma consulta que o reproduz e uma data. Quando 
 - **Tudo ou nada:** uma informação que compara senadores só aparece se todos a tiverem e os dados baterem para todos. Se um só falhar, ninguém a recebe. Exceção: dados de contato (telefone, e-mail) aparecem para quem os tem.
 - **Sem selos na tela:** o que não se comprova simplesmente não é mostrado. A lista do que está pendente fica na página de verificações.
 
-O primeiro teste: a cota de 2026, das despesas detalhadas contra o resumo do Senado. **74 de 81 senadores batem no centavo** (conferido em 18/11/2026), e as 7 diferenças são exatamente linhas sem categoria que o resumo não conta. Os resultados ficam numa página pública de verificações.
+O primeiro teste: a cota de 2026, das despesas detalhadas contra o resumo do Senado. **em 2026, 73 de 80 senadores com valores batem no centavo**, e os outros 7 diferem só por linhas sem categoria que o resumo não conta. De 2010 a 2026 todos os anos bateram; 2008 e 2009 não bateram e ficam de fora (conferido em 18/11/2026). Os resultados ficam numa página pública de verificações.
 
 ---
 

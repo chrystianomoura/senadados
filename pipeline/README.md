@@ -1,6 +1,6 @@
 # Pipeline
 
-Código em Python que coleta, limpa e verifica os dados abertos do Senado. Hoje existem a **coleta** e a **validação e limpeza**; a verificação entre bases é a próxima etapa ([ordem de construção](../docs/escopo.md#13-ordem-de-construção)).
+Código em Python que coleta, limpa e verifica os dados abertos do Senado. Hoje existem a **coleta**, a **validação e limpeza** e a **verificação da cota**; as outras verificações (gabinete, salário, moradia) são a próxima etapa ([ordem de construção](../docs/escopo.md#13-ordem-de-construção)).
 
 ## O que a coleta faz
 
@@ -46,6 +46,18 @@ uv run python -m senadados_pipeline.limpeza
 | Data fora de 2008 até o dia da coleta some e a linha é **marcada**, mas segue na soma | A despesa existe; só a data não se sustenta |
 
 Se algo falhar, o banco anterior **não é substituído**. Opção `--data-referencia AAAA-MM-DD` define o dia da coleta (padrão: hoje).
+
+## O que a verificação faz
+
+Compara, para cada senador e ano, as despesas por categoria com o resumo oficial do Senado ([D035](../docs/decisoes.md#d035-verificação-automática-da-cota-por-categoria-na-mesma-foto-dos-dados)). O resultado vai para o banco limpo (`verificacao_cota` e `verificacoes`).
+
+```bash
+uv run python -m senadados_pipeline.verificacao
+```
+
+- **Só roda na mesma foto dos dados:** coleta, limpeza e verificação precisam ser do mesmo dia. Se não forem, ela explica o que refazer (`coleta --sobrescrever`, depois `limpeza`).
+- Resultados: `identico`, `explicado` (só faltam as linhas sem categoria) e `sem_explicacao` (o número fica oculto).
+- Demora cerca de 3 minutos para todos os anos (uma consulta por senador e ano). `--anos 2026` verifica um ano só.
 
 ## Testes e qualidade
 

@@ -1,4 +1,5 @@
 import json
+from datetime import UTC, datetime
 
 import httpx
 import pytest
@@ -56,6 +57,30 @@ def test_grava_a_lista_como_o_senado_publica(tmp_path):
 
     saved = json.loads((tmp_path / "senadores_atuais.json").read_text(encoding="utf-8"))
     assert saved == SENADORES
+
+
+def test_registra_quando_cada_arquivo_foi_baixado(tmp_path):
+    moment = datetime(2026, 11, 18, 12, 30, tzinfo=UTC)
+    coleta.collect(make_client(ROUTES), tmp_path, [2024], log=lambda _: None, clock=lambda: moment)
+
+    manifest = coleta.read_manifest(tmp_path)
+    assert manifest == {
+        "senadores": "2026-11-18T12:30:00+00:00",
+        "despesas": {"2024": "2026-11-18T12:30:00+00:00"},
+    }
+
+
+def test_manifesto_nao_muda_para_arquivo_pulado(tmp_path):
+    first = datetime(2026, 11, 18, 12, 0, tzinfo=UTC)
+    later = datetime(2026, 11, 19, 12, 0, tzinfo=UTC)
+    coleta.collect(make_client(ROUTES), tmp_path, [2024], log=lambda _: None, clock=lambda: first)
+    coleta.collect(make_client(ROUTES), tmp_path, [2024], log=lambda _: None, clock=lambda: later)
+
+    assert coleta.read_manifest(tmp_path)["despesas"] == {"2024": "2026-11-18T12:00:00+00:00"}
+
+
+def test_manifesto_vazio_quando_nao_houve_coleta(tmp_path):
+    assert coleta.read_manifest(tmp_path) == {"senadores": None, "despesas": {}}
 
 
 def test_nao_sobrescreve_arquivo_existente(tmp_path):
