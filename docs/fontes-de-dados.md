@@ -117,6 +117,8 @@ Há também uns 60 registros recentes com o documento em formato fora do padrão
 - Valor sem vírgula decimal misturado com valor com vírgula.
 - Ano `0204` em uma data (erro de digitação).
 - Datas depois do dia da coleta: em 18/11/2026, 4 despesas com data de 23/11, 26/11 e 28 e 29/12 de 2026 (2 de notas de 2025 e 2 de 2026). Ainda não se sabe se é erro de digitação ou lançamento antecipado.
+- No total, **34 despesas** (de 154.298) têm data fora do intervalo de 2008 até o dia da coleta: anos como 0023, 0201, 0204 e 1201, datas de 1965 a 2006 e as 4 futuras. A limpeza as marca e tira a data, sem corrigir ([D034](decisoes.md#d034-limpeza-com-validação-em-sqlite-local-sem-nome-nem-documento-de-pessoa-física)).
+- Documentos fora do padrão (12 ou 13 dígitos): completar com zeros à esquerda só produz CNPJ válido em 2 dos 54 casos, então não são CNPJs que perderam zeros, e não se tenta corrigir.
 - Notas de 2023 e 2025 dentro do arquivo de 2024 (CSV). O campo `ANO` é a competência do reembolso, não a data do gasto.
 - Valores negativos (provavelmente estornos).
 - **CPF de pessoas físicas** aparecem completos no CSV (na API vêm mascarados). Veja [D008](decisoes.md#d008-pessoas-físicas-agrupadas-e-cpf-nunca-exibido).

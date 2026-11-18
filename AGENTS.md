@@ -8,7 +8,7 @@ Instruções para qualquer agente (humano ou de IA) que trabalhe neste repositó
 
 **Escopo de pessoas:** só os **senadores em exercício**, pela lista oficial do Senado (D026). Quem sai do mandato sai do site.
 
-**Estado atual (18/11/2026):** escopo, regras e protótipo da página fechados; fontes e conferências documentadas; **a coleta do pipeline existe** (veja [pipeline/README.md](pipeline/README.md)); ainda sem validação, limpeza, API ou site. Próximo passo: validar e limpar as despesas (ordem de construção em [docs/escopo.md](docs/escopo.md)). Índice dos documentos em [docs/README.md](docs/README.md).
+**Estado atual (18/11/2026):** escopo, regras e protótipo da página fechados; fontes e conferências documentadas; **a coleta, a validação e a limpeza do pipeline existem** (veja [pipeline/README.md](pipeline/README.md)); ainda sem verificação automática, API ou site. Próximo passo: a camada de verificação entre bases (ordem de construção em [docs/escopo.md](docs/escopo.md)). Índice dos documentos em [docs/README.md](docs/README.md).
 
 ## 2. Princípios inegociáveis
 
@@ -131,7 +131,7 @@ senadados/
 ├── docs/            # índice, escopo, decisões, fontes de dados, verificações
 ├── design/          # protótipo da página do senador, folha da marca e favicon
 ├── data/            # README versionado; data/raw/ (dados baixados) fora do git
-├── pipeline/        # coleta (pronta), limpeza e verificação (Python, uv)
+├── pipeline/        # coleta e limpeza (prontas), verificação (Python, uv)
 ├── api/             # (a criar) FastAPI
 ├── web/             # (a criar) site (Next.js)
 └── .github/         # (a criar) automações

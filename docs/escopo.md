@@ -217,7 +217,7 @@ Metas a medir, não resultados já obtidos:
 
 Cada etapa termina com a documentação atualizada e um commit no padrão do [AGENTS.md](../AGENTS.md).
 
-**Andamento (18/11/2026):** a etapa 1 começou. A **coleta** está pronta e testada (lista de senadores e despesas por ano, só de quem está em exercício, [D033](decisoes.md#d033-coleta-local-que-só-grava-quem-está-em-exercício)). Faltam a validação com Pandera, a limpeza e os testes das regras de sujeira.
+**Andamento (18/11/2026):** a etapa 1 começou. A **coleta** está pronta e testada (lista de senadores e despesas por ano, só de quem está em exercício, [D033](decisoes.md#d033-coleta-local-que-só-grava-quem-está-em-exercício)). A **validação com Pandera e a limpeza** também estão prontas, com testes das regras de sujeira e banco SQLite local ([D034](decisoes.md#d034-limpeza-com-validação-em-sqlite-local-sem-nome-nem-documento-de-pessoa-física)). Falta a etapa 2, a **verificação automática** entre bases (hoje a cota de 2026 foi conferida por um roteiro avulso: 74 idênticos, 7 explicados, 0 sem explicação).
 
 ## 14. Perguntas em aberto para o mantenedor
 

@@ -14,6 +14,12 @@ Esta pasta guarda os dados baixados do Senado para análise e conferência. **Na
 
 Endereços completos e o que cada um traz: [docs/fontes-de-dados.md](../docs/fontes-de-dados.md).
 
+## `limpo/` (local, ignorado pelo git)
+
+| Caminho | O que é |
+|---|---|
+| `limpo/senadados.sqlite` | Despesas e senadores já validados e limpos, gerados por `pipeline/` ([D034](../docs/decisoes.md#d034-limpeza-com-validação-em-sqlite-local-sem-nome-nem-documento-de-pessoa-física)). Pode ser refeito a qualquer momento a partir de `raw/` |
+
 ## Regras
 
 - **Só senadores em exercício** ([D026](../docs/decisoes.md#d026-só-senadores-em-exercício)). A coleta do pipeline já grava só as despesas de quem está na lista ([D033](../docs/decisoes.md#d033-coleta-local-que-só-grava-quem-está-em-exercício)).

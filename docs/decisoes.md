@@ -46,6 +46,7 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 | D031 | Onde fica o gabinete: contato | Vale (revista em 12/11/2026) |
 | D032 | Organização do repositório e dos documentos | Vale |
 | D033 | Coleta local que só grava quem está em exercício | Vale |
+| D034 | Limpeza com validação, em SQLite local, sem nome nem documento de pessoa física | Vale |
 
 ---
 
@@ -361,4 +362,22 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 - **Descartado:** começar já no Neon (obriga a criar conta e conexão antes de existir algo funcionando).
 - **Consequência:** a coleta traz mais linhas do que os arquivos antigos filtrados (2026: 16.033 contra 15.636), porque o Senado continuou publicando entre 11/11 e 18/11. Essa diferença vem da atualização da fonte, e não foi investigada linha a linha.
 - **Executado em 18/11/2026:** os 19 arquivos de despesas foram baixados de novo e substituíram os antigos: 154.298 registros, nenhum de fora da lista, 80 senadores com despesa (a documentação de 11/11 falava em 79 de 81; o 80º é Leany Lemos, que ganhou a primeira despesa depois de 11/11; só Jorge Kajuru segue sem despesa).
+- **Status:** aceita.
+
+## D034: Limpeza com validação, em SQLite local, sem nome nem documento de pessoa física
+
+- **Contexto:** a coleta (D033) grava o que o Senado devolve. Antes de qualquer número aparecer, os dados precisam ser validados e limpos, com cada regra provada por teste. Medi os dados reais de 18/11/2026 (154.298 despesas) para escrever as regras.
+- **Decisão (18/11/2026):**
+  - **Validação com Pandera em dois momentos:** o que o Senado entrega (colunas exatas, tipos, `id` único, mês de 1 a 12, valor com no máximo 2 casas) e o que o pipeline produz. Coluna nova ou faltando, `id` repetido ou valor impossível **quebram a execução e nada é gravado**.
+  - **Categoria vazia vira "Sem categoria".** Categoria nova do Senado passa, com o nome oficial.
+  - **Valor em centavos inteiros**, para as somas baterem no centavo sem erro de arredondamento.
+  - **Fornecedor classificado pelo documento:** `empresa` (CNPJ no formato certo e com dígitos verificadores válidos), `pessoa_fisica` (CPF mascarado ou com 11 dígitos), `sem_documento` (o Senado não informou; só 2008 e 2009) e `outro` (qualquer outro formato, mantido como veio).
+  - **Pessoa física não leva nome nem documento** para os dados limpos (D008, aplicada já na limpeza). Os brutos seguem em `data/raw/`, fora do git.
+  - **Documento fora do padrão não é corrigido.** Testei a hipótese de CNPJ que perdeu zeros à esquerda: completando com zeros, só 2 dos 54 casos de 12 ou 13 dígitos têm dígitos verificadores válidos, então a hipótese não se sustenta e nada é inferido (D025). Ficam como `outro`.
+  - **Data fora do intervalo de 1º/1/2008 até o dia da coleta (ou malformada) some, e a linha é marcada** (`data_fora_do_esperado`), sem tentar adivinhar a data certa. A linha **continua na soma**. Em 18/11/2026 são 34 linhas: anos como 0023, 0201, 0204 e 1201, datas antigas como 1965 a 2006 e 4 datas futuras.
+  - **Descrição, número do documento e nome do senador da despesa não seguem** para os dados limpos: o MVP não os usa (o nome vem da lista de senadores), e o bruto continua disponível pelo `id`.
+  - **Formato local: SQLite** (`data/limpo/senadados.sqlite`, fora do git), gravado de forma atômica: se qualquer validação falhar, o banco anterior fica intacto.
+- **Por quê:** SQLite já vem com o Python (sem dependência nova), aceita as consultas SQL das verificações e tem o mesmo desenho que as tabelas do Neon depois. Parquet exigiria uma biblioteca grande sem ganho para 154 mil linhas. Tirar nome e documento de pessoa física na origem é mais seguro do que confiar em esconder depois.
+- **Descartado:** Parquet (dependência a mais); corrigir documentos por suposição (viola D025); apagar as linhas de data ruim (a despesa existe e entra no total, só a data não se sustenta).
+- **Resultado em 18/11/2026:** 154.298 despesas limpas (nenhuma perdida), soma de R$ 213.008.569,15 igual à dos arquivos brutos, 276 sem categoria, 34 datas fora do esperado, 56 documentos fora do padrão. A cota de 2026 conferida contra o resumo do mesmo dia deu **74 idênticos, 7 explicados e 0 sem explicação**; essa conferência foi feita por um roteiro avulso, e **a verificação automática ainda não existe**.
 - **Status:** aceita.
