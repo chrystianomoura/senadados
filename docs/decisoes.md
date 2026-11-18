@@ -50,6 +50,7 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 | D035 | Verificação automática da cota por categoria, na mesma foto dos dados | Vale |
 | D036 | Verificação automática da equipe do gabinete, por vínculo | Vale (a consequência foi substituída pela D037) |
 | D037 | Exibição por tipo de dado e freio de segurança | Vale |
+| D038 | Documento público de divergências, com prova em imagem | Vale |
 
 ---
 
@@ -413,7 +414,7 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
   - Mesma regra da cota: só roda com a lista de senadores e o banco limpo do mesmo dia, e o resultado vai para o banco limpo (`verificacao_equipe`, e uma linha `equipe` em `verificacoes`).
 - **Resultado em 18/11/2026:** 81 gabinetes, **80 idênticos** (total e cada vínculo) e **1 sem explicação**: no gabinete de Camilo Santana o resumo traz 1 efetivo que a lista de ativos não tem (28 contra 27 pessoas). Testei e descartei duas hipóteses: servidor fora da lista de ativos (as listas completa, de efetivos e de exercício provisório não o trazem) e servidor cedido de outro órgão (os 4 cedidos do gabinete já estão entre os comissionados). Só o Senado pode explicar.
 - **Consequência (substituída pela [D037](decisoes.md#d037-exibição-por-tipo-de-dado-e-freio-de-segurança)):** pela regra de tudo ou nada (D025), a equipe
-- **Dados locais:** `data/raw/folha/servidores_ativos.json` (de 11/11) traz nomes de servidores. O pipeline novo não o usa, e ele pode ser apagado; não apaguei sem pedido.
+- **Dados locais:** `data/raw/folha/servidores_ativos.json` (de 11/11) trazia nomes de servidores. O pipeline novo não o usava, e ele foi **apagado em 18/11/2026**, a pedido do mantenedor, junto com as cópias temporárias que continham nomes.
 - **Limites:** prova consistência entre bases do mesmo sistema do Senado, não é auditoria (D027). A ligação por nome é frágil se um nome mudar, e nesse caso o gabinete cai em "sem explicação" em vez de receber um número errado.
 - **Status:** aceita.
 
@@ -429,4 +430,20 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 - **Resultado em 18/11/2026:** a equipe aparece para os 80 gabinetes idênticos e fica oculta no de Camilo Santana (1 efetivo a mais no resumo, sem explicação). A verificação diária mostra o gabinete de volta sozinha quando o Senado explicar ou corrigir.
 - **Implementação:** a coluna `exibir` da tabela `verificacao_equipe` no banco limpo. Quem ler o banco (a API e o site) usa `exibir`, e **trata a ausência da tabela como "não verificado"**.
 - **Altera:** a consequência da D036 e o texto da regra de tudo ou nada na D025 (que continua valendo para dados que comparam).
+- **Status:** aceita.
+
+## D038: Documento público de divergências, com prova em imagem
+
+- **Contexto:** a verificação (D035 e D036) achou diferenças entre publicações do próprio Senado. A primeira ideia era enviar um pedido de esclarecimento ao Senado. O mantenedor preferiu **mostrar as diferenças publicamente**, sem prometer buscar respostas.
+- **Decisão (18/11/2026):** o projeto passa a ter o documento `docs/divergencias-nos-dados-do-senado.md`, que vira a seção "Onde os dados do Senado não batem entre si" do site. Regras:
+  - **Só entra o que tem print.** Cada caso mostra uma captura da tela ou do relatório do próprio Senado (recortada, **sem a foto do senador**), ou, para arquivos de dados, uma tabela feita pelo Senadados com linhas copiadas sem alteração e **etiquetada como montagem do Senadados**. Contagens sobre todos os senadores são declaradas como feitas pelo Senadados.
+  - **Texto neutro e fácil de entender:** não diz qual número está certo, não diz o motivo, não acusa ninguém e **não diz que o projeto vai atrás de respostas**.
+  - **Cada caso traz o passo a passo para conferir** e a data e hora da captura.
+  - **Os nomes dos senadores aparecem**, porque a diferença está na publicação por senador e o print mostra o nome. Isso altera a linha do `escopo.md` §4.5 que dizia "sem nomes" para a página de verificações como um todo; a regra vale para a página agregada, e não para esta seção.
+  - **Dados de servidores:** nenhuma imagem mostra nome de servidor. O arquivo local `servidores_ativos.json`, que tinha nomes, foi apagado.
+- **Casos publicados em 18/11/2026:** (1) tela de um gabinete com 27 pessoas contra 28 na exportação da mesma página; (2) o rótulo "Gabinete" com totais diferentes (a tela inclui estagiários e terceirizados, a exportação não); (3) cota de 2008 e 2009 de cinco senadores, em que a tela mostra menos que o arquivo de despesas; (4) linhas sem categoria que a tela não conta; (5) notas com data de ano 0204 e 0202.
+- **Achados novos que a captura trouxe:**
+  - A **tela do portal e a exportação da mesma página divergem** no bloco de pessoal de um gabinete. Isso reforça que o resumo da API (D015) e a tela não são a mesma coisa, e a tela está de acordo com a lista de servidores.
+  - O **número "equipe" depende da definição.** O Senadados usa o do resumo (comissionados, efetivos e requisitados) e **deve dizer o que ele inclui**, para o cidadão que comparar com a tela (que soma estagiários e terceirizados) não achar um dos dois errado.
+- **Cuidados:** os prints são fotos de 18/11/2026 e podem deixar de refletir a tela se o Senado atualizar os dados (de fato, a divergência do item 1 foi vista também na API às 16h46, e pode ser corrigida a qualquer momento). Os recortes não mostram foto de senador. A responsabilidade por manter o documento correto é do projeto: se o Senado corrigir um caso, ele deve ser atualizado ou retirado.
 - **Status:** aceita.

@@ -96,7 +96,8 @@ Não há selos como "comprovado" ou "fonte única" na tela. As palavras técnica
 
 ### 4.5 Verificações (nova)
 - A lista de checagens feitas e o resultado de cada uma, por exemplo "cota de 2026: 73 idênticos, 7 explicados".
-- As divergências encontradas nos dados do Senado, **agregadas e sem nomes**, com a explicação quando existe.
+- Uma seção **“Onde os dados do Senado não batem entre si”**, com cada divergência provada por **prints** das telas e dos arquivos do Senado, sem dizer qual número está certo, nem o motivo, nem o que faremos a respeito ([D038](decisoes.md#d038-documento-público-de-divergências-com-prova-em-imagem)). Só entra o que tem print. O texto está em [divergencias-nos-dados-do-senado.md](divergencias-nos-dados-do-senado.md).
+- As divergências encontradas nos dados do Senado, **agregadas**, com a explicação quando existe. Os **nomes dos senadores só aparecem na seção de divergências**, onde o print mostra a tela do Senado, que traz o nome ([D038](decisoes.md#d038-documento-público-de-divergências-com-prova-em-imagem)).
 - A frase fixa: "verificamos se as bases do Senado concordam entre si. Não auditamos os dados."
 - Canal para **reportar um erro** e registro público das correções.
 
