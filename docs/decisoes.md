@@ -52,6 +52,7 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 | D037 | Exibição por tipo de dado e freio de segurança | Vale |
 | D038 | Documento público de divergências, com prova em imagem | Vale |
 | D039 | Verificação automática da moradia, mês a mês | Vale |
+| D040 | Verificação automática do contato do gabinete | Vale |
 
 ---
 
@@ -463,4 +464,19 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 - **Resultado em 18/11/2026:** 81 senadores, **76 idênticos, 1 explicado, 4 pendentes e 0 sem explicação**, e a moradia aparece para **77**. Os 4 pendentes usaram auxílio-moradia até outubro e a lista de hoje diz que não usam. Em 12/11 eram 3 pendentes. Foram 12 senadores com auxílio-moradia e 63 com imóvel funcional, e 6 sem link para a página mensal (não usaram nenhum dos dois).
 - **Por quê:** o uso mês a mês só existe na página mensal do portal, então ele precisa ser confrontado com as outras três fontes antes de aparecer. Separar `pendente` de `sem_explicacao` evita tratar uma defasagem esperada como falha do dado.
 - **Limites:** (1) a página mensal é lida do **HTML do portal**, que não é uma API e pode mudar; se mudar, o senador cai em `sem_explicacao` e não recebe número errado. (2) O pendente se resolve sozinho quando a página mensal incluir novembro (a verificação diária reconfere). (3) Prova consistência entre bases do Senado, não é auditoria (D027). (4) A verificação não diz onde o imóvel fica nem afirma nada sobre o direito ao benefício (D024).
+- **Status:** aceita.
+
+## D040: Verificação automática do contato do gabinete
+
+- **Contexto:** a D031 decidiu mostrar o endereço do gabinete, os telefones (copiados da página do portal, que traz os números completos) e o e-mail, para quem os tem. As conferências de 12/11 eram manuais.
+- **Decisão (18/11/2026):** a verificação virou código (`python -m senadados_pipeline.contato`). Compara, **campo a campo**, a API de dados abertos (a lista de senadores que a coleta gravou) com a seção "Dados pessoais" da página de cada senador, baixada na hora.
+  - **Endereço:** igual ignorando caixa alta e espaços repetidos. O valor mostrado é o da página.
+  - **Telefones:** a página abrevia vários números ("(61) 3303-6187 / 6188 / 6183"). A regra é mecânica: o início do primeiro número vale para os seguintes que trouxerem só os 4 últimos dígitos. `identico` se os conjuntos de números são iguais; **`explicado`** se a página traz números a mais e **todos os da API estão nela**; `sem_explicacao` se a API tem número que a página não tem ou o formato é inesperado. O fax não é usado.
+  - **E-mail:** igual ignorando caixa. "-" e vazio são "sem e-mail", e se **nenhuma** das fontes traz e-mail o campo é `identico` e simplesmente não aparece (D025, exceção do contato).
+  - **Exibição (D037):** contato é dado descritivo. **Cada campo** aparece para quem foi provado e tem o **próprio freio de segurança de 5%**. Só o valor provado vai para a tabela `contato`; o campo não provado fica **vazio** (falhar fechado). O resultado de cada campo fica em `verificacao_contato`.
+  - **Só três campos são lidos da página.** Nome civil, data de nascimento e o restante não são lidos nem guardados.
+- **Resultado em 18/11/2026:** endereço **81 idênticos**; telefones **66 idênticos e 15 explicados**; e-mail **81 idênticos**, dos quais 2 sem e-mail nas duas fontes. Nenhum sem explicação. O contato aparece para 81 (endereço e telefones) e 79 (e-mail). É o mesmo resultado da conferência manual de 12/11.
+- **Falhar fechado, visto na prática:** a primeira execução usou o endereço da página sem o parâmetro do ano, o portal respondeu com um redirecionamento, e os 81 senadores caíram em `sem_explicacao`, sem nenhum contato exibido. Depois da correção, passou. A regra fez o que devia: sem dado provado, nada aparece.
+- **Por quê:** o contato do gabinete é o dado mais útil para o cidadão e o mais simples de provar. Verificar campo a campo evita que um telefone divergente esconda o endereço, e o freio por campo evita que um problema numa só fonte derrube os outros.
+- **Limites:** (1) a página do portal é HTML, não uma API, e pode mudar; se mudar, o campo cai em `sem_explicacao`. (2) O motivo de a API listar menos telefones **não foi confirmado**. (3) Prova consistência entre bases do Senado, não é auditoria (D027). (4) O escritório de apoio continua fora (D031).
 - **Status:** aceita.

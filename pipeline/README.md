@@ -1,6 +1,6 @@
 # Pipeline
 
-Código em Python que coleta, limpa e verifica os dados abertos do Senado. Hoje existem a **coleta**, a **validação e limpeza** e a **verificação da cota**, a **da equipe do gabinete** e a **da moradia**; as outras (contato e salário) são a próxima etapa ([ordem de construção](../docs/escopo.md#13-ordem-de-construção)).
+Código em Python que coleta, limpa e verifica os dados abertos do Senado. Hoje existem a **coleta**, a **validação e limpeza** e a **verificação da cota**, a **da equipe do gabinete**, a **da moradia** e a **do contato**; a última que falta é a do salário ([ordem de construção](../docs/escopo.md#13-ordem-de-construção)).
 
 ## O que a coleta faz
 
@@ -84,6 +84,19 @@ uv run python -m senadados_pipeline.moradia
 - Só `sem_explicacao` conta para o freio de segurança de 5% (D037). O `pendente` esconde só o próprio senador.
 - O resultado vai para `verificacao_moradia`, e o uso mês a mês, para `moradia_meses` (usar só quem tem `exibir = 1`).
 - A página mensal é lida do portal (não há API para isso). Se o Senado mudar o formato, o senador cai em `sem_explicacao`, e não recebe um número errado.
+
+## O que a verificação do contato faz
+
+Baixa, na hora, o endereço do gabinete, os telefones e o e-mail da página de cada senador e compara com a API de dados abertos ([D040](../docs/decisoes.md#d040-verificação-automática-do-contato-do-gabinete)).
+
+```bash
+uv run python -m senadados_pipeline.contato
+```
+
+- Cada campo tem o seu resultado (`identico`, `explicado` ou `sem_explicacao`) e o seu freio de segurança de 5% (D037).
+- Os telefones saem da página do portal, com os números abreviados ("6187 / 6188") expandidos por uma regra mecânica.
+- Só o valor provado vai para a tabela `contato`; o que não foi provado fica vazio. O resultado de cada campo fica em `verificacao_contato`.
+- Só guarda gabinete, telefones e e-mail. Nome civil, data de nascimento e o resto da página são ignorados.
 
 ## Testes e qualidade
 

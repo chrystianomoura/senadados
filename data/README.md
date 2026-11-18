@@ -13,6 +13,7 @@ Esta pasta guarda os dados baixados do Senado para análise e conferência. **Na
 | `raw/folha/` | Folha de setembro de 2026 e lotações. A lista de servidores ativos (com nomes) foi apagada em 18/11/2026 | API `servidores` |
 | `raw/equipe/` | Número de pessoas por gabinete e vínculo (lista de servidores contada na hora, **sem nomes**) e o bloco de pessoal do resumo de cada senador | Pipeline (`equipe`) |
 | `raw/moradia/` | Uso de auxílio-moradia e de imóvel funcional por senador (resumo da API, tela do portal e página mensal) e a lista do mês | Pipeline (`moradia`) |
+| `raw/contato/` | Endereço do gabinete, telefones e e-mail como a página de cada senador mostra | Pipeline (`contato`) |
 | `raw/coleta.json` | Data e hora de cada download da lista e das despesas por ano; serve para garantir que as bases são da mesma foto dos dados | Gerado pela coleta |
 
 Endereços completos e o que cada um traz: [docs/fontes-de-dados.md](../docs/fontes-de-dados.md).

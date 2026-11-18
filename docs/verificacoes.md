@@ -28,7 +28,7 @@ Todos gratuitos e **sem chave**.
 |---|---|---|---|
 | 1 | Cota por ano: despesas detalhadas × resumo, por categoria | 2010 a 2026: tudo bate (2026: 73 idênticos, 7 explicados); 2008 e 2009: 5 senadores sem explicação em cada | 2010 a 2026 aparecem; 2008 e 2009 ficam ocultos |
 | 2 | Moradia: resumo da API × tela × página mensal × lista do mês | 76 idênticos, 1 explicado, 4 pendentes, 0 sem explicação (18/11/2026) | Aparece para 77; 4 ficam sem informação até o mês fechar |
-| 3 | Gabinete e contato: API × página do senador | Endereço igual nos 81; telefone e e-mail com ressalvas | Veja abaixo |
+| 3 | Contato do gabinete: API × página do senador | Endereço 81 idênticos; telefones 66 idênticos e 15 explicados; e-mail 81 idênticos (2 sem e-mail nas duas fontes) (18/11/2026) | Aparecem para 81 (endereço e telefones) e 79 (e-mail) |
 | 4 | Salário: folha × senador | 78 de 81 ligados pelo nome | Os 3 sem ligação ficam sem salário |
 | 5 | Equipe: resumo × lista de servidores, por gabinete e vínculo | 80 de 81 idênticos; 1 sem explicação (18/11/2026) | Aparece para 80; 1 gabinete oculto (D037) |
 | 6 | CSV × API em 2008 | 8 valores diferentes em 2.449 linhas | Sem impacto no MVP |
@@ -84,7 +84,16 @@ O resumo diz que **12** senadores "utilizaram" auxílio-moradia em 2026. A lista
 - **3 de 12** usaram até outubro, e a lista, de novembro, diz que não. A diferença de um mês **pode** explicar, mas **não está provada**.
 - **Conclusão:** as bases não se contradizem; medem períodos diferentes. **Classificação:** 9 explicados, 3 pendentes (ficam sem informação até serem provados).
 
-### 3. Gabinete e contato, API contra a página de cada senador (12/11/2026)
+### 3. Contato do gabinete, API contra a página de cada senador
+
+**Refeita em 18/11/2026 pela verificação automática** ([D040](decisoes.md#d040-verificação-automática-do-contato-do-gabinete)). Compara, campo a campo, a API de dados abertos com a seção "Dados pessoais" da página de cada um dos 81 senadores.
+
+- **Endereço do gabinete:** **81 idênticos** (ignorando caixa alta e espaços repetidos).
+- **Telefones:** **66 idênticos e 15 explicados**: a página traz números a mais que a API, e **todos os números da API estão na página** (a API lista no máximo 2 números e a página, até 5). O motivo de a API listar menos **não foi confirmado**.
+- **E-mail:** **81 idênticos**. Em **2 senadores** nenhuma das duas fontes traz e-mail (a API escreve "-"), e por isso o e-mail aparece para **79**.
+- **0 sem explicação.** O escritório de apoio continua fora (D031).
+
+**Primeira medição (12/11/2026), com os mesmos resultados:**
 
 Comparei endereço do gabinete, telefones e e-mail da API (`senadores`) com a seção "Dados pessoais" da página de cada um dos 81 senadores.
 

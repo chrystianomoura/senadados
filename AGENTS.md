@@ -8,7 +8,7 @@ Instruções para qualquer agente (humano ou de IA) que trabalhe neste repositó
 
 **Escopo de pessoas:** só os **senadores em exercício**, pela lista oficial do Senado (D026). Quem sai do mandato sai do site.
 
-**Estado atual (18/11/2026):** escopo, regras e protótipo da página fechados; fontes e conferências documentadas; **a coleta, a validação e a limpeza do pipeline existem** (veja [pipeline/README.md](pipeline/README.md)); a **verificação automática da cota** (D035), a **da equipe do gabinete** (D036) e a **da moradia** (D039) também; ainda sem as outras verificações (contato e salário), banco no Neon, API ou site. Próximo passo: as outras verificações e o banco (ordem de construção em [docs/escopo.md](docs/escopo.md)). Índice dos documentos em [docs/README.md](docs/README.md).
+**Estado atual (18/11/2026):** escopo, regras e protótipo da página fechados; fontes e conferências documentadas; **a coleta, a validação e a limpeza do pipeline existem** (veja [pipeline/README.md](pipeline/README.md)); a **verificação automática da cota** (D035), a **da equipe do gabinete** (D036) e a **da moradia** (D039) e a **do contato** (D040) também; ainda sem a verificação do salário, banco no Neon, API ou site. Próximo passo: as outras verificações e o banco (ordem de construção em [docs/escopo.md](docs/escopo.md)). Índice dos documentos em [docs/README.md](docs/README.md).
 
 ## 2. Princípios inegociáveis
 

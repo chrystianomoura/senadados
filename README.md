@@ -2,7 +2,7 @@
 
 > Os valores que o Senado publica sobre os senadores em exercício, explicados para qualquer pessoa.
 
-**Status (12/11/2026):** escopo e protótipo da página fechados, fontes conferidas; **a coleta, a limpeza e as verificações da cota, da equipe e da moradia existem** (18/11/2026). Este documento descreve o que o projeto **vai ser** e **vai mudar** conforme aprendermos mais. Cada mudança relevante é registrada com o motivo (veja [Como este projeto é documentado](#como-este-projeto-é-documentado)).
+**Status (12/11/2026):** escopo e protótipo da página fechados, fontes conferidas; **a coleta, a limpeza e as verificações da cota, da equipe, da moradia e do contato existem** (18/11/2026). Este documento descreve o que o projeto **vai ser** e **vai mudar** conforme aprendermos mais. Cada mudança relevante é registrada com o motivo (veja [Como este projeto é documentado](#como-este-projeto-é-documentado)).
 
 ---
 
@@ -209,7 +209,7 @@ Este roadmap é uma intenção, não uma promessa, e será revisado conforme os 
 
 ## Como rodar
 
-Hoje existem a coleta, a limpeza e as verificações da cota, da equipe e da moradia. Instruções em [pipeline/README.md](pipeline/README.md). Para ver o protótipo da página, abra `design/perfil-do-senador.html` no navegador.
+Hoje existem a coleta, a limpeza e as verificações da cota, da equipe, da moradia e do contato. Instruções em [pipeline/README.md](pipeline/README.md). Para ver o protótipo da página, abra `design/perfil-do-senador.html` no navegador.
 
 ## Licença e citação dos dados
 
