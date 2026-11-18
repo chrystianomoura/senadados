@@ -174,7 +174,7 @@ def test_parse_years(text, expected):
     assert coleta.parse_years(text) == expected
 
 
-@pytest.mark.parametrize("text", ["2007", "2030-2031", "2026-2024", "abc"])
+@pytest.mark.parametrize("text", ["2007", "2099-2100", "2026-2024", "abc"])
 def test_parse_years_recusa_valores_invalidos(text):
     with pytest.raises(ValueError):
         coleta.parse_years(text)

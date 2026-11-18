@@ -13,3 +13,9 @@ FIRST_YEAR = 2008
 ROOT = Path(__file__).resolve().parents[3]
 RAW_DIR = ROOT / "data" / "raw"
 CLEAN_DB = ROOT / "data" / "limpo" / "senadados.sqlite"
+
+# Acima dessa fração de falhas num dado descritivo, ele some para todos (D037).
+MAX_FAILURE_RATE = 0.05
+
+# Identificação do pipeline nas consultas ao Senado (sem dados pessoais).
+USER_AGENT = "senadados-pipeline/0.1"

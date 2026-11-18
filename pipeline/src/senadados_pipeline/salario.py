@@ -51,19 +51,24 @@ from senadados_pipeline.coleta import (
     read_manifest,
     write_json,
 )
-from senadados_pipeline.config import BASE_URL, CLEAN_DB, PORTAL_URL, RAW_DIR
+from senadados_pipeline.config import (
+    BASE_URL,
+    CLEAN_DB,
+    MAX_FAILURE_RATE,
+    PORTAL_URL,
+    RAW_DIR,
+    USER_AGENT,
+)
 from senadados_pipeline.equipe import normalize
 from senadados_pipeline.verificacao import (
     IDENTICAL,
     UNEXPLAINED,
     VerificacaoError,
-    check_same_snapshot,
+    check_snapshot,
     ensure_verificacoes_table,
 )
 
 MANIFEST_KEY = "salario"
-MAX_FAILURE_RATE = 0.05
-USER_AGENT = "senadados-pipeline/0.1"
 MONTHS_BACK = 3
 DETAIL_URL = "https://www.senado.leg.br/transparencia/rh/servidores/detalhe.asp"
 
@@ -362,12 +367,7 @@ def run(
     if not database.exists():
         raise VerificacaoError(f"falta {database}; rode a limpeza antes")
     with closing(sqlite3.connect(database)) as connection:
-        reference = connection.execute(
-            "SELECT valor FROM metadados WHERE chave = 'data_referencia'"
-        ).fetchone()
-        if reference is None:
-            raise VerificacaoError("o banco limpo não registra a data de referência")
-        check_same_snapshot(read_manifest(raw_dir), [], date.fromisoformat(reference[0]), today)
+        check_snapshot(connection, raw_dir, [], today)
         senators = {
             code: (name, uf)
             for code, name, uf in connection.execute("SELECT cod_senador, nome, uf FROM senadores")

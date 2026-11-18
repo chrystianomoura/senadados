@@ -204,6 +204,18 @@ def check_same_snapshot(
         )
 
 
+def check_snapshot(
+    connection: sqlite3.Connection, raw_dir: Path, years: Iterable[int], today: date
+) -> None:
+    """Confere, no banco limpo e no registro da coleta, que tudo é do mesmo dia."""
+    reference = connection.execute(
+        "SELECT valor FROM metadados WHERE chave = 'data_referencia'"
+    ).fetchone()
+    if reference is None:
+        raise VerificacaoError("o banco limpo não registra a data de referência")
+    check_same_snapshot(read_manifest(raw_dir), years, date.fromisoformat(reference[0]), today)
+
+
 # ---------------------------------------------------------------------------
 # Banco local
 # ---------------------------------------------------------------------------
@@ -281,12 +293,7 @@ def run(raw_dir: Path, database: Path, years: list[int] | None, client: httpx.Cl
         missing = [year for year in years if year not in stored]
         if missing:
             raise VerificacaoError(f"o banco limpo não tem despesas de {missing}")
-        reference = connection.execute(
-            "SELECT valor FROM metadados WHERE chave = 'data_referencia'"
-        ).fetchone()
-        if reference is None:
-            raise VerificacaoError("o banco limpo não registra a data de referência")
-        check_same_snapshot(read_manifest(raw_dir), years, date.fromisoformat(reference[0]), today)
+        check_snapshot(connection, raw_dir, years, today)
 
         codes = [row[0] for row in connection.execute("SELECT cod_senador FROM senadores")]
         resumos = fetch_resumos(client, codes, years)
