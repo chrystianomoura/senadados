@@ -65,7 +65,7 @@ Todo número tem origem oficial, uma consulta que o reproduz e uma data. Quando 
 - **Tudo ou nada:** uma informação que compara senadores só aparece se todos a tiverem e os dados baterem para todos. Se um só falhar, ninguém a recebe. Exceção: dados de contato (telefone, e-mail) aparecem para quem os tem.
 - **Sem selos na tela:** o que não se comprova simplesmente não é mostrado. A lista do que está pendente fica na página de verificações.
 
-O primeiro teste: a cota de 2026, das despesas detalhadas contra o resumo do Senado. **72 de 79 senadores batem no centavo**, e as 7 diferenças são exatamente linhas sem categoria que o resumo não conta. Os resultados ficam numa página pública de verificações.
+O primeiro teste: a cota de 2026, das despesas detalhadas contra o resumo do Senado. **74 de 81 senadores batem no centavo** (conferido em 18/11/2026), e as 7 diferenças são exatamente linhas sem categoria que o resumo não conta. Os resultados ficam numa página pública de verificações.
 
 ---
 
@@ -85,7 +85,7 @@ Todos vêm do **próprio Senado Federal**, são públicos e **não exigem login 
 - Os arquivos têm sujeira (formatos de número misturados, datas fora do ano, valores negativos que parecem estornos). Parte do trabalho do projeto é tratar isso.
 - O Senado pode corrigir dados antigos. Rodar o projeto hoje e daqui a seis meses pode dar valores ligeiramente diferentes.
 - Os anos antigos têm menos informação: em **2008 nenhuma despesa traz o CNPJ/CPF do fornecedor nem a data da nota**. De 2009 em diante o fornecedor existe. A descrição da despesa também falha: está vazia até 2010 e vem preenchida em só cerca de 35 a 40% dos registros recentes.
-- O Senado deixa de fora do resumo algumas linhas de despesa sem categoria (60 linhas em 2026, R$ 164.450,50). O site as mostra como "Sem categoria", com a explicação.
+- O Senado deixa de fora do resumo algumas linhas de despesa sem categoria (59 linhas em 2026, R$ 162.260,84, entre os senadores em exercício). O site as mostra como "Sem categoria", com a explicação.
 - Os termos de uso exigem, no máximo, **citar a fonte**; a licença não tem nome. Detalhes em [docs/fontes-de-dados.md](docs/fontes-de-dados.md).
 - A página de navegação dos dados abertos do Senado exigiu login quando testei, mas os arquivos e as APIs em si baixaram sem nenhuma autenticação.
 

@@ -69,7 +69,7 @@ Não há selos como "comprovado" ou "fonte única" na tela. As palavras técnica
 |---|---|---|
 | **Quem é** | Foto oficial com crédito, partido, estado, mandato, titular ou suplente. | Pronto para provar |
 | **Salário** | Remuneração do último mês da folha | Só onde a ligação com o senador for inequívoca |
-| **Verba (a cota)** | Total do ano e do mês, mês a mês, por categoria, e a posição entre os outros senadores em três faixas | Provado em 2026 (72 de 79 idênticos, 7 explicados) |
+| **Verba (a cota)** | Total do ano e do mês, mês a mês, por categoria, e a posição entre os outros senadores em três faixas | Provado em 2026 (74 de 81 idênticos, 7 explicados) |
 | **Para onde vai** | Maiores fornecedores (empresas) e "pessoas físicas" agrupadas ([D008](decisoes.md#d008-pessoas-físicas-agrupadas-e-cpf-nunca-exibido)) | A partir de 2009 |
 | **Gabinete: onde fica, contato e equipe** | **Onde fica** (endereço), **como falar** (telefones completos, um por linha, e e-mail, só para quem tem) e o número de pessoas, do resumo oficial. **Sem custo estimado** ([D031](decisoes.md#d031-onde-fica-o-gabinete-endereço-entra-telefone-e-mail-e-escritório-de-apoio-ficam-fora)) | Endereço, telefone e e-mail provados; número de pessoas a provar por gabinete |
 | **Moradia** | Uso de imóvel funcional e de auxílio-moradia **mês a mês** | 9 de 12 divergências explicadas; 3 pendentes |
@@ -95,7 +95,7 @@ Não há selos como "comprovado" ou "fonte única" na tela. As palavras técnica
 - Como citar o Senadados e a fonte original.
 
 ### 4.5 Verificações (nova)
-- A lista de checagens feitas e o resultado de cada uma, por exemplo "cota de 2026: 72 de 79 idênticos, 7 explicados".
+- A lista de checagens feitas e o resultado de cada uma, por exemplo "cota de 2026: 74 de 81 idênticos, 7 explicados".
 - As divergências encontradas nos dados do Senado, **agregadas e sem nomes**, com a explicação quando existe.
 - A frase fixa: "verificamos se as bases do Senado concordam entre si. Não auditamos os dados."
 - Canal para **reportar um erro** e registro público das correções.
@@ -117,7 +117,7 @@ Não há selos como "comprovado" ou "fonte única" na tela. As palavras técnica
 2. **Anos sem fornecedor:** o bloco "Para onde vai" começa em **2009**. Em 2008 o site explica que o dado não existe.
 3. **Pessoas físicas:** nunca com nome nem CPF; sempre agrupadas ([D008](decisoes.md#d008-pessoas-físicas-agrupadas-e-cpf-nunca-exibido)).
 4. **Equipe:** só números, nunca nomes ([D007](decisoes.md#d007-equipe-do-gabinete-só-em-números)).
-5. **Linhas sem categoria:** aparecem como "Sem categoria". O total da verba inclui essas linhas, e o site explica que o resumo do Senado não as conta (60 linhas, R$ 164.450,50 em 2026).
+5. **Linhas sem categoria:** aparecem como "Sem categoria". O total da verba inclui essas linhas, e o site explica que o resumo do Senado não as conta (59 linhas, R$ 162.260,84 em 2026, entre os senadores em exercício).
 6. **Valores negativos:** somados normalmente, com a nota. A causa não foi confirmada.
 7. **Dado que não se comprova:** não aparece, e nunca é preenchido com estimativa. A página "Verificações" diz o que está pendente.
 8. **Nenhum termo jurídico:** o site não usa "legal", "ilegal", "irregular" nem "teto".

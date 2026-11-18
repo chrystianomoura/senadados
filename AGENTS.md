@@ -100,6 +100,7 @@ senador fica errada.
 - **"De onde vem este número"** segue sempre o mesmo molde, em linguagem simples (sem "API", "consulta" ou siglas sem explicação): **onde o Senado publica**, **como chegamos neste número** e **atualizado em**, com o link para o portal do Senado.
 - **Tudo ou nada (D025, D031).** Um dado que vale para todos os senadores só aparece se todos em exercício o tiverem e os dados baterem para todos. Se um só falhar, ninguém o recebe. **Exceção:** dados de contato (telefone, e-mail) aparecem para quem os tem.
 - **Falhe fechado.** Se uma verificação quebrar, o número fica oculto e o motivo vai para o relatório de verificações. A prova real mostra consistência entre bases, não é auditoria; o site diz isso.
+- **Compare bases na mesma foto dos dados.** Uma conferência entre duas bases do Senado só vale se as duas foram baixadas no mesmo dia, e o resultado registra a data. Números de dias diferentes geram divergências falsas.
 - **Toda informação exibida indica fonte e data de atualização.**
 - **CPF nunca é exibido por inteiro, e pessoas físicas aparecem agrupadas, sem nome** (decisão D008; o mantenedor aceitou o risco de LGPD por serem dados públicos, e as proteções continuam). A coluna `CNPJ_CPF` traz CPFs completos de pessoas físicas. Veja a decisão D008 em [docs/decisoes.md](docs/decisoes.md).
 - **Citação da fonte:** os termos do Senado exigem, no máximo, citar a proveniência. Toda página mostra a fonte e a data de atualização (D009). Detalhes dos termos em [docs/fontes-de-dados.md](docs/fontes-de-dados.md).

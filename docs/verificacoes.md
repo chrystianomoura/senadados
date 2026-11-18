@@ -26,7 +26,7 @@ Todos gratuitos e **sem chave**.
 
 | # | Conferência | Resultado | Classificação |
 |---|---|---|---|
-| 1 | Cota de 2026: despesas detalhadas × resumo | 72 de 79 idênticos; 7 explicados | Aparece |
+| 1 | Cota de 2026: despesas detalhadas × resumo | 74 de 81 idênticos; 7 explicados (18/11/2026) | Aparece |
 | 2 | Moradia: resumo anual × lista do mês | 9 de 12 explicados; 3 pendentes | 9 aparecem; 3 ficam sem informação |
 | 3 | Gabinete e contato: API × página do senador | Endereço igual nos 81; telefone e e-mail com ressalvas | Veja abaixo |
 | 4 | Salário: folha × senador | 78 de 81 ligados pelo nome | Os 3 sem ligação ficam sem salário |
@@ -37,10 +37,17 @@ Todos gratuitos e **sem chave**.
 
 Somei as despesas de cada senador na API e comparei com o total que o próprio Senado publica no resumo.
 
-- **72 de 79 senadores batem no centavo.**
-- **7 divergem**, entre R$ 748 e R$ 31.500. Em todos, a diferença é **exatamente a soma das linhas sem categoria**: a API as inclui e o resumo não. São **60 linhas, R$ 164.450,50** em 2026.
-- 2 senadores do resumo não têm despesa na API (o valor deles no resumo é zero).
-- **Classificação:** idêntico (72) e divergência explicada (7). Por que o resumo deixa de fora as linhas sem categoria **só o Senado pode explicar**.
+**Refeita em 18/11/2026**, com despesas e resumo baixados no mesmo dia:
+
+- **74 de 81 senadores batem no centavo.** Um deles é Jorge Kajuru, que não tem despesa e tem resumo zero.
+- **7 divergem**, entre R$ 748,39 e R$ 35.000,00. Em todos, a diferença é **exatamente a soma das linhas sem categoria**: a API as inclui e o resumo não. Entre os senadores em exercício são **59 linhas, R$ 162.260,84** em 2026.
+- **Classificação:** idêntico (74) e divergência explicada (7). **Nenhuma divergência sem explicação.** Por que o resumo deixa de fora as linhas sem categoria **só o Senado pode explicar**.
+
+**Primeira medição (11/11/2026):** 72 de 79 idênticos e 7 explicados, com "60 linhas, R$ 164.450,50". Dois pontos dela estavam imprecisos: o número de linhas e o valor incluíam ex-senadores (hoje, na API inteira, são 62 linhas e R$ 171.450,50, em 9 senadores; só em exercício, 59 e R$ 162.260,84), e os arquivos tinham uma foto mais antiga dos dados.
+
+**Por que os números mudaram entre 11/11 e 18/11:** o Senado continuou publicando. O resumo mudou para 59 senadores (+R$ 674.349,27 no total, e 5 totais diminuíram, o maior em R$ 13.347,28, causa não investigada). Leany Lemos, que tinha resumo zero em 11/11, passou a ter uma despesa de R$ 15.200 (competência de novembro). Os arquivos antigos de despesas foram sobrescritos sem cópia, então a comparação linha a linha não é possível; o "antes" é o resumo de 11/11, que ainda está em `data/raw/recursos/`.
+
+**Lição:** conferir duas bases só faz sentido se as duas forem baixadas **na mesma foto dos dados** (mesmo dia). A verificação automática do pipeline deve baixar tudo junto e registrar a data.
 
 ### 2. Moradia, resumo anual contra lista do mês
 
@@ -91,7 +98,7 @@ Comparei endereço do gabinete, telefones e e-mail da API (`senadores`) com a se
 - Equipe: a diferença de 1 pessoa e o gabinete com 70 pessoas; provar por gabinete antes de exibir.
 - Cota de outros anos: repetir a conferência 1 ano a ano (2023 a 2025 têm resumo; os anteriores só têm API e CSV).
 - Escritórios de apoio: contagem contra a página de cada senador (hoje fora do MVP).
-- Entender: por que o resumo deixa de fora as linhas sem categoria (344 entre 2023 e 2026); o que são os valores negativos e os ~60 documentos em formato fora do padrão; até que ano a API de recursos (`?ano=`) devolve dados.
+- Entender: por que o resumo deixa de fora as linhas sem categoria (276 entre 2023 e 2026, só em exercício, em 18/11/2026); o que são os valores negativos, os 56 documentos em formato fora do padrão e as 4 despesas com data no futuro; até que ano a API de recursos (`?ano=`) devolve dados.
 - Testemunhas fora do Senado: o **Internet Archive** acusa uma cópia do CSV de 2024 (25/10/2026), mas não consegui ler as cópias (**a testar**). O Portal da Transparência federal e o TSE **não foram verificados** como fonte de conferência.
 
 ## Fora do MVP (registrado para não se perder)

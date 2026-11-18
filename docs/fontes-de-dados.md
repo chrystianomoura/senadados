@@ -92,7 +92,7 @@ Baixei a API de despesas de **todos os anos** (174 MB em JSON, fora do git). Os 
 1. **Fornecedor existe a partir de 2009** (95,8% em 2009 e 100% depois). Só 2008 não tem CNPJ/CPF nem data da nota. O risco anterior era menor do que parecia.
 2. **A descrição (`detalhamento`) é útil só em parte e vem caindo.** Passa de 80% entre 2013 e 2018, mas está em cerca de 35 a 40% nos anos recentes, justamente os que mais interessam ao cidadão. Isso reforça que o modelo principal não pode depender de texto (veja [D006](decisoes.md#d006-modelo-de-anomalias)).
 3. **Valores negativos só existem de 2023 em diante** e são raros (menos de 0,6%). Provavelmente são estornos, o que não foi confirmado.
-4. **As categorias são estáveis.** Há 7 textos de categoria em todos os anos: cinco existem desde 2008, e "Passagens aéreas, aquáticas e terrestres nacionais" e "Serviços de Segurança Privada" entram em 2011. O texto das categorias não muda. Entre 2023 e 2026, 344 registros vêm sem categoria.
+4. **As categorias são estáveis.** Há 7 textos de categoria em todos os anos: cinco existem desde 2008, e "Passagens aéreas, aquáticas e terrestres nacionais" e "Serviços de Segurança Privada" entram em 2011. O texto das categorias não muda. Entre 2023 e 2026, 344 registros vêm sem categoria (contagem de 11/11, da API inteira, com ex-senadores; só entre os senadores em exercício são 276 em 18/11/2026).
 5. **Pessoas físicas são minoria:** 1,3% a 3,1% dos registros e 3,1% a 12,3% do valor, e a fatia vem caindo (3,5% do valor em 2024 e 2026). Mostrar só o agrupamento de pessoas físicas ([D008](decisoes.md#d008-pessoas-físicas-agrupadas-e-cpf-nunca-exibido)) esconde pouco.
 6. **Concentração moderada:** os 10 maiores fornecedores (empresas) ficam com cerca de 20% do valor nos anos recentes (o cálculo usa o CNPJ completo, então filiais da mesma empresa contam separadas).
 7. **Tipos de documento:** Nota Fiscal Eletrônica, Nota Fiscal, Cupom Fiscal, Passagem, Fatura, Recibo e outros; 3.144 registros sem tipo.
@@ -102,13 +102,13 @@ Baixei a API de despesas de **todos os anos** (174 MB em JSON, fora do git). Os 
 
 Na API, o CPF de pessoa física vem mascarado (padrão `123.***.***-45`). No CSV, vem completo (44 de 1.692 linhas nos primeiros registros de 2024). Isso reforça a escolha da API como fonte principal ([D005](decisoes.md#d005-api-como-fonte-principal-csv-para-conferência)): o pipeline nunca recebe o CPF inteiro.
 
-Há também uns 60 registros recentes com o documento em formato fora do padrão (12 ou 13 dígitos, sem pontuação), que não são nem CNPJ nem CPF. Precisam de tratamento à parte.
+Há também uns 60 registros recentes com o documento em formato fora do padrão (12 ou 13 dígitos, sem pontuação), que não são nem CNPJ nem CPF. Precisam de tratamento à parte. (Contagem de 11/11, da API inteira. Só entre os senadores em exercício, em 18/11/2026: 56 registros de 2023 a 2026, sendo 30 com 13 dígitos, 24 com 12 e 2 com 6 ou 7.)
 
 ## Quem está no escopo (senadores em exercício)
 
 - **81** em exercício em 12/11/2026: 70 titulares e 11 suplentes ([D026](decisoes.md#d026-só-senadores-em-exercício)).
 - Eles têm **153.901 dos 398.624 registros** (39%) e **47% do valor** do histórico de 2008 a 2026.
-- **79 de 81** têm despesa registrada. O primeiro ano de despesa de 33 deles é 2019, e o de 20 é 2023. Só 5 vêm de 2008.
+- **80 de 81** têm despesa registrada (conferido em 18/11/2026; só Jorge Kajuru não tem). O primeiro ano de despesa de 33 deles é 2019, o de 20 é 2023 e o de 4 é 2026. Só 5 vêm de 2008.
 - **54 dos 81 mandatos terminam em 2027.** Quando um senador sai, ele e os dados dele saem do site.
 - Os códigos de parlamentar das legislaturas 53 a 57 (681 pessoas) cobrem os 331 códigos das despesas, mas essas listas trazem só nome e sexo; **partido e UF existem só para os 81 em exercício**.
 
@@ -116,6 +116,7 @@ Há também uns 60 registros recentes com o documento em formato fora do padrão
 
 - Valor sem vírgula decimal misturado com valor com vírgula.
 - Ano `0204` em uma data (erro de digitação).
+- Datas depois do dia da coleta: em 18/11/2026, 4 despesas com data de 23/11, 26/11 e 28 e 29/12 de 2026 (2 de notas de 2025 e 2 de 2026). Ainda não se sabe se é erro de digitação ou lançamento antecipado.
 - Notas de 2023 e 2025 dentro do arquivo de 2024 (CSV). O campo `ANO` é a competência do reembolso, não a data do gasto.
 - Valores negativos (provavelmente estornos).
 - **CPF de pessoas físicas** aparecem completos no CSV (na API vêm mascarados). Veja [D008](decisoes.md#d008-pessoas-físicas-agrupadas-e-cpf-nunca-exibido).
