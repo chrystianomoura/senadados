@@ -10,7 +10,7 @@ from pandera.errors import SchemaError, SchemaErrors
 from senadados_pipeline import limpeza
 
 TODAY = date(2026, 11, 18)
-CNPJ = "11.222.333/0001-81"  # dígitos verificadores válidos
+CNPJ = "11.222.333/0001-81"  # fictício, com dígitos verificadores válidos
 
 
 def row(**changes) -> dict:
@@ -207,6 +207,11 @@ def write_raw(tmp_path, rows, year=2024, senadores=None):
     ]
     (raw / "senadores_atuais.json").write_text(json.dumps({"data": senadores}), encoding="utf-8")
     (raw / "api" / f"ceaps_{year}.json").write_text(json.dumps(rows), encoding="utf-8")
+    manifest = {
+        "senadores": "2026-11-18T10:00:00-03:00",
+        "despesas": {str(year): "2026-11-18T10:01:00-03:00"},
+    }
+    (raw / "coleta.json").write_text(json.dumps(manifest), encoding="utf-8")
     return raw
 
 
@@ -260,3 +265,101 @@ def test_build_recusa_arquivo_com_linha_de_outro_ano(tmp_path):
 def test_build_pede_a_coleta_quando_faltam_arquivos(tmp_path):
     with pytest.raises(limpeza.LimpezaError):
         limpeza.build(tmp_path / "vazio", tmp_path / "db.sqlite", TODAY)
+
+
+# --- o esquema das despesas limpas é a última barreira ----------------------
+def test_esquema_recusa_documento_de_pessoa_fisica_que_escapou():
+    result = clean(row())
+    result.loc[0, "fornecedor_doc"] = "123.***.***-09"
+    with pytest.raises((SchemaError, SchemaErrors)):
+        limpeza.clean_despesas_schema(TODAY).validate(result)
+
+
+def test_esquema_recusa_pessoa_fisica_com_nome():
+    result = clean(row(cpfCnpj="123.***.***-09"))
+    result.loc[0, "fornecedor_nome"] = "JOAO"
+    with pytest.raises((SchemaError, SchemaErrors)):
+        limpeza.clean_despesas_schema(TODAY).validate(result)
+
+
+def test_esquema_recusa_despesa_sem_data_e_sem_marcacao():
+    result = clean(row())
+    result.loc[0, "data"] = None
+    with pytest.raises((SchemaError, SchemaErrors)):
+        limpeza.clean_despesas_schema(TODAY).validate(result)
+
+
+def test_esquema_recusa_data_depois_do_dia_da_coleta():
+    result = clean(row())
+    result.loc[0, "data"] = "2026-11-19"
+    with pytest.raises((SchemaError, SchemaErrors)):
+        limpeza.clean_despesas_schema(TODAY).validate(result)
+
+
+# --- leitura dos arquivos coletados -----------------------------------------
+def test_load_raw_recusa_arquivo_que_nao_e_lista(tmp_path):
+    raw = write_raw(tmp_path, [])
+    (raw / "api" / "ceaps_2024.json").write_text('{"erro": true}', encoding="utf-8")
+    with pytest.raises(limpeza.LimpezaError, match="não é uma lista"):
+        limpeza.load_raw(raw)
+
+
+def test_load_raw_recusa_lista_de_senadores_vazia(tmp_path):
+    raw = write_raw(tmp_path, [row()], senadores=[])
+    (raw / "senadores_atuais.json").write_text('{"data": []}', encoding="utf-8")
+    with pytest.raises(limpeza.LimpezaError, match="lista de senadores"):
+        limpeza.load_raw(raw)
+
+
+def test_load_raw_pede_a_coleta_quando_nao_ha_despesas(tmp_path):
+    raw = write_raw(tmp_path, [row()])
+    (raw / "api" / "ceaps_2024.json").unlink()
+    with pytest.raises(limpeza.LimpezaError, match="nenhum arquivo de despesas"):
+        limpeza.load_raw(raw)
+
+
+# --- linha de comando -------------------------------------------------------
+def test_linha_de_comando_grava_o_banco(tmp_path, capsys):
+    raw = write_raw(tmp_path, [row()])
+    output = tmp_path / "db.sqlite"
+    code = limpeza.main(
+        ["--raw", str(raw), "--saida", str(output), "--data-referencia", "2026-11-18"]
+    )
+    assert code == 0
+    assert output.exists()
+    assert "despesas: 1" in capsys.readouterr().out
+
+
+def test_linha_de_comando_avisa_quando_a_validacao_falha(tmp_path, capsys):
+    raw = write_raw(tmp_path, [row(mes=13)])
+    code = limpeza.main(["--raw", str(raw), "--saida", str(tmp_path / "db.sqlite")])
+    assert code == 1
+    assert "erro:" in capsys.readouterr().err
+    assert not (tmp_path / "db.sqlite").exists()
+
+
+# --- a lista e as despesas precisam ser da mesma coleta ---------------------
+def test_load_raw_recusa_despesas_mais_antigas_que_a_lista(tmp_path):
+    raw = write_raw(tmp_path, [row()])
+    manifest = {
+        "senadores": "2026-11-18T12:00:00-03:00",
+        "despesas": {"2024": "2026-11-17T12:00:00-03:00"},
+    }
+    (raw / "coleta.json").write_text(json.dumps(manifest), encoding="utf-8")
+    with pytest.raises(limpeza.LimpezaError, match="2024 é mais antigo"):
+        limpeza.load_raw(raw)
+
+
+def test_load_raw_recusa_ano_sem_data_de_coleta(tmp_path):
+    raw = write_raw(tmp_path, [row()])
+    manifest = {"senadores": "2026-11-18T10:00:00-03:00", "despesas": {}}
+    (raw / "coleta.json").write_text(json.dumps(manifest), encoding="utf-8")
+    with pytest.raises(limpeza.LimpezaError, match="2024 sem data"):
+        limpeza.load_raw(raw)
+
+
+def test_load_raw_recusa_dados_sem_registro_de_coleta(tmp_path):
+    raw = write_raw(tmp_path, [row()])
+    (raw / "coleta.json").unlink()
+    with pytest.raises(limpeza.LimpezaError, match="lista de senadores não tem data"):
+        limpeza.load_raw(raw)

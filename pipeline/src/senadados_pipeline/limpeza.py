@@ -15,22 +15,21 @@ import re
 import sqlite3
 import sys
 from contextlib import closing
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 
 import pandas as pd
 from pandera.errors import SchemaError, SchemaErrors
 
+from senadados_pipeline.coleta import read_manifest
+from senadados_pipeline.config import CLEAN_DB, FIRST_YEAR, RAW_DIR
 from senadados_pipeline.esquemas import (
     CLEAN_SENADORES,
-    FIRST_YEAR,
     RAW_DESPESAS,
     RAW_SENADORES,
     clean_despesas_schema,
 )
 
-DEFAULT_RAW = Path(__file__).resolve().parents[3] / "data" / "raw"
-DEFAULT_OUTPUT = Path(__file__).resolve().parents[3] / "data" / "limpo" / "senadados.sqlite"
 NO_CATEGORY = "Sem categoria"
 
 CNPJ_FORMAT = re.compile(r"^\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}$")
@@ -154,6 +153,31 @@ def clean_despesas(raw: pd.DataFrame, codes: set[int], reference_date: date) -> 
 # ---------------------------------------------------------------------------
 # Leitura, montagem e gravação
 # ---------------------------------------------------------------------------
+def check_collection_order(manifest: dict, years: list[int]) -> None:
+    """Recusa dados coletados em momentos incompatíveis.
+
+    Cada ano é filtrado pela lista de senadores da hora da coleta. Se a lista foi
+    atualizada depois das despesas de um ano, um senador que entrou nesse intervalo
+    ficaria sem o histórico daquele ano, e ninguém perceberia.
+    """
+    if not manifest.get("senadores"):
+        raise LimpezaError("a lista de senadores não tem data de coleta; rode a coleta de novo")
+    listed_at = datetime.fromisoformat(manifest["senadores"])
+    problems = []
+    for year in years:
+        stamp = manifest.get("despesas", {}).get(str(year))
+        if not stamp:
+            problems.append(f"{year} sem data de coleta")
+        elif datetime.fromisoformat(stamp) < listed_at:
+            problems.append(f"{year} é mais antigo que a lista de senadores")
+    if problems:
+        raise LimpezaError(
+            "coleta inconsistente: "
+            + "; ".join(problems)
+            + ". Rode a coleta de novo com --sobrescrever para todos os anos."
+        )
+
+
 def load_raw(raw_dir: Path) -> tuple[list[dict], list[dict], list[int]]:
     """Lê a lista de senadores e as despesas de todos os anos coletados."""
     list_path = raw_dir / "senadores_atuais.json"
@@ -180,6 +204,7 @@ def load_raw(raw_dir: Path) -> tuple[list[dict], list[dict], list[int]]:
             raise LimpezaError(f"{path.name} tem {len(wrong)} linha(s) de outro ano")
         rows.extend(data)
         years.append(year)
+    check_collection_order(read_manifest(raw_dir), years)
     return senadores, rows, years
 
 
@@ -224,12 +249,8 @@ def build(raw_dir: Path, output: Path, reference_date: date) -> dict:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Valida e limpa as despesas coletadas.")
-    parser.add_argument(
-        "--raw", type=Path, default=DEFAULT_RAW, help="pasta com os dados coletados"
-    )
-    parser.add_argument(
-        "--saida", type=Path, default=DEFAULT_OUTPUT, help="arquivo SQLite de saída"
-    )
+    parser.add_argument("--raw", type=Path, default=RAW_DIR, help="pasta com os dados coletados")
+    parser.add_argument("--saida", type=Path, default=CLEAN_DB, help="arquivo SQLite de saída")
     parser.add_argument(
         "--data-referencia",
         type=date.fromisoformat,

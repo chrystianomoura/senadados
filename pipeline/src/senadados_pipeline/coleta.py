@@ -20,10 +20,12 @@ from pathlib import Path
 
 import httpx
 
-BASE_URL = "https://adm.senado.gov.br/adm-dadosabertos/api/v1"
-FIRST_YEAR = 2008
+from senadados_pipeline.config import BASE_URL, FIRST_YEAR, RAW_DIR
+
 MANIFEST = "coleta.json"
-DEFAULT_OUTPUT = Path(__file__).resolve().parents[3] / "data" / "raw"
+
+# Erros que costumam passar sozinhos: vale tentar de novo. Os outros (404, 400...) não.
+TRANSIENT_STATUS = {429, 500, 502, 503, 504}
 
 
 class ColetaError(Exception):
@@ -38,10 +40,14 @@ def get_json(client: httpx.Client, path: str, *, attempts: int = 3, wait: float 
             response = client.get(path)
             response.raise_for_status()
             return response.json()
-        except (httpx.TransportError, httpx.HTTPStatusError, ValueError) as error:
+        except httpx.HTTPStatusError as error:
             last_error = error
-            if attempt < attempts:
-                time.sleep(wait * attempt)
+            if error.response.status_code not in TRANSIENT_STATUS:
+                break
+        except (httpx.TransportError, ValueError) as error:
+            last_error = error
+        if attempt < attempts:
+            time.sleep(wait * attempt)
     raise ColetaError(f"falha ao ler {path}: {last_error}") from last_error
 
 
@@ -173,7 +179,7 @@ def main(argv: list[str] | None = None) -> int:
         default=f"{FIRST_YEAR}-{date.today().year}",
         help="anos das despesas, por exemplo 2026, 2023-2026 ou 2008,2010-2012",
     )
-    parser.add_argument("--saida", type=Path, default=DEFAULT_OUTPUT, help="pasta de saída")
+    parser.add_argument("--saida", type=Path, default=RAW_DIR, help="pasta de saída")
     parser.add_argument(
         "--sobrescrever",
         action="store_true",

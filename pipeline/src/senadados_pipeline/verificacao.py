@@ -29,8 +29,9 @@ from pathlib import Path
 
 import httpx
 
-from senadados_pipeline.coleta import BASE_URL, ColetaError, get_json, parse_years, read_manifest
-from senadados_pipeline.limpeza import DEFAULT_OUTPUT, DEFAULT_RAW, NO_CATEGORY
+from senadados_pipeline.coleta import ColetaError, get_json, parse_years, read_manifest
+from senadados_pipeline.config import BASE_URL, CLEAN_DB, RAW_DIR
+from senadados_pipeline.limpeza import NO_CATEGORY
 
 # Nome da categoria no resumo -> nome oficial da categoria nas despesas.
 # O resumo usa nomes encurtados; um nome que não esteja aqui impede a verificação.
@@ -106,6 +107,7 @@ def fetch_resumos(
     client: httpx.Client, codes: Iterable[int], years: Iterable[int], *, workers: int = 8
 ) -> dict[tuple[int, int], tuple[dict[str, int], int]]:
     """Baixa o resumo de cada senador em cada ano (todos de uma vez, na mesma foto)."""
+    codes, years = list(codes), list(years)
     pairs = [(code, year) for year in years for code in codes]
 
     def one(pair):
@@ -292,10 +294,8 @@ def run(raw_dir: Path, database: Path, years: list[int] | None, client: httpx.Cl
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Verifica a cota contra o resumo do Senado.")
-    parser.add_argument(
-        "--raw", type=Path, default=DEFAULT_RAW, help="pasta com os dados coletados"
-    )
-    parser.add_argument("--banco", type=Path, default=DEFAULT_OUTPUT, help="banco SQLite limpo")
+    parser.add_argument("--raw", type=Path, default=RAW_DIR, help="pasta com os dados coletados")
+    parser.add_argument("--banco", type=Path, default=CLEAN_DB, help="banco SQLite limpo")
     parser.add_argument("--anos", default=None, help="anos a verificar, por exemplo 2023-2026")
     args = parser.parse_args(argv)
 

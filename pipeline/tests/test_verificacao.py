@@ -17,7 +17,7 @@ OTHER_OFFICIAL = v.CATEGORY_MAP[OTHER_SHORT]
 
 def resumo(**values) -> tuple[dict[str, int], int]:
     """Resumo com todas as categorias (zeradas) e os valores pedidos, em centavos."""
-    categories = {name: 0 for name in v.CATEGORY_MAP}
+    categories = dict.fromkeys(v.CATEGORY_MAP, 0)
     categories.update(values)
     return categories, sum(categories.values())
 
@@ -187,7 +187,7 @@ def make_client(by_senator: dict[int, dict[str, float]]) -> httpx.Client:
     return httpx.Client(base_url="https://example.test", transport=httpx.MockTransport(handler))
 
 
-FULL = {name: 0.0 for name in v.CATEGORY_MAP}
+FULL = dict.fromkeys(v.CATEGORY_MAP, 0.0)
 
 
 def test_run_verifica_e_grava_o_resultado(tmp_path):
@@ -268,7 +268,7 @@ def test_falha_de_rede_no_resumo_interrompe_sem_gravar(tmp_path, monkeypatch):
     write_manifest(tmp_path / "raw")
     client = httpx.Client(
         base_url="https://example.test",
-        transport=httpx.MockTransport(lambda request: httpx.Response(503)),
+        transport=httpx.MockTransport(lambda _request: httpx.Response(503)),
     )
 
     with pytest.raises(v.VerificacaoError):
@@ -277,3 +277,19 @@ def test_falha_de_rede_no_resumo_interrompe_sem_gravar(tmp_path, monkeypatch):
     with closing(sqlite3.connect(database)) as connection:
         tables = {row[0] for row in connection.execute("SELECT name FROM sqlite_master")}
     assert "verificacao_cota" not in tables
+
+
+def test_run_recusa_banco_sem_data_de_referencia(tmp_path):
+    database = tmp_path / "db.sqlite"
+    make_database(database)
+    with closing(sqlite3.connect(database)) as connection, connection:
+        connection.execute("DELETE FROM metadados")
+    write_manifest(tmp_path / "raw")
+    with pytest.raises(v.VerificacaoError, match="data de referência"):
+        v.run(tmp_path / "raw", database, None, make_client({}), TODAY)
+
+
+def test_linha_de_comando_avisa_quando_falta_o_banco(tmp_path, capsys):
+    code = v.main(["--raw", str(tmp_path), "--banco", str(tmp_path / "nao-existe.sqlite")])
+    assert code == 1
+    assert "limpeza" in capsys.readouterr().err

@@ -141,7 +141,7 @@ def test_tenta_de_novo_quando_a_rede_falha(monkeypatch):
     monkeypatch.setattr(coleta.time, "sleep", lambda _: None)
     attempts = []
 
-    def handler(request: httpx.Request) -> httpx.Response:
+    def handler(_request: httpx.Request) -> httpx.Response:
         attempts.append(1)
         if len(attempts) < 3:
             return httpx.Response(503)
@@ -156,7 +156,7 @@ def test_desiste_depois_de_varias_falhas(monkeypatch):
     monkeypatch.setattr(coleta.time, "sleep", lambda _: None)
     client = httpx.Client(
         base_url="https://example.test",
-        transport=httpx.MockTransport(lambda request: httpx.Response(503)),
+        transport=httpx.MockTransport(lambda _request: httpx.Response(503)),
     )
     with pytest.raises(coleta.ColetaError):
         coleta.get_json(client, "/x")
@@ -178,3 +178,28 @@ def test_parse_years(text, expected):
 def test_parse_years_recusa_valores_invalidos(text):
     with pytest.raises(ValueError):
         coleta.parse_years(text)
+
+
+def test_nao_tenta_de_novo_quando_o_erro_nao_passa_sozinho(monkeypatch):
+    monkeypatch.setattr(coleta.time, "sleep", lambda _: None)
+    attempts = []
+
+    def handler(_request: httpx.Request) -> httpx.Response:
+        attempts.append(1)
+        return httpx.Response(404)
+
+    client = httpx.Client(base_url="https://example.test", transport=httpx.MockTransport(handler))
+    with pytest.raises(coleta.ColetaError):
+        coleta.get_json(client, "/x")
+    assert len(attempts) == 1
+
+
+def test_falha_se_um_senador_da_lista_nao_tiver_codigo(tmp_path):
+    routes = {"/api/v1/senadores": {"data": [{"nomeParlamentar": "SEM CODIGO"}]}}
+    with pytest.raises(coleta.ColetaError):
+        coleta.collect(make_client(routes), tmp_path, [2024], log=lambda _: None)
+
+
+def test_linha_de_comando_recusa_ano_invalido(capsys):
+    assert coleta.main(["--anos", "2007"]) == 1
+    assert "erro:" in capsys.readouterr().err

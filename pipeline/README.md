@@ -38,6 +38,7 @@ uv run python -m senadados_pipeline.limpeza
 | Regra | Motivo |
 |---|---|
 | Coluna nova ou faltando, `id` repetido, mês fora de 1 a 12 ou valor com mais de 2 casas **param tudo** | O Senado mudou algo: melhor avisar do que gravar dado errado |
+| Despesas de um ano **mais antigas que a lista de senadores**, ou sem data de coleta, **param tudo** | Um senador que entrou no intervalo ficaria sem o histórico daquele ano, sem ninguém perceber |
 | Categoria vazia vira "Sem categoria" | O site mostra essas linhas com explicação |
 | Valor guardado em **centavos inteiros** | A soma bate no centavo, sem erro de arredondamento |
 | Fornecedor vira `empresa` (CNPJ com dígitos válidos), `pessoa_fisica`, `sem_documento` ou `outro` | O site trata cada um de um jeito |

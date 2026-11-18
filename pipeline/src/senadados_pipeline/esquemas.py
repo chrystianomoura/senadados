@@ -12,7 +12,8 @@ from datetime import date
 
 from pandera.pandas import Check, Column, DataFrameSchema
 
-FIRST_YEAR = 2008
+from senadados_pipeline.config import FIRST_YEAR
+
 FIRST_DATE = f"{FIRST_YEAR}-01-01"
 SUPPLIER_TYPES = ["empresa", "pessoa_fisica", "outro", "sem_documento"]
 
@@ -139,12 +140,3 @@ def clean_despesas_schema(reference_date: date) -> DataFrameSchema:
         strict=True,
         name="despesas limpas",
     )
-
-
-__all__ = [
-    "CLEAN_SENADORES",
-    "RAW_DESPESAS",
-    "RAW_SENADORES",
-    "SUPPLIER_TYPES",
-    "clean_despesas_schema",
-]
