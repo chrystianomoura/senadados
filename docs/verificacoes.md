@@ -27,7 +27,7 @@ Todos gratuitos e **sem chave**.
 | # | Conferência | Resultado | Classificação |
 |---|---|---|---|
 | 1 | Cota por ano: despesas detalhadas × resumo, por categoria | 2010 a 2026: tudo bate (2026: 73 idênticos, 7 explicados); 2008 e 2009: 5 senadores sem explicação em cada | 2010 a 2026 aparecem; 2008 e 2009 ficam ocultos |
-| 2 | Moradia: resumo anual × lista do mês | 9 de 12 explicados; 3 pendentes | 9 aparecem; 3 ficam sem informação |
+| 2 | Moradia: resumo da API × tela × página mensal × lista do mês | 76 idênticos, 1 explicado, 4 pendentes, 0 sem explicação (18/11/2026) | Aparece para 77; 4 ficam sem informação até o mês fechar |
 | 3 | Gabinete e contato: API × página do senador | Endereço igual nos 81; telefone e e-mail com ressalvas | Veja abaixo |
 | 4 | Salário: folha × senador | 78 de 81 ligados pelo nome | Os 3 sem ligação ficam sem salário |
 | 5 | Equipe: resumo × lista de servidores, por gabinete e vínculo | 80 de 81 idênticos; 1 sem explicação (18/11/2026) | Aparece para 80; 1 gabinete oculto (D037) |
@@ -66,7 +66,16 @@ Agora é código (`pipeline/`, [D035](decisoes.md#d035-verificação-automática
 
 **2008 e 2009:** em 2008 o resumo do Senado vem **vazio** (valor zero) para os 5 senadores que já tinham despesa; em 2009 o resumo é **menor** que as despesas (por exemplo, R$ 129.049,97 contra R$ 156.517,14 num caso), e a diferença não é a das linhas sem categoria. Não sabemos o motivo (o resumo pode cobrir só parte do ano, mas isso **não foi confirmado**). Pela regra da D025, a cota desses dois anos **não aparece**.
 
-### 2. Moradia, resumo anual contra lista do mês
+### 2. Moradia, quatro fontes do Senado
+
+**Refeita em 18/11/2026 pela verificação automática** ([D039](decisoes.md#d039-verificação-automática-da-moradia-mês-a-mês)). Para cada um dos 81 senadores, compara: (1) o resumo anual da API, (2) o resumo da tela do portal ("Utilizou (em 10 meses)"), (3) a página mensal do portal, que traz o uso mês a mês, e (4) a lista do mês, da API, que diz quem usa o benefício agora.
+
+- **As três primeiras concordam nos 81**, no sim ou não e no número de meses.
+- **1 explicado:** um senador tem "Renúncia ao benefício" na tela, nos dois benefícios, e "Não utilizou" na API. É a mesma coisa dita de dois jeitos.
+- **4 pendentes:** usaram auxílio-moradia até outubro (último mês da página mensal), e a lista de hoje diz que não usam. **São períodos diferentes**, e o mês de novembro ainda não está na página mensal. A causa provável é essa, mas **não está provada**.
+- **0 sem explicação.** A moradia aparece para **77** senadores.
+
+**Primeira medição (12/11/2026), superada:**
 
 O resumo diz que **12** senadores "utilizaram" auxílio-moradia em 2026. A lista do mês diz que **1** recebe. Cruzei os 12 casos com a página mensal de benefícios:
 
@@ -121,7 +130,7 @@ Comparei endereço do gabinete, telefones e e-mail da API (`senadores`) com a se
 
 ## Pendências de prova
 
-- Moradia: os **3 casos** pendentes (reconferir quando a página mensal incluir novembro).
+- Moradia: os **4 casos** pendentes (a lista de hoje difere do último mês da página mensal; reconferir quando ela incluir novembro). A verificação diária faz isso sozinha.
 - Salário: 3 suplentes sem correspondência e um titular com valor diferente.
 - Equipe: 1 efetivo a mais no resumo do gabinete de Camilo Santana, sem explicação. A equipe desse gabinete fica oculta; os outros 80 aparecem.
 - Cota de 2008 e 2009: o resumo de 2008 está vazio e o de 2009 é menor que as despesas; só o Senado pode explicar. Ficam ocultos.

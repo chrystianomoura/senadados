@@ -51,6 +51,7 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 | D036 | Verificação automática da equipe do gabinete, por vínculo | Vale (a consequência foi substituída pela D037) |
 | D037 | Exibição por tipo de dado e freio de segurança | Vale |
 | D038 | Documento público de divergências, com prova em imagem | Vale |
+| D039 | Verificação automática da moradia, mês a mês | Vale |
 
 ---
 
@@ -446,4 +447,20 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
   - A **tela do portal e a exportação da mesma página divergem** no bloco de pessoal de um gabinete. Isso reforça que o resumo da API (D015) e a tela não são a mesma coisa, e a tela está de acordo com a lista de servidores.
   - O **número "equipe" depende da definição.** O Senadados usa o do resumo (comissionados, efetivos e requisitados) e **deve dizer o que ele inclui**, para o cidadão que comparar com a tela (que soma estagiários e terceirizados) não achar um dos dois errado.
 - **Cuidados:** os prints são fotos de 18/11/2026 e podem deixar de refletir a tela se o Senado atualizar os dados (de fato, a divergência do item 1 foi vista também na API às 16h46, e pode ser corrigida a qualquer momento). Os recortes não mostram foto de senador. A responsabilidade por manter o documento correto é do projeto: se o Senado corrigir um caso, ele deve ser atualizado ou retirado.
+- **Status:** aceita.
+
+## D039: Verificação automática da moradia, mês a mês
+
+- **Contexto:** a D028 manda mostrar o uso de auxílio-moradia e de imóvel funcional **mês a mês**, só para quem foi provado. Em 12/11 havia 3 casos pendentes, em que o resumo anual e a lista do mês pareciam divergir.
+- **Decisão (18/11/2026):** a verificação virou código (`python -m senadados_pipeline.moradia`). Para cada senador compara **quatro fontes** do Senado, baixadas na hora: (1) o resumo anual da API, (2) o resumo da tela do portal ("Utilizou (em 10 meses)", "Não utilizou" ou "Renúncia ao benefício"), (3) a **página mensal** do portal, a única com o uso mês a mês, e (4) a **lista do mês**, da API, que diz quem usa agora.
+  - **`identico`:** as quatro concordam (sim ou não, número de meses e último mês).
+  - **`explicado`:** a tela diz "renúncia ao benefício" onde a API diz "não utilizou". Quem renuncia não usa.
+  - **`pendente`:** as três primeiras concordam, mas a lista de hoje difere do **último mês** da página mensal. São períodos diferentes, e isso **não está provado** como causa. O benefício daquele senador some até a página mensal alcançar o mês da lista.
+  - **`sem_explicacao`:** qualquer outra diferença, página fora do formato ou falha de coleta do senador.
+  - **Exibição (D037):** moradia é dado descritivo, aparece para `identico` e `explicado`. **Só `sem_explicacao` conta para o freio de segurança de 5%**: o `pendente` tem causa provável conhecida (defasagem entre períodos) e esconde só o próprio senador. Sem isso, a virada normal de mês poderia derrubar a moradia de todos.
+  - O número funcional do senador, necessário para abrir a página mensal, é lido do link do portal e **não é guardado**.
+  - O resultado vai para `verificacao_moradia` e o uso mês a mês para `moradia_meses` (usar só quem tem `exibir = 1`).
+- **Resultado em 18/11/2026:** 81 senadores, **76 idênticos, 1 explicado, 4 pendentes e 0 sem explicação**, e a moradia aparece para **77**. Os 4 pendentes usaram auxílio-moradia até outubro e a lista de hoje diz que não usam. Em 12/11 eram 3 pendentes. Foram 12 senadores com auxílio-moradia e 63 com imóvel funcional, e 6 sem link para a página mensal (não usaram nenhum dos dois).
+- **Por quê:** o uso mês a mês só existe na página mensal do portal, então ele precisa ser confrontado com as outras três fontes antes de aparecer. Separar `pendente` de `sem_explicacao` evita tratar uma defasagem esperada como falha do dado.
+- **Limites:** (1) a página mensal é lida do **HTML do portal**, que não é uma API e pode mudar; se mudar, o senador cai em `sem_explicacao` e não recebe número errado. (2) O pendente se resolve sozinho quando a página mensal incluir novembro (a verificação diária reconfere). (3) Prova consistência entre bases do Senado, não é auditoria (D027). (4) A verificação não diz onde o imóvel fica nem afirma nada sobre o direito ao benefício (D024).
 - **Status:** aceita.

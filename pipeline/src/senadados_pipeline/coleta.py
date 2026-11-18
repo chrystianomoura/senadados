@@ -32,14 +32,14 @@ class ColetaError(Exception):
     """A coleta falhou ou o Senado devolveu algo diferente do esperado."""
 
 
-def get_json(client: httpx.Client, path: str, *, attempts: int = 3, wait: float = 2.0):
-    """Faz um GET e devolve o JSON. Tenta de novo em erro de rede ou de servidor."""
+def _fetch(client: httpx.Client, path: str, parse, *, attempts: int, wait: float):
+    """Faz um GET e devolve `parse(resposta)`. Tenta de novo em erro de rede ou de servidor."""
     last_error: Exception | None = None
     for attempt in range(1, attempts + 1):
         try:
             response = client.get(path)
             response.raise_for_status()
-            return response.json()
+            return parse(response)
         except httpx.HTTPStatusError as error:
             last_error = error
             if error.response.status_code not in TRANSIENT_STATUS:
@@ -49,6 +49,16 @@ def get_json(client: httpx.Client, path: str, *, attempts: int = 3, wait: float 
         if attempt < attempts:
             time.sleep(wait * attempt)
     raise ColetaError(f"falha ao ler {path}: {last_error}") from last_error
+
+
+def get_json(client: httpx.Client, path: str, *, attempts: int = 3, wait: float = 2.0):
+    """GET que devolve o JSON."""
+    return _fetch(client, path, lambda response: response.json(), attempts=attempts, wait=wait)
+
+
+def get_text(client: httpx.Client, path: str, *, attempts: int = 3, wait: float = 2.0) -> str:
+    """GET que devolve o texto da página (HTML)."""
+    return _fetch(client, path, lambda response: response.text, attempts=attempts, wait=wait)
 
 
 def fetch_senadores(client: httpx.Client) -> dict:

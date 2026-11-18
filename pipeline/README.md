@@ -1,6 +1,6 @@
 # Pipeline
 
-Código em Python que coleta, limpa e verifica os dados abertos do Senado. Hoje existem a **coleta**, a **validação e limpeza** e a **verificação da cota**; a **verificação da equipe do gabinete**; as outras (salário, moradia, contato) são a próxima etapa ([ordem de construção](../docs/escopo.md#13-ordem-de-construção)).
+Código em Python que coleta, limpa e verifica os dados abertos do Senado. Hoje existem a **coleta**, a **validação e limpeza** e a **verificação da cota**, a **da equipe do gabinete** e a **da moradia**; as outras (contato e salário) são a próxima etapa ([ordem de construção](../docs/escopo.md#13-ordem-de-construção)).
 
 ## O que a coleta faz
 
@@ -71,6 +71,19 @@ uv run python -m senadados_pipeline.equipe
 - **Nunca guarda nomes de servidores** (D007): a lista é contada por gabinete e vínculo na hora do download, e só as contagens vão para `data/raw/equipe/`.
 - Precisa do banco limpo e da lista de senadores do mesmo dia (mesma regra da cota).
 - Resultado em `verificacao_equipe` (a coluna `exibir` diz quem aparece); o resumo fica em `verificacoes` (`equipe`). A equipe aparece para os gabinetes idênticos e some para todos se mais de **5%** falharem ([D037](../docs/decisoes.md#d037-exibição-por-tipo-de-dado-e-freio-de-segurança)).
+
+## O que a verificação da moradia faz
+
+Baixa, na hora, o uso de auxílio-moradia e de imóvel funcional de cada senador e compara quatro fontes do Senado: o resumo da API, o resumo da tela do portal, a página mensal e a lista do mês ([D039](../docs/decisoes.md#d039-verificação-automática-da-moradia-mês-a-mês)).
+
+```bash
+uv run python -m senadados_pipeline.moradia
+```
+
+- Resultados: `identico`, `explicado` (a tela diz "renúncia" onde a API diz "não utilizou"), `pendente` (a lista de hoje difere do último mês da página mensal) e `sem_explicacao`.
+- Só `sem_explicacao` conta para o freio de segurança de 5% (D037). O `pendente` esconde só o próprio senador.
+- O resultado vai para `verificacao_moradia`, e o uso mês a mês, para `moradia_meses` (usar só quem tem `exibir = 1`).
+- A página mensal é lida do portal (não há API para isso). Se o Senado mudar o formato, o senador cai em `sem_explicacao`, e não recebe um número errado.
 
 ## Testes e qualidade
 
