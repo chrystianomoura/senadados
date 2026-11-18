@@ -217,6 +217,8 @@ Metas a medir, não resultados já obtidos:
 
 Cada etapa termina com a documentação atualizada e um commit no padrão do [AGENTS.md](../AGENTS.md).
 
+**Andamento (18/11/2026):** a etapa 1 começou. A **coleta** está pronta e testada (lista de senadores e despesas por ano, só de quem está em exercício, [D033](decisoes.md#d033-coleta-local-que-só-grava-quem-está-em-exercício)). Faltam a validação com Pandera, a limpeza e os testes das regras de sujeira.
+
 ## 14. Perguntas em aberto para o mantenedor
 
 Nenhuma no momento.

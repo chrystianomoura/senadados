@@ -12,6 +12,7 @@ Leia nesta ordem se for a primeira vez no projeto.
 | [../AGENTS.md](../AGENTS.md) | Regras de trabalho para qualquer pessoa ou agente (commits, dados, comportamento) |
 | [../design/README.md](../design/README.md) | Protótipo da página e identidade visual |
 | [../data/README.md](../data/README.md) | O que fica em `data/raw/` (fora do git) |
+| [../pipeline/README.md](../pipeline/README.md) | O código que coleta, limpa e verifica os dados, e como rodá-lo |
 
 ## Regra de manutenção
 

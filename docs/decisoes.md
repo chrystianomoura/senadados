@@ -45,6 +45,7 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 | D030 | Destaque do maior mês no lugar do alerta | Vale |
 | D031 | Onde fica o gabinete: contato | Vale (revista em 12/11/2026) |
 | D032 | Organização do repositório e dos documentos | Vale |
+| D033 | Coleta local que só grava quem está em exercício | Vale |
 
 ---
 
@@ -345,4 +346,17 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 - **Decisão:** (1) `docs/fontes-de-dados.md` descreve **só as fontes** (o que existe, formato, qualidade, termos); (2) `docs/verificacoes.md` guarda **os resultados das conferências** e as pendências de prova; (3) `docs/README.md` é o índice; (4) cada pasta tem um `README.md` curto dizendo o que é; (5) a pasta `design/` guarda só o protótipo final e a folha da marca, e as páginas de exploração foram apagadas (o histórico git e as decisões D021, D029 e D030 registram o que foi escolhido); (6) dados de quem saiu do mandato e as amostras parciais foram apagados de `data/raw/`.
 - **Por quê:** quem pegar o projeto precisa achar cada coisa em um lugar só, e achados fora do escopo viram ruído. Apagar o que não vale mais segue D026.
 - **Alternativas descartadas:** manter as páginas de exploração "por histórico" (o git não as tem ainda, mas as decisões já registram o raciocínio); um único documento grande (difícil de manter coerente).
+- **Status:** aceita.
+
+## D033: Coleta local que só grava quem está em exercício
+
+- **Contexto:** a ordem de construção começa pelo pipeline de despesas. A API de despesas devolve também ex-senadores (em 2024, 16 dos 88 senadores da despesa não estão na lista de quem está em exercício), e a D026 manda que os dados de quem saiu não fiquem guardados. Os arquivos baixados à mão em 11/11 trazem esses ex-senadores, apesar do que a D032 registrou.
+- **Decisão (18/11/2026):**
+  - O código fica em `pipeline/`, em Python com uv, httpx, pytest e ruff. Pandas e Pandera entram na etapa de validação e limpeza, não antes.
+  - A coleta baixa a lista dos senadores em exercício e as despesas de cada ano pela API, e **grava só as despesas de quem está na lista**. O que a API devolve é gravado sem alteração.
+  - A coleta **não sobrescreve** arquivo existente, a menos que se peça, e **para com erro** se o Senado devolver um formato inesperado ou uma lista vazia (falhar fechado).
+  - Por enquanto os dados ficam **só em arquivos locais** (`data/raw/`). O banco no Neon fica para a etapa do banco; o formato local dos dados limpos (Parquet ou SQLite) será escolhido na etapa de limpeza.
+- **Por quê:** o arquivo local não exige conta nem rede para testar, e é o Plano B já previsto na D002. Filtrar ao gravar cumpre a D026 sem depender de apagar depois. Não sobrescrever evita perder dados sem querer.
+- **Descartado:** começar já no Neon (obriga a criar conta e conexão antes de existir algo funcionando).
+- **Consequência:** a coleta traz mais linhas do que os arquivos antigos filtrados (2026: 16.033 contra 15.636), porque o Senado continuou publicando entre 11/11 e 18/11. Essa diferença vem da atualização da fonte, e não foi investigada linha a linha.
 - **Status:** aceita.

@@ -177,4 +177,4 @@ curl -s -o api_2024.json "https://adm.senado.gov.br/adm-dadosabertos/api/v1/sena
 curl -s -o ceaps_2024.csv "https://www.senado.leg.br/transparencia/LAI/verba/despesa_ceaps_2024.csv"
 ```
 
-O código que baixa e confere tudo de forma repetível (pipeline) ainda não existe; é o próximo passo ([escopo.md](escopo.md), ordem de construção).
+A coleta repetível já existe em [pipeline/](../pipeline/README.md) (`python -m senadados_pipeline.coleta`). A conferência entre bases ainda não foi automatizada; é uma etapa seguinte ([escopo.md](escopo.md), ordem de construção).
