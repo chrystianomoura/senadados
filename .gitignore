@@ -1,5 +1,7 @@
 # Dados brutos (nunca vão para o git; veja AGENTS.md, seção 6)
 data/raw/
+# Dados limpos gerados pelo pipeline (podem ser refeitos a qualquer momento)
+data/limpo/
 
 # Segredos e configuração local
 .env
@@ -12,6 +14,7 @@ __pycache__/
 venv/
 .pytest_cache/
 .ruff_cache/
+.coverage
 
 # Node / Next.js
 node_modules/

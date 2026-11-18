@@ -2,7 +2,7 @@
 
 > Os valores que o Senado publica sobre os senadores em exercício, explicados para qualquer pessoa.
 
-**Status (12/11/2026):** escopo e protótipo da página fechados, fontes conferidas; **o código ainda não existe**. Este documento descreve o que o projeto **vai ser** e **vai mudar** conforme aprendermos mais. Cada mudança relevante é registrada com o motivo (veja [Como este projeto é documentado](#como-este-projeto-é-documentado)).
+**Status (12/11/2026):** escopo e protótipo da página fechados, fontes conferidas; **a coleta, a limpeza e as verificações da cota, da equipe, da moradia, do contato e do salário existem** (18/11/2026). Este documento descreve o que o projeto **vai ser** e **vai mudar** conforme aprendermos mais. Cada mudança relevante é registrada com o motivo (veja [Como este projeto é documentado](#como-este-projeto-é-documentado)).
 
 ---
 
@@ -62,10 +62,10 @@ Todo número tem origem oficial, uma consulta que o reproduz e uma data. Quando 
 - **Diferente, mas explicado:** aparece com a explicação.
 - **Diferente e sem explicação:** não aparece.
 - **Só uma fonte:** aparece, e a página explica de onde vem em palavras simples.
-- **Tudo ou nada:** uma informação que compara senadores só aparece se todos a tiverem e os dados baterem para todos. Se um só falhar, ninguém a recebe. Exceção: dados de contato (telefone, e-mail) aparecem para quem os tem.
+- **Tudo ou nada, para o que compara senadores:** uma informação que compara senadores (ranking, posição) só aparece se todos a tiverem e os dados baterem para todos. Se um só falhar, ninguém a recebe. **Dados descritivos de cada senador** (contato, equipe do gabinete) aparecem para quem foi provado; se falharem em mais de 5% dos senadores, o problema é provavelmente nosso ou da API, e ele some para todos.
 - **Sem selos na tela:** o que não se comprova simplesmente não é mostrado. A lista do que está pendente fica na página de verificações.
 
-O primeiro teste: a cota de 2026, das despesas detalhadas contra o resumo do Senado. **72 de 79 senadores batem no centavo**, e as 7 diferenças são exatamente linhas sem categoria que o resumo não conta. Os resultados ficam numa página pública de verificações.
+O primeiro teste: a cota de 2026, das despesas detalhadas contra o resumo do Senado. **em 2026, 73 de 80 senadores com valores batem no centavo**, e os outros 7 diferem só por linhas sem categoria que o resumo não conta. De 2010 a 2026 todos os anos bateram; 2008 e 2009 não bateram e ficam de fora (conferido em 18/11/2026). Os resultados ficam numa página pública de verificações.
 
 ---
 
@@ -85,7 +85,7 @@ Todos vêm do **próprio Senado Federal**, são públicos e **não exigem login 
 - Os arquivos têm sujeira (formatos de número misturados, datas fora do ano, valores negativos que parecem estornos). Parte do trabalho do projeto é tratar isso.
 - O Senado pode corrigir dados antigos. Rodar o projeto hoje e daqui a seis meses pode dar valores ligeiramente diferentes.
 - Os anos antigos têm menos informação: em **2008 nenhuma despesa traz o CNPJ/CPF do fornecedor nem a data da nota**. De 2009 em diante o fornecedor existe. A descrição da despesa também falha: está vazia até 2010 e vem preenchida em só cerca de 35 a 40% dos registros recentes.
-- O Senado deixa de fora do resumo algumas linhas de despesa sem categoria (60 linhas em 2026, R$ 164.450,50). O site as mostra como "Sem categoria", com a explicação.
+- O Senado deixa de fora do resumo algumas linhas de despesa sem categoria (59 linhas em 2026, R$ 162.260,84, entre os senadores em exercício). O site as mostra como "Sem categoria", com a explicação.
 - Os termos de uso exigem, no máximo, **citar a fonte**; a licença não tem nome. Detalhes em [docs/fontes-de-dados.md](docs/fontes-de-dados.md).
 - A página de navegação dos dados abertos do Senado exigiu login quando testei, mas os arquivos e as APIs em si baixaram sem nenhuma autenticação.
 
@@ -136,7 +136,7 @@ A regra do projeto: **nenhuma tecnologia entra "porque é moderna"**. Cada uma r
 ### PostgreSQL no Neon: o banco de dados
 **Em uma frase:** é o arquivo organizado onde os dados limpos ficam guardados.
 **Por quê:** o Neon oferece um plano gratuito, e o PostgreSQL é um banco sério usado em empresas. O plano gratuito não cobra por excesso: se o limite estourar, ele para de gravar em vez de gerar fatura. Para um projeto sem orçamento, isso protege.
-**Descartado:** SQLite (mais simples, mas guardaria o dado num arquivo que só atualiza a cada nova publicação do site).
+**Descartado:** SQLite como banco da API (mais simples, mas guardaria o dado num arquivo que só atualiza a cada nova publicação do site). **Por enquanto** o pipeline grava num SQLite local ([D034](docs/decisoes.md#d034-limpeza-com-validação-em-sqlite-local-sem-nome-nem-documento-de-pessoa-física)), e o Neon entra na próxima etapa.
 
 ### FastAPI: a API
 **Em uma frase:** é o "balcão de atendimento" dos dados.
@@ -201,6 +201,7 @@ Documentos (índice completo em [docs/README.md](docs/README.md)):
 | Versão | O que entra |
 |---|---|
 | **Primeiros passos** (feito) | Baixar os dados, medir o tamanho real, conferir colunas, formatos e a prova real; definir escopo e protótipo |
+| **Pipeline e prova real** (feito em 18/11/2026) | Coleta, limpeza e cinco verificações automáticas (cota, equipe, moradia, contato e salário). Resumo em [docs/andamento.md](docs/andamento.md) |
 | **MVP (versão 1)** | Perfil do senador, verba por categoria e mês, principais fornecedores (de 2009 em diante), número de pessoas na equipe, moradia mês a mês, salário (quando comprovado), ranking e comparação entre os senadores em exercício, destaque do maior mês e a página de verificações |
 | **Versão 2** | Atuação parlamentar (votações, projetos, comissões), histórico desde 2008 e, se fizer sentido, um modelo de anomalias |
 | **Versão 3 (talvez)** | Dados de outras fontes públicas, como o TSE. Aumenta muito o escopo e a responsabilidade |
@@ -209,7 +210,7 @@ Este roadmap é uma intenção, não uma promessa, e será revisado conforme os 
 
 ## Como rodar
 
-*Em breve.* O projeto ainda não tem código. Para ver o protótipo, abra `design/perfil-do-senador.html` no navegador.
+Hoje existem a coleta, a limpeza e as verificações da cota, da equipe, da moradia, do contato e do salário. Instruções em [pipeline/README.md](pipeline/README.md). Para ver o protótipo da página, abra `design/perfil-do-senador.html` no navegador.
 
 ## Licença e citação dos dados
 

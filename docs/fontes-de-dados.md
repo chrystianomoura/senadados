@@ -50,11 +50,23 @@ Todos na base `https://adm.senado.gov.br/adm-dadosabertos/api/v1`. Respondem sem
 | Dado | Endereço | Uso no MVP |
 |---|---|---|
 | Resumo de recursos por senador | `/senadores/{codigo}/recursos-utilizados` (aceita `?ano=`) | Cota por categoria, benefícios e número de pessoas na equipe |
-| Auxílio-moradia e imóvel funcional | `/senadores/auxilio-moradia-imoveis-funcionais` | Só como conferência (a página mensal do senador é o canal principal) |
-| Folha de pagamento por mês | `/servidores/remuneracoes/{ano}/{mes}` (~5 MB por mês) | Salário, quando a ligação por nome completo é comprovada |
+| Auxílio-moradia e imóvel funcional | `/senadores/auxilio-moradia-imoveis-funcionais` | Lista de quem usa o benefício **agora**. A verificação da moradia a compara com a página mensal ([D039](decisoes.md#d039-verificação-automática-da-moradia-mês-a-mês)) |
+| Folha de pagamento por mês | `/servidores/remuneracoes/{ano}/{mes}` (~5 MB por mês) | Salário, depois de cinco provas ([D041](decisoes.md#d041-verificação-automática-do-salário-pela-identidade-do-senador)). A consulta de remuneração de cada servidor exige reCAPTCHA e não é usada |
 | Servidores ativos | `/servidores/servidores/ativos` | Só conferência da contagem de equipe (nunca nomes) |
 | Escritórios de apoio | `/senadores/escritorios-apoio` | Fora do MVP |
 | Votações, autorias, comissões etc. | `legis.senado.leg.br/dadosabertos/senador/{codigo}/...` | Versão 2 |
+
+### 4. Páginas do portal de transparência (HTML)
+
+Algumas informações só existem nas páginas do portal, e não na API. O pipeline lê **só o que precisa** delas, sem login e sem contornar nenhum desafio de bot.
+
+| Página | Endereço | O que o pipeline lê |
+|---|---|---|
+| Página do senador | `www6g.senado.leg.br/transparencia/sen/{código}/?ano=AAAA` | Uso de benefícios ("Utilizou (em 10 meses)"), endereço do gabinete, telefones, e-mail e o link da página de identificação |
+| Página mensal de benefícios | `.../sen/{código}/beneficios/?numeroFuncional=...&ano=AAAA` | Uso de moradia mês a mês (o número funcional vem do link da página do senador e não é guardado) |
+| Identificação no portal de servidores | `www.senado.leg.br/transparencia/rh/servidores/detalhe.asp?fcodigo=...` | Nome civil, vínculo, situação e UF (a consulta de remuneração dessa página exige reCAPTCHA e **não é usada**) |
+
+São páginas em HTML, não APIs: **podem mudar sem aviso**. Se mudarem, a verificação do senador cai em "sem explicação" e o dado não aparece ([D039](decisoes.md#d039-verificação-automática-da-moradia-mês-a-mês), [D040](decisoes.md#d040-verificação-automática-do-contato-do-gabinete), [D041](decisoes.md#d041-verificação-automática-do-salário-pela-identidade-do-senador)). Os termos de uso são os mesmos do resto do portal (veja abaixo).
 
 ## Achados com a API completa (2008 a 2026)
 
@@ -64,7 +76,7 @@ Baixei a API de despesas de **todos os anos** (174 MB em JSON, fora do git). Os 
 - **398.624 registros** e cerca de **R$ 450 milhões** reembolsados entre 2008 e 2026 (2026 incompleto).
 - 31.658 documentos de fornecedor distintos.
 - Nenhum `id` repetido e nenhum registro sem `codSenador`.
-- Colocados em um SQLite com dois índices, ocuparam cerca de 126 MB. No PostgreSQL deve ser parecido, talvez maior (*estimativa, não medida*).
+- Colocados em um SQLite com dois índices, ocuparam cerca de 126 MB. (Medição de 11/11, com ex-senadores; só com os senadores em exercício, o banco local tem 34 MB.)
 
 | Ano | Registros | CNPJ/CPF e data preenchidos | `detalhamento` preenchido | Valores negativos |
 |---|---|---|---|---|
@@ -92,7 +104,7 @@ Baixei a API de despesas de **todos os anos** (174 MB em JSON, fora do git). Os 
 1. **Fornecedor existe a partir de 2009** (95,8% em 2009 e 100% depois). Só 2008 não tem CNPJ/CPF nem data da nota. O risco anterior era menor do que parecia.
 2. **A descrição (`detalhamento`) é útil só em parte e vem caindo.** Passa de 80% entre 2013 e 2018, mas está em cerca de 35 a 40% nos anos recentes, justamente os que mais interessam ao cidadão. Isso reforça que o modelo principal não pode depender de texto (veja [D006](decisoes.md#d006-modelo-de-anomalias)).
 3. **Valores negativos só existem de 2023 em diante** e são raros (menos de 0,6%). Provavelmente são estornos, o que não foi confirmado.
-4. **As categorias são estáveis.** Há 7 textos de categoria em todos os anos: cinco existem desde 2008, e "Passagens aéreas, aquáticas e terrestres nacionais" e "Serviços de Segurança Privada" entram em 2011. O texto das categorias não muda. Entre 2023 e 2026, 344 registros vêm sem categoria.
+4. **As categorias são estáveis.** Há 7 textos de categoria em todos os anos: cinco existem desde 2008, e "Passagens aéreas, aquáticas e terrestres nacionais" e "Serviços de Segurança Privada" entram em 2011. O texto das categorias não muda. Entre 2023 e 2026, 344 registros vêm sem categoria (contagem de 11/11, da API inteira, com ex-senadores; só entre os senadores em exercício são 276 em 18/11/2026).
 5. **Pessoas físicas são minoria:** 1,3% a 3,1% dos registros e 3,1% a 12,3% do valor, e a fatia vem caindo (3,5% do valor em 2024 e 2026). Mostrar só o agrupamento de pessoas físicas ([D008](decisoes.md#d008-pessoas-físicas-agrupadas-e-cpf-nunca-exibido)) esconde pouco.
 6. **Concentração moderada:** os 10 maiores fornecedores (empresas) ficam com cerca de 20% do valor nos anos recentes (o cálculo usa o CNPJ completo, então filiais da mesma empresa contam separadas).
 7. **Tipos de documento:** Nota Fiscal Eletrônica, Nota Fiscal, Cupom Fiscal, Passagem, Fatura, Recibo e outros; 3.144 registros sem tipo.
@@ -102,13 +114,13 @@ Baixei a API de despesas de **todos os anos** (174 MB em JSON, fora do git). Os 
 
 Na API, o CPF de pessoa física vem mascarado (padrão `123.***.***-45`). No CSV, vem completo (44 de 1.692 linhas nos primeiros registros de 2024). Isso reforça a escolha da API como fonte principal ([D005](decisoes.md#d005-api-como-fonte-principal-csv-para-conferência)): o pipeline nunca recebe o CPF inteiro.
 
-Há também uns 60 registros recentes com o documento em formato fora do padrão (12 ou 13 dígitos, sem pontuação), que não são nem CNPJ nem CPF. Precisam de tratamento à parte.
+Há também uns 60 registros recentes com o documento em formato fora do padrão (12 ou 13 dígitos, sem pontuação), que não são nem CNPJ nem CPF. Precisam de tratamento à parte. (Contagem de 11/11, da API inteira. Só entre os senadores em exercício, em 18/11/2026: 56 registros de 2023 a 2026, sendo 30 com 13 dígitos, 24 com 12 e 2 com 6 ou 7.)
 
 ## Quem está no escopo (senadores em exercício)
 
 - **81** em exercício em 12/11/2026: 70 titulares e 11 suplentes ([D026](decisoes.md#d026-só-senadores-em-exercício)).
 - Eles têm **153.901 dos 398.624 registros** (39%) e **47% do valor** do histórico de 2008 a 2026.
-- **79 de 81** têm despesa registrada. O primeiro ano de despesa de 33 deles é 2019, e o de 20 é 2023. Só 5 vêm de 2008.
+- **80 de 81** têm despesa registrada (conferido em 18/11/2026; só Jorge Kajuru não tem). O primeiro ano de despesa de 33 deles é 2019, o de 20 é 2023 e o de 4 é 2026. Só 5 vêm de 2008.
 - **54 dos 81 mandatos terminam em 2027.** Quando um senador sai, ele e os dados dele saem do site.
 - Os códigos de parlamentar das legislaturas 53 a 57 (681 pessoas) cobrem os 331 códigos das despesas, mas essas listas trazem só nome e sexo; **partido e UF existem só para os 81 em exercício**.
 
@@ -116,6 +128,9 @@ Há também uns 60 registros recentes com o documento em formato fora do padrão
 
 - Valor sem vírgula decimal misturado com valor com vírgula.
 - Ano `0204` em uma data (erro de digitação).
+- Datas depois do dia da coleta: em 18/11/2026, 4 despesas com data de 23/11, 26/11 e 28 e 29/12 de 2026 (2 de notas de 2025 e 2 de 2026). Ainda não se sabe se é erro de digitação ou lançamento antecipado.
+- No total, **34 despesas** (de 154.298) têm data fora do intervalo de 2008 até o dia da coleta: anos como 0023, 0201, 0204 e 1201, datas de 1965 a 2006 e as 4 futuras. A limpeza as marca e tira a data, sem corrigir ([D034](decisoes.md#d034-limpeza-com-validação-em-sqlite-local-sem-nome-nem-documento-de-pessoa-física)).
+- Documentos fora do padrão (12 ou 13 dígitos): completar com zeros à esquerda só produz CNPJ válido em 2 dos 54 casos, então não são CNPJs que perderam zeros, e não se tenta corrigir.
 - Notas de 2023 e 2025 dentro do arquivo de 2024 (CSV). O campo `ANO` é a competência do reembolso, não a data do gasto.
 - Valores negativos (provavelmente estornos).
 - **CPF de pessoas físicas** aparecem completos no CSV (na API vêm mascarados). Veja [D008](decisoes.md#d008-pessoas-físicas-agrupadas-e-cpf-nunca-exibido).
@@ -177,4 +192,4 @@ curl -s -o api_2024.json "https://adm.senado.gov.br/adm-dadosabertos/api/v1/sena
 curl -s -o ceaps_2024.csv "https://www.senado.leg.br/transparencia/LAI/verba/despesa_ceaps_2024.csv"
 ```
 
-O código que baixa e confere tudo de forma repetível (pipeline) ainda não existe; é o próximo passo ([escopo.md](escopo.md), ordem de construção).
+A coleta repetível já existe em [pipeline/](../pipeline/README.md) (`python -m senadados_pipeline.coleta`). A conferência entre bases ainda não foi automatizada; é uma etapa seguinte ([escopo.md](escopo.md), ordem de construção).

@@ -45,6 +45,15 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 | D030 | Destaque do maior mês no lugar do alerta | Vale |
 | D031 | Onde fica o gabinete: contato | Vale (revista em 12/11/2026) |
 | D032 | Organização do repositório e dos documentos | Vale |
+| D033 | Coleta local que só grava quem está em exercício | Vale |
+| D034 | Limpeza com validação, em SQLite local, sem nome nem documento de pessoa física | Vale |
+| D035 | Verificação automática da cota por categoria, na mesma foto dos dados | Vale |
+| D036 | Verificação automática da equipe do gabinete, por vínculo | Vale (a consequência foi substituída pela D037) |
+| D037 | Exibição por tipo de dado e freio de segurança | Vale |
+| D038 | Documento público de divergências, com prova em imagem | Vale |
+| D039 | Verificação automática da moradia, mês a mês | Vale |
+| D040 | Verificação automática do contato do gabinete | Vale |
+| D041 | Verificação automática do salário pela identidade do senador | Vale (altera a ligação da D016) |
 
 ---
 
@@ -66,6 +75,7 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 - **Riscos:** limite de 1 GB por projeto e 100 horas de computação por mês.
 - **Plano B:** arquivos Parquet ou SQLite versionados, também de custo zero.
 - **Status:** aceita.
+- **Atualização (18/11/2026):** o banco local da D034 (SQLite) ocupa **34 MB** com os 154.298 registros dos senadores em exercício e todas as tabelas de verificação, bem abaixo dos números estimados acima, que contavam todos os ex-senadores. O Neon entra na etapa 3 da ordem de construção.
 
 ## D003: Site em Next.js estático no Cloudflare Pages
 
@@ -218,6 +228,7 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 - **Por quê:** responde direto à pergunta mais natural do cidadão ("e o outro senador, gasta mais?"). Com só duas séries, o gráfico continua legível.
 - **Cuidado:** se os senadores forem de estados diferentes, aparece o aviso de que a cota varia por estado.
 - **Status:** aceita.
+- **Atualização (18/11/2026):** a comparação **não traz custo estimado do gabinete**: a D025 aboliu estimativas. Ela traz salário, verba usada, equipe e gasto por categoria, cada um só para quem foi provado (D037); se um dos dois senadores não tiver um dado, a comparação mostra "sem dado" naquela linha.
 
 ## D022: Ranking nacional com contexto de estado e região
 
@@ -270,6 +281,7 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 - **Atualização (12/11/2026):** **na tela não há selos nem avisos.** Saem as etiquetas "comprovado" e "fonte única" e a caixa "dado em verificação": o que não se comprova **simplesmente não aparece**, e a lista do que está pendente fica só na página "Verificações". Em cada número, "De onde vem este número" segue um molde fixo, em linguagem simples, com três partes: **onde o Senado publica**, **como chegamos neste número** e **atualizado em**, com o link para o portal do Senado.
 - **Atualização (12/11/2026):** **regra de grupo, "tudo ou nada".** Uma informação que vale para todos os senadores só aparece se todos os senadores em exercício a tiverem e se os dados baterem para todos. Se um só falhar, ninguém a recebe. Assim o site nunca mostra um dado para uns senadores e esconde de outros.
 - **Atualização (12/11/2026):** **exceção à regra de tudo ou nada: dados de contato.** Telefone e e-mail aparecem para quem os tem; quem não tem, simplesmente não mostra, porque é uma informação de contato e não uma comparação entre senadores.
+- **Atualização (18/11/2026):** **a conferência só vale se as duas bases forem baixadas no mesmo dia.** Ao refazer a cota de 2026 com os dados do mesmo dia, o resultado passou de "72 de 79 idênticos" para **74 de 81 idênticos e 7 explicados, nenhuma divergência sem explicação**. A diferença veio de o Senado ter atualizado os dados e de o número de linhas sem categoria da primeira medição incluir ex-senadores (agora: 59 linhas e R$ 162.260,84 entre os senadores em exercício). Detalhes em [verificacoes.md](verificacoes.md). A verificação automática do pipeline deve baixar tudo junto e registrar a data. (A contagem foi refeita depois pelo código ([D035](#d035-verificação-automática-da-cota-por-categoria-na-mesma-foto-dos-dados)): **73 idênticos e 7 explicados, entre os 80 senadores com valores**; Jorge Kajuru, sem valores nos dois lados, não entra na conta.)
 
 ## D026: Só senadores em exercício
 
@@ -301,6 +313,7 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 - **Atualização (12/11/2026):** os gastos fora da cota entram sem selo de "fonte única"; "De onde vem este número" explica em palavras simples que o Senado informa só o total do ano de cada item e que o valor é copiado sem alteração.
 - **Correção (12/11/2026):** cada item fora da cota tem uma página própria com o valor **mês a mês** no portal do Senado, sem nota fiscal nem fornecedor. O texto da tela passa a dizer, com precisão: "estes valores não fazem parte da verba (cota); o Senado os lista à parte; nos dados que usamos, não consta se o dinheiro é reembolsado ao senador ou pago direto pelo Senado".
 - **Atualização (12/11/2026):** **os gastos fora da cota saem do MVP.** O bloco confundia o cidadão e não há como afirmar, com os dados do Senado, se o dinheiro é reembolso ao senador ou pagamento direto. Fica só a moradia. Os achados continuam registrados em `docs/fontes-de-dados.md`, e o assunto pode voltar se houver uma explicação precisa.
+- **Atualização (18/11/2026):** a moradia ganhou verificação automática com quatro fontes, e os casos pendentes passaram de 3 para 4 (a defasagem entre a lista de novembro e a página mensal, que vai até outubro). Ver [D039](#d039-verificação-automática-da-moradia-mês-a-mês).
 
 ## D029: Identidade visual
 
@@ -345,4 +358,147 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 - **Decisão:** (1) `docs/fontes-de-dados.md` descreve **só as fontes** (o que existe, formato, qualidade, termos); (2) `docs/verificacoes.md` guarda **os resultados das conferências** e as pendências de prova; (3) `docs/README.md` é o índice; (4) cada pasta tem um `README.md` curto dizendo o que é; (5) a pasta `design/` guarda só o protótipo final e a folha da marca, e as páginas de exploração foram apagadas (o histórico git e as decisões D021, D029 e D030 registram o que foi escolhido); (6) dados de quem saiu do mandato e as amostras parciais foram apagados de `data/raw/`.
 - **Por quê:** quem pegar o projeto precisa achar cada coisa em um lugar só, e achados fora do escopo viram ruído. Apagar o que não vale mais segue D026.
 - **Alternativas descartadas:** manter as páginas de exploração "por histórico" (o git não as tem ainda, mas as decisões já registram o raciocínio); um único documento grande (difícil de manter coerente).
+- **Status:** aceita.
+
+## D033: Coleta local que só grava quem está em exercício
+
+- **Contexto:** a ordem de construção começa pelo pipeline de despesas. A API de despesas devolve também ex-senadores (em 2024, 16 dos 88 senadores da despesa não estão na lista de quem está em exercício), e a D026 manda que os dados de quem saiu não fiquem guardados. Os arquivos baixados à mão em 11/11 trazem esses ex-senadores, apesar do que a D032 registrou.
+- **Decisão (18/11/2026):**
+  - O código fica em `pipeline/`, em Python com uv, httpx, pytest e ruff. Pandas e Pandera entram na etapa de validação e limpeza, não antes.
+  - A coleta baixa a lista dos senadores em exercício e as despesas de cada ano pela API, e **grava só as despesas de quem está na lista**. O que a API devolve é gravado sem alteração.
+  - A coleta **não sobrescreve** arquivo existente, a menos que se peça, e **para com erro** se o Senado devolver um formato inesperado ou uma lista vazia (falhar fechado).
+  - Por enquanto os dados ficam **só em arquivos locais** (`data/raw/`). O banco no Neon fica para a etapa do banco; o formato local dos dados limpos (Parquet ou SQLite) será escolhido na etapa de limpeza.
+- **Por quê:** o arquivo local não exige conta nem rede para testar, e é o Plano B já previsto na D002. Filtrar ao gravar cumpre a D026 sem depender de apagar depois. Não sobrescrever evita perder dados sem querer.
+- **Descartado:** começar já no Neon (obriga a criar conta e conexão antes de existir algo funcionando).
+- **Consequência:** a coleta traz mais linhas do que os arquivos antigos filtrados (2026: 16.033 contra 15.636), porque o Senado continuou publicando entre 11/11 e 18/11. Essa diferença vem da atualização da fonte, e não foi investigada linha a linha.
+- **Executado em 18/11/2026:** os 19 arquivos de despesas foram baixados de novo e substituíram os antigos: 154.298 registros, nenhum de fora da lista, 80 senadores com despesa (a documentação de 11/11 falava em 79 de 81; o 80º é Leany Lemos, que ganhou a primeira despesa depois de 11/11; só Jorge Kajuru segue sem despesa).
+- **Status:** aceita.
+
+## D034: Limpeza com validação, em SQLite local, sem nome nem documento de pessoa física
+
+- **Contexto:** a coleta (D033) grava o que o Senado devolve. Antes de qualquer número aparecer, os dados precisam ser validados e limpos, com cada regra provada por teste. Medi os dados reais de 18/11/2026 (154.298 despesas) para escrever as regras.
+- **Decisão (18/11/2026):**
+  - **Validação com Pandera em dois momentos:** o que o Senado entrega (colunas exatas, tipos, `id` único, mês de 1 a 12, valor com no máximo 2 casas) e o que o pipeline produz. Coluna nova ou faltando, `id` repetido ou valor impossível **quebram a execução e nada é gravado**.
+  - **Categoria vazia vira "Sem categoria".** Categoria nova do Senado passa, com o nome oficial.
+  - **Valor em centavos inteiros**, para as somas baterem no centavo sem erro de arredondamento.
+  - **Fornecedor classificado pelo documento:** `empresa` (CNPJ no formato certo e com dígitos verificadores válidos), `pessoa_fisica` (CPF mascarado ou com 11 dígitos), `sem_documento` (o Senado não informou; só 2008 e 2009) e `outro` (qualquer outro formato, mantido como veio).
+  - **Pessoa física não leva nome nem documento** para os dados limpos (D008, aplicada já na limpeza). Os brutos seguem em `data/raw/`, fora do git.
+  - **Documento fora do padrão não é corrigido.** Testei a hipótese de CNPJ que perdeu zeros à esquerda: completando com zeros, só 2 dos 54 casos de 12 ou 13 dígitos têm dígitos verificadores válidos, então a hipótese não se sustenta e nada é inferido (D025). Ficam como `outro`.
+  - **Data fora do intervalo de 1º/1/2008 até o dia da coleta (ou malformada) some, e a linha é marcada** (`data_fora_do_esperado`), sem tentar adivinhar a data certa. A linha **continua na soma**. Em 18/11/2026 são 34 linhas: anos como 0023, 0201, 0204 e 1201, datas antigas como 1965 a 2006 e 4 datas futuras.
+  - **Descrição, número do documento e nome do senador da despesa não seguem** para os dados limpos: o MVP não os usa (o nome vem da lista de senadores), e o bruto continua disponível pelo `id`.
+  - **Formato local: SQLite** (`data/limpo/senadados.sqlite`, fora do git), gravado de forma atômica: se qualquer validação falhar, o banco anterior fica intacto.
+- **Por quê:** SQLite já vem com o Python (sem dependência nova), aceita as consultas SQL das verificações e tem o mesmo desenho que as tabelas do Neon depois. Parquet exigiria uma biblioteca grande sem ganho para 154 mil linhas. Tirar nome e documento de pessoa física na origem é mais seguro do que confiar em esconder depois.
+- **Descartado:** Parquet (dependência a mais); corrigir documentos por suposição (viola D025); apagar as linhas de data ruim (a despesa existe e entra no total, só a data não se sustenta).
+- **Resultado em 18/11/2026:** 154.298 despesas limpas (nenhuma perdida), soma de R$ 213.008.569,15 igual à dos arquivos brutos, 276 sem categoria, 34 datas fora do esperado, 56 documentos fora do padrão. A cota de 2026 conferida contra o resumo do mesmo dia deu **74 idênticos, 7 explicados e 0 sem explicação**; essa conferência foi feita por um roteiro avulso, e **a verificação automática ainda não existe**. A conferência feita pelo código está em [D035](#d035-verificação-automática-da-cota-por-categoria-na-mesma-foto-dos-dados): 73 idênticos e 7 explicados, entre os 80 senadores com valores.
+- **Trava de coerência da coleta (18/11/2026):** a limpeza recusa dados em que as despesas de algum ano são mais antigas que a lista de senadores usada para filtrá-las, ou sem data de coleta. Sem isso, atualizar só um ano deixaria um senador novo sem o histórico dos outros anos, e ninguém perceberia. A correção é recoletar todos os anos.
+- **Status:** aceita.
+
+## D035: Verificação automática da cota por categoria, na mesma foto dos dados
+
+- **Contexto:** a D025 manda provar cada número comparando bases do Senado. A cota de 2026 tinha sido conferida por um roteiro avulso, e a lição de 18/11/2026 mostrou que bases de dias diferentes geram divergências falsas.
+- **Decisão (18/11/2026):**
+  - A verificação virou código (`pipeline/`, `python -m senadados_pipeline.verificacao`). Para cada senador e ano, compara as despesas **por categoria** com o resumo oficial (`recursos-utilizados`), e não só o total. As 7 categorias do resumo têm uma tabela fixa de equivalência com os nomes oficiais das despesas.
+  - Resultados: **`identico`** (todas as categorias batem no centavo), **`explicado`** (batem, e só faltam as linhas sem categoria, que o resumo não conta) e **`sem_explicacao`** (qualquer outra diferença, categoria desconhecida ou resumo que não soma o próprio total). Esta última **oculta o número** (falhar fechado) e registra o motivo.
+  - **Mesma foto dos dados:** a coleta registra a data e a hora de cada download em `data/raw/coleta.json`. A verificação **se recusa a rodar** se a lista de senadores, as despesas do ano ou o banco limpo não forem de hoje. O resumo é baixado no momento da verificação.
+  - O resultado fica no banco limpo (`verificacao_cota`, por senador e ano, e `verificacoes`, o resumo por ano), para a página "Verificações" ler depois.
+  - Pares senador-ano sem valor nos dois lados não entram na contagem.
+- **Resultado em 18/11/2026 (2008 a 2026, 1.539 consultas de resumo, cerca de 3 minutos):**
+  - **2010 a 2026: nenhuma divergência sem explicação.** Em 2026, 73 idênticos e 7 explicados.
+  - **2008 e 2009: 5 senadores sem explicação em cada ano.** O resumo de 2008 vem vazio, e o de 2009 é menor que as despesas. **O motivo não foi confirmado**; só o Senado pode explicar. Pela D025, a cota desses anos **não aparece** e o histórico da cota começa em 2010.
+- **Por quê:** comparar por categoria é mais forte do que comparar o total (categorias trocadas com o mesmo total seriam percebidas), e o site mostra o valor por categoria. A trava de "mesma foto" impede a falha que cometi no começo da investigação.
+- **Limites:** prova consistência entre bases do mesmo sistema do Senado, não é auditoria (D027). Só cobre a cota; gabinete, salário, moradia e contato ainda não têm verificação automática. O resumo de 2008 e 2009 pode ser limitado do lado do Senado, e isso **não foi confirmado**.
+- **Status:** aceita.
+
+## D036: Verificação automática da equipe do gabinete, por vínculo
+
+- **Contexto:** a D015 manda mostrar só o **número** de pessoas do gabinete, do resumo oficial, e a D025 exige prova antes de exibir. Em 11/11 o resumo somava 1.723 pessoas e a lista de servidores 1.722, e a diferença de uma pessoa não estava explicada.
+- **Decisão (18/11/2026):**
+  - A verificação virou código (`python -m senadados_pipeline.equipe`). Para cada senador, compara o total e a quebra por vínculo (comissionado, efetivo, requisitado) do resumo oficial com a lista de servidores ativos lotados no gabinete, **sem contar o próprio senador** (vínculo "parlamentar", que consta na lista).
+  - **Nomes de servidores nunca são guardados** (D007): a lista é contada por gabinete e vínculo na hora do download, e só as contagens vão para o disco.
+  - Resultados: `identico` ou `sem_explicacao`. Não existe "explicado", porque não há diferença conhecida entre as duas fontes.
+  - **A ligação senador-gabinete é pelo nome**, porque a lista de servidores não traz o código do parlamentar. Regra: nome igual (sem acento e sem caixa) e, só quando houver uma única possibilidade, um nome inteiro dentro do outro em palavras (`Nelsinho Trad` e `Nelsinho Trad Filho`). Quem não se liga fica sem explicação. A contagem de pessoas é a segunda barreira contra uma ligação errada.
+  - Mesma regra da cota: só roda com a lista de senadores e o banco limpo do mesmo dia, e o resultado vai para o banco limpo (`verificacao_equipe`, e uma linha `equipe` em `verificacoes`).
+- **Resultado em 18/11/2026:** 81 gabinetes, **80 idênticos** (total e cada vínculo) e **1 sem explicação**: no gabinete de Camilo Santana o resumo traz 1 efetivo que a lista de ativos não tem (28 contra 27 pessoas). Testei e descartei duas hipóteses: servidor fora da lista de ativos (as listas completa, de efetivos e de exercício provisório não o trazem) e servidor cedido de outro órgão (os 4 cedidos do gabinete já estão entre os comissionados). Só o Senado pode explicar.
+- **Consequência (substituída pela [D037](decisoes.md#d037-exibição-por-tipo-de-dado-e-freio-de-segurança)):** pela regra de tudo ou nada (D025), a equipe
+- **Dados locais:** `data/raw/folha/servidores_ativos.json` (de 11/11) trazia nomes de servidores. O pipeline novo não o usava, e ele foi **apagado em 18/11/2026**, a pedido do mantenedor, junto com as cópias temporárias que continham nomes.
+- **Limites:** prova consistência entre bases do mesmo sistema do Senado, não é auditoria (D027). A ligação por nome é frágil se um nome mudar, e nesse caso o gabinete cai em "sem explicação" em vez de receber um número errado.
+- **Status:** aceita.
+
+## D037: Exibição por tipo de dado e freio de segurança
+
+- **Contexto:** a regra "tudo ou nada" (D025) foi escrita para a comparação entre senadores: se um senador faltasse num ranking, a posição de todos ficaria distorcida. Ao verificar a equipe do gabinete (D036), 80 de 81 gabinetes bateram nas duas bases do Senado e 1 não, e a regra escondia a equipe dos 81 por causa de 1.
+- **Decisão (18/11/2026):** os dados passam a ter **duas classes**.
+  1. **Dado que compara senadores** (ranking, posição entre os senadores, mediana): segue **tudo ou nada**. Só aparece se todos em exercício o tiverem e baterem.
+  2. **Dado descritivo de cada senador** (contato, equipe do gabinete): aparece **para quem foi provado**, e fica oculto para quem não foi, sem aviso no perfil. O gabinete oculto é listado na página "Verificações".
+  - **Freio de segurança:** se mais de **5%** dos senadores falharem num dado descritivo, ele some para todos. Uma falha isolada é uma discrepância da fonte; muitas juntas indicam problema na nossa ligação ou mudança na API do Senado. O 5% é um julgamento, e não um número pesquisado. Com 81 senadores, até 4 falhas ainda permitem exibir.
+  - **Ao criar um dado novo, classificá-lo** numa das duas classes e registrar qual.
+- **Por quê:** a equipe é uma contagem descritiva e não entra em ranking, então esconder 80 números provados por causa de 1 só empobrece o site sem proteger ninguém. O que fere a credibilidade é mostrar um número que não se prova, e isso continua proibido. Mostrar o que bate e listar o que foi escondido passa mais rigor do que esconder tudo. O contato (D031) já abria esse precedente.
+- **Resultado em 18/11/2026:** a equipe aparece para os 80 gabinetes idênticos e fica oculta no de Camilo Santana (1 efetivo a mais no resumo, sem explicação). A verificação diária mostra o gabinete de volta sozinha quando o Senado explicar ou corrigir.
+- **Implementação:** a coluna `exibir` da tabela `verificacao_equipe` no banco limpo. Quem ler o banco (a API e o site) usa `exibir`, e **trata a ausência da tabela como "não verificado"**.
+- **Altera:** a consequência da D036 e o texto da regra de tudo ou nada na D025 (que continua valendo para dados que comparam).
+- **Status:** aceita.
+
+## D038: Documento público de divergências, com prova em imagem
+
+- **Contexto:** a verificação (D035 e D036) achou diferenças entre publicações do próprio Senado. A primeira ideia era enviar um pedido de esclarecimento ao Senado. O mantenedor preferiu **mostrar as diferenças publicamente**, sem prometer buscar respostas.
+- **Decisão (18/11/2026):** o projeto passa a ter o documento `docs/divergencias-nos-dados-do-senado.md`, que vira a seção "Onde os dados do Senado não batem entre si" do site. Regras:
+  - **Só entra o que tem print.** Cada caso mostra uma captura da tela ou do relatório do próprio Senado (recortada, **sem a foto do senador**), ou, para arquivos de dados, uma tabela feita pelo Senadados com linhas copiadas sem alteração e **etiquetada como montagem do Senadados**. Contagens sobre todos os senadores são declaradas como feitas pelo Senadados.
+  - **Texto neutro e fácil de entender:** não diz qual número está certo, não diz o motivo, não acusa ninguém e **não diz que o projeto vai atrás de respostas**.
+  - **Cada caso traz o passo a passo para conferir** e a data e hora da captura.
+  - **Os nomes dos senadores aparecem**, porque a diferença está na publicação por senador e o print mostra o nome. Isso altera a linha do `escopo.md` §4.5 que dizia "sem nomes" para a página de verificações como um todo; a regra vale para a página agregada, e não para esta seção.
+  - **Dados de servidores:** nenhuma imagem mostra nome de servidor. O arquivo local `servidores_ativos.json`, que tinha nomes, foi apagado.
+- **Casos publicados em 18/11/2026:** (1) tela de um gabinete com 27 pessoas contra 28 na exportação da mesma página; (2) o rótulo "Gabinete" com totais diferentes (a tela inclui estagiários e terceirizados, a exportação não); (3) cota de 2008 e 2009 de cinco senadores, em que a tela mostra menos que o arquivo de despesas; (4) linhas sem categoria que a tela não conta; (5) notas com data de ano 0204 e 0202.
+- **Achados novos que a captura trouxe:**
+  - A **tela do portal e a exportação da mesma página divergem** no bloco de pessoal de um gabinete. Isso reforça que o resumo da API (D015) e a tela não são a mesma coisa, e a tela está de acordo com a lista de servidores.
+  - O **número "equipe" depende da definição.** O Senadados usa o do resumo (comissionados, efetivos e requisitados) e **deve dizer o que ele inclui**, para o cidadão que comparar com a tela (que soma estagiários e terceirizados) não achar um dos dois errado.
+- **Cuidados:** os prints são fotos de 18/11/2026 e podem deixar de refletir a tela se o Senado atualizar os dados (de fato, a divergência do item 1 foi vista também na API às 16h46, e pode ser corrigida a qualquer momento). Os recortes não mostram foto de senador. A responsabilidade por manter o documento correto é do projeto: se o Senado corrigir um caso, ele deve ser atualizado ou retirado.
+- **Status:** aceita.
+
+## D039: Verificação automática da moradia, mês a mês
+
+- **Contexto:** a D028 manda mostrar o uso de auxílio-moradia e de imóvel funcional **mês a mês**, só para quem foi provado. Em 12/11 havia 3 casos pendentes, em que o resumo anual e a lista do mês pareciam divergir.
+- **Decisão (18/11/2026):** a verificação virou código (`python -m senadados_pipeline.moradia`). Para cada senador compara **quatro fontes** do Senado, baixadas na hora: (1) o resumo anual da API, (2) o resumo da tela do portal ("Utilizou (em 10 meses)", "Não utilizou" ou "Renúncia ao benefício"), (3) a **página mensal** do portal, a única com o uso mês a mês, e (4) a **lista do mês**, da API, que diz quem usa agora.
+  - **`identico`:** as quatro concordam (sim ou não, número de meses e último mês).
+  - **`explicado`:** a tela diz "renúncia ao benefício" onde a API diz "não utilizou". Quem renuncia não usa.
+  - **`pendente`:** as três primeiras concordam, mas a lista de hoje difere do **último mês** da página mensal. São períodos diferentes, e isso **não está provado** como causa. O benefício daquele senador some até a página mensal alcançar o mês da lista.
+  - **`sem_explicacao`:** qualquer outra diferença, página fora do formato ou falha de coleta do senador.
+  - **Exibição (D037):** moradia é dado descritivo, aparece para `identico` e `explicado`. **Só `sem_explicacao` conta para o freio de segurança de 5%**: o `pendente` tem causa provável conhecida (defasagem entre períodos) e esconde só o próprio senador. Sem isso, a virada normal de mês poderia derrubar a moradia de todos.
+  - O número funcional do senador, necessário para abrir a página mensal, é lido do link do portal e **não é guardado**.
+  - O resultado vai para `verificacao_moradia` e o uso mês a mês para `moradia_meses` (usar só quem tem `exibir = 1`).
+- **Resultado em 18/11/2026:** 81 senadores, **76 idênticos, 1 explicado, 4 pendentes e 0 sem explicação**, e a moradia aparece para **77**. Os 4 pendentes usaram auxílio-moradia até outubro e a lista de hoje diz que não usam. Em 12/11 eram 3 pendentes. Foram 12 senadores com auxílio-moradia e 63 com imóvel funcional, e 6 sem link para a página mensal (não usaram nenhum dos dois).
+- **Por quê:** o uso mês a mês só existe na página mensal do portal, então ele precisa ser confrontado com as outras três fontes antes de aparecer. Separar `pendente` de `sem_explicacao` evita tratar uma defasagem esperada como falha do dado.
+- **Limites:** (1) a página mensal é lida do **HTML do portal**, que não é uma API e pode mudar; se mudar, o senador cai em `sem_explicacao` e não recebe número errado. (2) O pendente se resolve sozinho quando a página mensal incluir novembro (a verificação diária reconfere). (3) Prova consistência entre bases do Senado, não é auditoria (D027). (4) A verificação não diz onde o imóvel fica nem afirma nada sobre o direito ao benefício (D024).
+- **Status:** aceita.
+
+## D040: Verificação automática do contato do gabinete
+
+- **Contexto:** a D031 decidiu mostrar o endereço do gabinete, os telefones (copiados da página do portal, que traz os números completos) e o e-mail, para quem os tem. As conferências de 12/11 eram manuais.
+- **Decisão (18/11/2026):** a verificação virou código (`python -m senadados_pipeline.contato`). Compara, **campo a campo**, a API de dados abertos (a lista de senadores que a coleta gravou) com a seção "Dados pessoais" da página de cada senador, baixada na hora.
+  - **Endereço:** igual ignorando caixa alta e espaços repetidos. O valor mostrado é o da página.
+  - **Telefones:** a página abrevia vários números ("(61) 3303-6187 / 6188 / 6183"). A regra é mecânica: o início do primeiro número vale para os seguintes que trouxerem só os 4 últimos dígitos. `identico` se os conjuntos de números são iguais; **`explicado`** se a página traz números a mais e **todos os da API estão nela**; `sem_explicacao` se a API tem número que a página não tem ou o formato é inesperado. O fax não é usado.
+  - **E-mail:** igual ignorando caixa. "-" e vazio são "sem e-mail", e se **nenhuma** das fontes traz e-mail o campo é `identico` e simplesmente não aparece (D025, exceção do contato).
+  - **Exibição (D037):** contato é dado descritivo. **Cada campo** aparece para quem foi provado e tem o **próprio freio de segurança de 5%**. Só o valor provado vai para a tabela `contato`; o campo não provado fica **vazio** (falhar fechado). O resultado de cada campo fica em `verificacao_contato`.
+  - **Só três campos são lidos da página.** Nome civil, data de nascimento e o restante não são lidos nem guardados.
+- **Resultado em 18/11/2026:** endereço **81 idênticos**; telefones **66 idênticos e 15 explicados**; e-mail **81 idênticos**, dos quais 2 sem e-mail nas duas fontes. Nenhum sem explicação. O contato aparece para 81 (endereço e telefones) e 79 (e-mail). É o mesmo resultado da conferência manual de 12/11.
+- **Falhar fechado, visto na prática:** a primeira execução usou o endereço da página sem o parâmetro do ano, o portal respondeu com um redirecionamento, e os 81 senadores caíram em `sem_explicacao`, sem nenhum contato exibido. Depois da correção, passou. A regra fez o que devia: sem dado provado, nada aparece.
+- **Por quê:** o contato do gabinete é o dado mais útil para o cidadão e o mais simples de provar. Verificar campo a campo evita que um telefone divergente esconda o endereço, e o freio por campo evita que um problema numa só fonte derrube os outros.
+- **Limites:** (1) a página do portal é HTML, não uma API, e pode mudar; se mudar, o campo cai em `sem_explicacao`. (2) O motivo de a API listar menos telefones **não foi confirmado**. (3) Prova consistência entre bases do Senado, não é auditoria (D027). (4) O escritório de apoio continua fora (D031).
+- **Status:** aceita.
+
+## D041: Verificação automática do salário pela identidade do senador
+
+- **Contexto:** a D016 liga a folha de pagamento ao senador pelo **nome completo da lista legislativa**, e a D025 só aceita o que se comprova. A folha **não traz o código do parlamentar** e é a **única fonte do valor**. Em 12/11, 3 suplentes não tinham correspondência e um titular tinha valor diferente.
+- **Decisão (18/11/2026):** a verificação virou código (`python -m senadados_pipeline.salario`) e **muda a chave de ligação**. Em vez do nome da lista legislativa, usa o **nome civil da página de identificação do próprio senador**, alcançada pelo link "Subsídios do Senador" da página dele no portal (ou seja, pelo código do senador). Cada senador passa por **cinco provas**:
+  1. **Identidade:** a página de identificação diz vínculo "parlamentar", situação "ativo" e a mesma UF que o senador tem.
+  2. **Uma única matrícula** com esse nome na folha do mês. Nenhuma ou mais de uma impede a ligação, e **as linhas nem são guardadas** quando há mais de uma (podem ser de outra pessoa).
+  3. **Uma única folha normal** no mês. Folhas suplementares só são aceitas se estiverem **zeradas**.
+  4. **Conta interna:** a remuneração líquida é a soma dos 11 componentes. Conferido em **todas as 10.480 linhas normais** de outubro de 2026.
+  5. **Remuneração básica e líquida positivas.**
+- **Exibição (D037):** dado descritivo, aparece para quem passou, com o freio de segurança de 5%. O que se mostra é a **remuneração básica e a líquida do mês**, e o site deve dizer que a básica **não é o total antes dos descontos** (a folha tem outros componentes).
+- **Dados de servidores (D007):** a folha do mês é baixada na hora, **só as linhas dos senadores são guardadas**, e os nomes dos demais servidores são descartados na hora. O arquivo local `data/raw/folha/remuneracao_2026_09.json`, de 11/11, tinha os nomes e a remuneração de todos os servidores. O pipeline novo não o usava, e ele foi **apagado em 18/11/2026**, a pedido do mantenedor, junto com a cópia temporária da folha de outubro.
+- **A consulta de remuneração do portal de servidores exige reCAPTCHA.** O pipeline **não tenta contorná-lo** e lê só a identificação, que o portal mostra sem desafio. A consequência é que o valor continua com **fonte única**, provada por consistência interna e identidade, e não por uma segunda fonte.
+- **Resultado em 18/11/2026 (folha de outubro, a de novembro ainda não existe):** **79 de 81 passam**, todos com remuneração básica de **R$ 46.366,19**, e o salário aparece para 79. **2 sem explicação**, ambos suplentes que assumiram em outubro: um tem **duas matrículas com o mesmo nome** (R$ 6.686,29 e R$ 38.887,77), e o outro tem **folha suplementar com valores** (R$ 46.366,19 em vantagens indenizatórias, além da normal de R$ 47.911,73). O suplente que antes não tinha correspondência agora é ligado.
+- **Por quê:** ligar pela identidade que o próprio portal atribui ao código do senador é mais forte do que ligar por um nome vindo de outra lista, e resolve o caso do nome escrito de dois jeitos. As provas internas e a recusa de ligação ambígua substituem a segunda fonte que o reCAPTCHA impede.
+- **Limites:** (1) fonte única do valor. (2) A identificação vem do HTML do portal, que pode mudar; se mudar, o senador cai em `sem_explicacao`. (3) Suplentes que assumem no meio do mês têm folhas parciais e ficam ocultos até a folha completa. (4) Prova consistência e identidade, não é auditoria (D027). (5) O site não diz se o valor está dentro ou fora de qualquer regra (D024).
+- **Altera:** a ligação da D016 (nome completo da lista legislativa).
 - **Status:** aceita.

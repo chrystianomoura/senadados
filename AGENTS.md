@@ -8,7 +8,7 @@ Instruções para qualquer agente (humano ou de IA) que trabalhe neste repositó
 
 **Escopo de pessoas:** só os **senadores em exercício**, pela lista oficial do Senado (D026). Quem sai do mandato sai do site.
 
-**Estado atual (12/11/2026):** escopo, regras e protótipo da página fechados; fontes e conferências documentadas; **ainda sem código de pipeline, API ou site**. Próximo passo: o pipeline (ordem de construção em [docs/escopo.md](docs/escopo.md)). Índice dos documentos em [docs/README.md](docs/README.md).
+**Estado atual (18/11/2026):** escopo, regras e protótipo da página fechados; fontes e conferências documentadas; **a coleta, a validação e a limpeza do pipeline existem** (veja [pipeline/README.md](pipeline/README.md)); a **verificação automática da cota** (D035), a **da equipe do gabinete** (D036), a **da moradia** (D039), a **do contato** (D040) e a **do salário** (D041) também, e as verificações estão completas; ainda sem banco no Neon, API ou site. Próximo passo: o banco (ordem de construção em [docs/escopo.md](docs/escopo.md)). Índice dos documentos em [docs/README.md](docs/README.md).
 
 ## 2. Princípios inegociáveis
 
@@ -98,8 +98,9 @@ senador fica errada.
 - **Regra de agregado (D026).** Nenhum total, mediana ou ranking é apresentado como "do Senado". Sempre "entre os senadores em exercício em [data]".
 - **O que aparece:** número idêntico nas bases, ou com divergência explicada, ou de fonte única que passou nas checagens. **O que não se comprova não aparece**, sem caixa de aviso e sem selos como "comprovado" ou "fonte única".
 - **"De onde vem este número"** segue sempre o mesmo molde, em linguagem simples (sem "API", "consulta" ou siglas sem explicação): **onde o Senado publica**, **como chegamos neste número** e **atualizado em**, com o link para o portal do Senado.
-- **Tudo ou nada (D025, D031).** Um dado que vale para todos os senadores só aparece se todos em exercício o tiverem e os dados baterem para todos. Se um só falhar, ninguém o recebe. **Exceção:** dados de contato (telefone, e-mail) aparecem para quem os tem.
+- **Tudo ou nada (D025, D031, D037).** Um dado que **compara** senadores (ranking, posição, mediana) só aparece se todos em exercício o tiverem e os dados baterem para todos; se um só falhar, ninguém o recebe. Um dado **descritivo por senador** (contato, equipe do gabinete) aparece para quem foi provado, e some para todos se mais de 5% falharem (freio de segurança). Ao criar um dado novo, classifique-o numa das duas classes e registre qual.
 - **Falhe fechado.** Se uma verificação quebrar, o número fica oculto e o motivo vai para o relatório de verificações. A prova real mostra consistência entre bases, não é auditoria; o site diz isso.
+- **Compare bases na mesma foto dos dados.** Uma conferência entre duas bases do Senado só vale se as duas foram baixadas no mesmo dia, e o resultado registra a data. Números de dias diferentes geram divergências falsas.
 - **Toda informação exibida indica fonte e data de atualização.**
 - **CPF nunca é exibido por inteiro, e pessoas físicas aparecem agrupadas, sem nome** (decisão D008; o mantenedor aceitou o risco de LGPD por serem dados públicos, e as proteções continuam). A coluna `CNPJ_CPF` traz CPFs completos de pessoas físicas. Veja a decisão D008 em [docs/decisoes.md](docs/decisoes.md).
 - **Citação da fonte:** os termos do Senado exigem, no máximo, citar a proveniência. Toda página mostra a fonte e a data de atualização (D009). Detalhes dos termos em [docs/fontes-de-dados.md](docs/fontes-de-dados.md).
@@ -107,7 +108,7 @@ senador fica errada.
 
 ## 7. Stack aprovada
 
-Python (Pandas, Pandera) para pipeline e verificação (scikit-learn só se o modelo voltar na versão 2); PostgreSQL no Neon como banco; FastAPI para a API; Next.js com TypeScript como site, exportado de forma estática no Cloudflare Pages; GitHub Actions para atualização diária; pytest, ruff e uv para qualidade. O motivo de cada escolha está no [README.md](README.md).
+Python (httpx, Pandas, Pandera) para pipeline e verificação (scikit-learn só se o modelo voltar na versão 2); SQLite local para os dados limpos por enquanto ([D034](docs/decisoes.md#d034-limpeza-com-validação-em-sqlite-local-sem-nome-nem-documento-de-pessoa-física)) e PostgreSQL no Neon como banco da API; FastAPI para a API; Next.js com TypeScript como site, exportado de forma estática no Cloudflare Pages; GitHub Actions para atualização diária; pytest, ruff e uv para qualidade. O motivo de cada escolha está no [README.md](README.md).
 
 Não troque nem acrescente tecnologia sem registrar a decisão e o motivo. Os limites dos planos gratuitos foram pesquisados em 11/11/2026, em grande parte em fontes secundárias, e precisam ser reconfirmados nas páginas oficiais antes de publicar.
 
@@ -130,7 +131,7 @@ senadados/
 ├── docs/            # índice, escopo, decisões, fontes de dados, verificações
 ├── design/          # protótipo da página do senador, folha da marca e favicon
 ├── data/            # README versionado; data/raw/ (dados baixados) fora do git
-├── pipeline/        # (a criar) coleta, limpeza e verificação (Python)
+├── pipeline/        # coleta e limpeza (prontas), verificação (Python, uv)
 ├── api/             # (a criar) FastAPI
 ├── web/             # (a criar) site (Next.js)
 └── .github/         # (a criar) automações

@@ -21,7 +21,7 @@ Regras que valem para todas as telas:
 7. **Linguagem neutra** ([D010](decisoes.md#d010-linguagem-neutra)): descreva o fato ("o maior mês foi março"), nunca "suspeito" ou "irregular".
 8. **Cada número mostra de onde vem:** o dado no Senado e a data ([D009](decisoes.md#d009-citação-da-fonte-em-toda-página)).
 9. **Funciona no celular primeiro.**
-10. **Tudo ou nada:** um dado que compara senadores só aparece se todos os senadores em exercício o tiverem e se os dados baterem para todos. **Exceção:** dados de contato (telefone, e-mail) aparecem para quem os tem.
+10. **Tudo ou nada, para o que compara senadores:** um dado que compara senadores (ranking, posição) só aparece se todos os senadores em exercício o tiverem e se os dados baterem para todos. **Dados descritivos de cada senador** (contato, equipe do gabinete) aparecem para quem foi provado, e somem para todos se mais de 5% falharem ([D037](decisoes.md#d037-exibição-por-tipo-de-dado-e-freio-de-segurança)).
 
 ## 2. Quem usa
 
@@ -68,11 +68,11 @@ Não há selos como "comprovado" ou "fonte única" na tela. As palavras técnica
 | Bloco | Mostra | Estado hoje |
 |---|---|---|
 | **Quem é** | Foto oficial com crédito, partido, estado, mandato, titular ou suplente. | Pronto para provar |
-| **Salário** | Remuneração do último mês da folha | Só onde a ligação com o senador for inequívoca |
-| **Verba (a cota)** | Total do ano e do mês, mês a mês, por categoria, e a posição entre os outros senadores em três faixas | Provado em 2026 (72 de 79 idênticos, 7 explicados) |
+| **Salário** | Remuneração do último mês da folha | Provado para 79 de 81 ([D041](decisoes.md#d041-verificação-automática-do-salário-pela-identidade-do-senador)); 2 suplentes ficam sem salário |
+| **Verba (a cota)** | Total do ano e do mês, mês a mês, por categoria, e a posição entre os outros senadores em três faixas | Provado de 2010 a 2026 (em 2026: 73 idênticos, 7 explicados); 2008 e 2009 não se provam e não aparecem |
 | **Para onde vai** | Maiores fornecedores (empresas) e "pessoas físicas" agrupadas ([D008](decisoes.md#d008-pessoas-físicas-agrupadas-e-cpf-nunca-exibido)) | A partir de 2009 |
-| **Gabinete: onde fica, contato e equipe** | **Onde fica** (endereço), **como falar** (telefones completos, um por linha, e e-mail, só para quem tem) e o número de pessoas, do resumo oficial. **Sem custo estimado** ([D031](decisoes.md#d031-onde-fica-o-gabinete-endereço-entra-telefone-e-mail-e-escritório-de-apoio-ficam-fora)) | Endereço, telefone e e-mail provados; número de pessoas a provar por gabinete |
-| **Moradia** | Uso de imóvel funcional e de auxílio-moradia **mês a mês** | 9 de 12 divergências explicadas; 3 pendentes |
+| **Gabinete: onde fica, contato e equipe** | **Onde fica** (endereço), **como falar** (telefones completos, um por linha, e e-mail, só para quem tem) e o número de pessoas, do resumo oficial. **Sem custo estimado** ([D031](decisoes.md#d031-onde-fica-o-gabinete-endereço-entra-telefone-e-mail-e-escritório-de-apoio-ficam-fora)) | Endereço, telefones e e-mail provados ([D040](decisoes.md#d040-verificação-automática-do-contato-do-gabinete)); equipe provada em 80 de 81 gabinetes ([D036](decisoes.md#d036-verificação-automática-da-equipe-do-gabinete-por-vínculo)) |
+| **Moradia** | Uso de imóvel funcional e de auxílio-moradia **mês a mês** | 76 de 81 idênticos, 1 explicado, 4 pendentes ([D039](decisoes.md#d039-verificação-automática-da-moradia-mês-a-mês)); aparece para 77 |
 | **Maior mês** | O mês de maior valor da verba, destacado no gráfico mês a mês. Só o fato, sem julgamento ([D030](decisoes.md#d030-destaque-do-maior-mês-no-lugar-do-alerta-fora-do-padrão)) | Sai da mesma conta do gráfico |
 
 **O que aparece e o que não aparece:**
@@ -95,8 +95,9 @@ Não há selos como "comprovado" ou "fonte única" na tela. As palavras técnica
 - Como citar o Senadados e a fonte original.
 
 ### 4.5 Verificações (nova)
-- A lista de checagens feitas e o resultado de cada uma, por exemplo "cota de 2026: 72 de 79 idênticos, 7 explicados".
-- As divergências encontradas nos dados do Senado, **agregadas e sem nomes**, com a explicação quando existe.
+- A lista de checagens feitas e o resultado de cada uma, por exemplo "cota de 2026: 73 idênticos, 7 explicados".
+- Uma seção **“Onde os dados do Senado não batem entre si”**, com cada divergência provada por **prints** das telas e dos arquivos do Senado, sem dizer qual número está certo, nem o motivo, nem o que faremos a respeito ([D038](decisoes.md#d038-documento-público-de-divergências-com-prova-em-imagem)). Só entra o que tem print. O texto está em [divergencias-nos-dados-do-senado.md](divergencias-nos-dados-do-senado.md).
+- As divergências encontradas nos dados do Senado, **agregadas**, com a explicação quando existe. Os **nomes dos senadores só aparecem na seção de divergências**, onde o print mostra a tela do Senado, que traz o nome ([D038](decisoes.md#d038-documento-público-de-divergências-com-prova-em-imagem)).
 - A frase fixa: "verificamos se as bases do Senado concordam entre si. Não auditamos os dados."
 - Canal para **reportar um erro** e registro público das correções.
 
@@ -104,11 +105,11 @@ Não há selos como "comprovado" ou "fonte única" na tela. As palavras técnica
 
 | Informação | Fonte | Verificação |
 |---|---|---|
-| Despesas da cota | API de despesas do Senado (2008 a 2026), com o CSV e a página de cada senador como conferência | 2026 verificado contra o resumo; outros anos a verificar |
+| Despesas da cota | API de despesas do Senado (2008 a 2026), com o CSV e a página de cada senador como conferência | Verificada de 2010 a 2026 contra o resumo; 2008 e 2009 não batem e ficam ocultos ([D035](decisoes.md#d035-verificação-automática-da-cota-por-categoria-na-mesma-foto-dos-dados)) |
 | Perfil e foto | APIs administrativa e legislativa | Pronto |
-| Salário | Folha de pagamento mensal | Ligação por nome; só os casos inequívocos |
-| Equipe | Resumo oficial por senador | A provar por gabinete |
-| Moradia | Página mensal de benefícios | 9 de 12 explicados |
+| Salário | Folha de pagamento mensal; identidade pela página do senador | Fonte única do valor, com cinco provas ([D041](decisoes.md#d041-verificação-automática-do-salário-pela-identidade-do-senador)) |
+| Equipe | Resumo oficial por senador | Provada em 80 de 81 gabinetes; aparece para esses 80, e o gabinete sem explicação fica oculto ([D036](decisoes.md#d036-verificação-automática-da-equipe-do-gabinete-por-vínculo), [D037](decisoes.md#d037-exibição-por-tipo-de-dado-e-freio-de-segurança)) |
+| Moradia | Página mensal de benefícios, resumo da API e lista do mês | 77 provados; 4 pendentes até o mês fechar ([D039](decisoes.md#d039-verificação-automática-da-moradia-mês-a-mês)) |
 | Escritórios de apoio | API administrativa | A verificar |
 
 ## 6. Regras de exibição
@@ -117,7 +118,7 @@ Não há selos como "comprovado" ou "fonte única" na tela. As palavras técnica
 2. **Anos sem fornecedor:** o bloco "Para onde vai" começa em **2009**. Em 2008 o site explica que o dado não existe.
 3. **Pessoas físicas:** nunca com nome nem CPF; sempre agrupadas ([D008](decisoes.md#d008-pessoas-físicas-agrupadas-e-cpf-nunca-exibido)).
 4. **Equipe:** só números, nunca nomes ([D007](decisoes.md#d007-equipe-do-gabinete-só-em-números)).
-5. **Linhas sem categoria:** aparecem como "Sem categoria". O total da verba inclui essas linhas, e o site explica que o resumo do Senado não as conta (60 linhas, R$ 164.450,50 em 2026).
+5. **Linhas sem categoria:** aparecem como "Sem categoria". O total da verba inclui essas linhas, e o site explica que o resumo do Senado não as conta (59 linhas, R$ 162.260,84 em 2026, entre os senadores em exercício).
 6. **Valores negativos:** somados normalmente, com a nota. A causa não foi confirmada.
 7. **Dado que não se comprova:** não aparece, e nunca é preenchido com estimativa. A página "Verificações" diz o que está pendente.
 8. **Nenhum termo jurídico:** o site não usa "legal", "ilegal", "irregular" nem "teto".
@@ -192,10 +193,10 @@ Metas a medir, não resultados já obtidos:
 
 | Item | Situação | O que fazer |
 |---|---|---|
-| Moradia: 3 casos sem prova | Explicação plausível (a lista é de novembro; a página mensal vai até outubro), não provada | Reconferir no mês seguinte |
-| Salário | 3 suplentes sem correspondência na folha; um titular com valor diferente | Provar a ligação ou deixar sem salário |
-| Equipe | Diferença de 1 pessoa entre o resumo e a lista; um gabinete com 70 pessoas | Provar por gabinete |
-| Cota de outros anos | Só 2026 foi cruzada com o resumo; CSV de 2008 difere em 8 valores | Rodar a prova real ano a ano |
+| Moradia: 4 casos pendentes | A lista é de novembro e a página mensal vai até outubro: períodos diferentes, causa provável, **não provada** | A verificação diária reconfere; quando a página mensal incluir novembro, o caso se resolve sozinho |
+| Salário | 2 suplentes que assumiram em outubro: duas matrículas com o mesmo nome e folha suplementar com valores | Ficam sem salário; a verificação diária reconfere com a folha de novembro |
+| Equipe | **Verificada por gabinete em 18/11/2026**: 80 de 81 idênticos; o gabinete de Camilo Santana tem 1 efetivo a mais no resumo | Perguntar ao Senado; quando explicarem, a equipe desse gabinete aparece sozinha na próxima verificação |
+| Cota de outros anos | **Feito em 18/11/2026** ([D035](decisoes.md#d035-verificação-automática-da-cota-por-categoria-na-mesma-foto-dos-dados)): 2010 a 2026 batem; 2008 e 2009 não (o resumo de 2008 está vazio e o de 2009 é menor que as despesas), então ficam ocultos | Perguntar ao Senado pelo canal oficial; o histórico da cota começa em 2010 |
 | Linhas sem categoria | O Senado não explica por que o resumo as deixa de fora | Perguntar pelo canal oficial; mostrar com a explicação |
 | Internet Archive | Acusa cópia, mas não consegui listar | Testar de novo |
 | Virada de 2027 | Até 54 páginas saem de uma vez | Decidido: apagar os dados de quem sair (banco, arquivos brutos, site e API) |
@@ -205,17 +206,19 @@ Metas a medir, não resultados já obtidos:
 
 ## 13. Ordem de construção
 
-1. Pipeline de despesas, com validação e testes.
-2. **Camada de verificação** (cruzamentos, relatório, falha fechada).
-3. Banco e carga completa dos senadores em exercício.
-4. Perfil, salário (quando provado), equipe e moradia.
-5. API.
-6. Site: perfil, depois início, ranking, comparação, "Sobre os dados" e "Verificações".
-7. Destaque do maior mês.
-8. Automação diária e publicação.
-9. Revisão final da documentação.
+| # | Etapa | Estado em 18/11/2026 |
+|---|---|---|
+| 1 | Pipeline de despesas, com validação e testes | **Feito** ([D033](decisoes.md#d033-coleta-local-que-só-grava-quem-está-em-exercício), [D034](decisoes.md#d034-limpeza-com-validação-em-sqlite-local-sem-nome-nem-documento-de-pessoa-física)) |
+| 2 | **Camada de verificação** (cruzamentos, relatório, falha fechada) | **Feito** para cota, equipe, moradia, contato e salário ([D035](decisoes.md#d035-verificação-automática-da-cota-por-categoria-na-mesma-foto-dos-dados) a [D041](decisoes.md#d041-verificação-automática-do-salário-pela-identidade-do-senador)) |
+| 3 | Banco e carga completa dos senadores em exercício | **Próximo** (Neon, 19/11/2026) |
+| 4 | Perfil, salário (quando provado), equipe e moradia | A fazer, no site |
+| 5 | API | A fazer |
+| 6 | Site: perfil, depois início, ranking, comparação, "Sobre os dados" e "Verificações" | A fazer |
+| 7 | Destaque do maior mês | A fazer |
+| 8 | Automação diária e publicação | A fazer |
+| 9 | Revisão final da documentação | A fazer |
 
-Cada etapa termina com a documentação atualizada e um commit no padrão do [AGENTS.md](../AGENTS.md).
+Cada etapa termina com a documentação atualizada e um commit no padrão do [AGENTS.md](../AGENTS.md). O resumo do que existe e do que vem a seguir está em [andamento.md](andamento.md).
 
 ## 14. Perguntas em aberto para o mantenedor
 
