@@ -136,7 +136,7 @@ A regra do projeto: **nenhuma tecnologia entra "porque é moderna"**. Cada uma r
 ### PostgreSQL no Neon: o banco de dados
 **Em uma frase:** é o arquivo organizado onde os dados limpos ficam guardados.
 **Por quê:** o Neon oferece um plano gratuito, e o PostgreSQL é um banco sério usado em empresas. O plano gratuito não cobra por excesso: se o limite estourar, ele para de gravar em vez de gerar fatura. Para um projeto sem orçamento, isso protege.
-**Descartado:** SQLite (mais simples, mas guardaria o dado num arquivo que só atualiza a cada nova publicação do site).
+**Descartado:** SQLite como banco da API (mais simples, mas guardaria o dado num arquivo que só atualiza a cada nova publicação do site). **Por enquanto** o pipeline grava num SQLite local ([D034](docs/decisoes.md#d034-limpeza-com-validação-em-sqlite-local-sem-nome-nem-documento-de-pessoa-física)), e o Neon entra na próxima etapa.
 
 ### FastAPI: a API
 **Em uma frase:** é o "balcão de atendimento" dos dados.
@@ -201,6 +201,7 @@ Documentos (índice completo em [docs/README.md](docs/README.md)):
 | Versão | O que entra |
 |---|---|
 | **Primeiros passos** (feito) | Baixar os dados, medir o tamanho real, conferir colunas, formatos e a prova real; definir escopo e protótipo |
+| **Pipeline e prova real** (feito em 18/11/2026) | Coleta, limpeza e cinco verificações automáticas (cota, equipe, moradia, contato e salário). Resumo em [docs/andamento.md](docs/andamento.md) |
 | **MVP (versão 1)** | Perfil do senador, verba por categoria e mês, principais fornecedores (de 2009 em diante), número de pessoas na equipe, moradia mês a mês, salário (quando comprovado), ranking e comparação entre os senadores em exercício, destaque do maior mês e a página de verificações |
 | **Versão 2** | Atuação parlamentar (votações, projetos, comissões), histórico desde 2008 e, se fizer sentido, um modelo de anomalias |
 | **Versão 3 (talvez)** | Dados de outras fontes públicas, como o TSE. Aumenta muito o escopo e a responsabilidade |

@@ -75,6 +75,7 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 - **Riscos:** limite de 1 GB por projeto e 100 horas de computação por mês.
 - **Plano B:** arquivos Parquet ou SQLite versionados, também de custo zero.
 - **Status:** aceita.
+- **Atualização (18/11/2026):** o banco local da D034 (SQLite) ocupa **34 MB** com os 154.298 registros dos senadores em exercício e todas as tabelas de verificação, bem abaixo dos números estimados acima, que contavam todos os ex-senadores. O Neon entra na etapa 3 da ordem de construção.
 
 ## D003: Site em Next.js estático no Cloudflare Pages
 
@@ -227,6 +228,7 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 - **Por quê:** responde direto à pergunta mais natural do cidadão ("e o outro senador, gasta mais?"). Com só duas séries, o gráfico continua legível.
 - **Cuidado:** se os senadores forem de estados diferentes, aparece o aviso de que a cota varia por estado.
 - **Status:** aceita.
+- **Atualização (18/11/2026):** a comparação **não traz custo estimado do gabinete**: a D025 aboliu estimativas. Ela traz salário, verba usada, equipe e gasto por categoria, cada um só para quem foi provado (D037); se um dos dois senadores não tiver um dado, a comparação mostra "sem dado" naquela linha.
 
 ## D022: Ranking nacional com contexto de estado e região
 
@@ -311,6 +313,7 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 - **Atualização (12/11/2026):** os gastos fora da cota entram sem selo de "fonte única"; "De onde vem este número" explica em palavras simples que o Senado informa só o total do ano de cada item e que o valor é copiado sem alteração.
 - **Correção (12/11/2026):** cada item fora da cota tem uma página própria com o valor **mês a mês** no portal do Senado, sem nota fiscal nem fornecedor. O texto da tela passa a dizer, com precisão: "estes valores não fazem parte da verba (cota); o Senado os lista à parte; nos dados que usamos, não consta se o dinheiro é reembolsado ao senador ou pago direto pelo Senado".
 - **Atualização (12/11/2026):** **os gastos fora da cota saem do MVP.** O bloco confundia o cidadão e não há como afirmar, com os dados do Senado, se o dinheiro é reembolso ao senador ou pagamento direto. Fica só a moradia. Os achados continuam registrados em `docs/fontes-de-dados.md`, e o assunto pode voltar se houver uma explicação precisa.
+- **Atualização (18/11/2026):** a moradia ganhou verificação automática com quatro fontes, e os casos pendentes passaram de 3 para 4 (a defasagem entre a lista de novembro e a página mensal, que vai até outubro). Ver [D039](#d039-verificação-automática-da-moradia-mês-a-mês).
 
 ## D029: Identidade visual
 

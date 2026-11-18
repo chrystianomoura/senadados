@@ -8,6 +8,7 @@ Leia nesta ordem se for a primeira vez no projeto.
 | [escopo.md](escopo.md) | O que o site mostra: telas, regras de exibição, versões e ordem de construção |
 | [decisoes.md](decisoes.md) | Cada decisão com o seu porquê, com índice e situação atual |
 | [fontes-de-dados.md](fontes-de-dados.md) | De onde vêm os dados, formato, qualidade e termos de uso |
+| [andamento.md](andamento.md) | Em que pé o projeto está: o que existe, o que foi provado, as decisões recentes, as pendências e o próximo passo |
 | [verificacoes.md](verificacoes.md) | Resultado de cada conferência entre bases do Senado e o que ainda falta provar |
 | [divergencias-nos-dados-do-senado.md](divergencias-nos-dados-do-senado.md) | Onde os dados do Senado não batem entre si, explicado para qualquer pessoa e provado com prints |
 | [../AGENTS.md](../AGENTS.md) | Regras de trabalho para qualquer pessoa ou agente (commits, dados, comportamento) |

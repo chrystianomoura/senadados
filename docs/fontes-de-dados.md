@@ -56,6 +56,18 @@ Todos na base `https://adm.senado.gov.br/adm-dadosabertos/api/v1`. Respondem sem
 | Escritórios de apoio | `/senadores/escritorios-apoio` | Fora do MVP |
 | Votações, autorias, comissões etc. | `legis.senado.leg.br/dadosabertos/senador/{codigo}/...` | Versão 2 |
 
+### 4. Páginas do portal de transparência (HTML)
+
+Algumas informações só existem nas páginas do portal, e não na API. O pipeline lê **só o que precisa** delas, sem login e sem contornar nenhum desafio de bot.
+
+| Página | Endereço | O que o pipeline lê |
+|---|---|---|
+| Página do senador | `www6g.senado.leg.br/transparencia/sen/{código}/?ano=AAAA` | Uso de benefícios ("Utilizou (em 10 meses)"), endereço do gabinete, telefones, e-mail e o link da página de identificação |
+| Página mensal de benefícios | `.../sen/{código}/beneficios/?numeroFuncional=...&ano=AAAA` | Uso de moradia mês a mês (o número funcional vem do link da página do senador e não é guardado) |
+| Identificação no portal de servidores | `www.senado.leg.br/transparencia/rh/servidores/detalhe.asp?fcodigo=...` | Nome civil, vínculo, situação e UF (a consulta de remuneração dessa página exige reCAPTCHA e **não é usada**) |
+
+São páginas em HTML, não APIs: **podem mudar sem aviso**. Se mudarem, a verificação do senador cai em "sem explicação" e o dado não aparece ([D039](decisoes.md#d039-verificação-automática-da-moradia-mês-a-mês), [D040](decisoes.md#d040-verificação-automática-do-contato-do-gabinete), [D041](decisoes.md#d041-verificação-automática-do-salário-pela-identidade-do-senador)). Os termos de uso são os mesmos do resto do portal (veja abaixo).
+
 ## Achados com a API completa (2008 a 2026)
 
 Baixei a API de despesas de **todos os anos** (174 MB em JSON, fora do git). Os números abaixo valem para os 19 anos inteiros. (Uma primeira amostra pequena e enviesada errou alguns percentuais; lição: **não tirar conclusões de amostra enviesada**.)
@@ -64,7 +76,7 @@ Baixei a API de despesas de **todos os anos** (174 MB em JSON, fora do git). Os 
 - **398.624 registros** e cerca de **R$ 450 milhões** reembolsados entre 2008 e 2026 (2026 incompleto).
 - 31.658 documentos de fornecedor distintos.
 - Nenhum `id` repetido e nenhum registro sem `codSenador`.
-- Colocados em um SQLite com dois índices, ocuparam cerca de 126 MB. No PostgreSQL deve ser parecido, talvez maior (*estimativa, não medida*).
+- Colocados em um SQLite com dois índices, ocuparam cerca de 126 MB. (Medição de 11/11, com ex-senadores; só com os senadores em exercício, o banco local tem 34 MB.)
 
 | Ano | Registros | CNPJ/CPF e data preenchidos | `detalhamento` preenchido | Valores negativos |
 |---|---|---|---|---|

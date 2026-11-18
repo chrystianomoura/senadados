@@ -105,7 +105,7 @@ Não há selos como "comprovado" ou "fonte única" na tela. As palavras técnica
 
 | Informação | Fonte | Verificação |
 |---|---|---|
-| Despesas da cota | API de despesas do Senado (2008 a 2026), com o CSV e a página de cada senador como conferência | 2026 verificado contra o resumo; outros anos a verificar |
+| Despesas da cota | API de despesas do Senado (2008 a 2026), com o CSV e a página de cada senador como conferência | Verificada de 2010 a 2026 contra o resumo; 2008 e 2009 não batem e ficam ocultos ([D035](decisoes.md#d035-verificação-automática-da-cota-por-categoria-na-mesma-foto-dos-dados)) |
 | Perfil e foto | APIs administrativa e legislativa | Pronto |
 | Salário | Folha de pagamento mensal; identidade pela página do senador | Fonte única do valor, com cinco provas ([D041](decisoes.md#d041-verificação-automática-do-salário-pela-identidade-do-senador)) |
 | Equipe | Resumo oficial por senador | Provada em 80 de 81 gabinetes; aparece para esses 80, e o gabinete sem explicação fica oculto ([D036](decisoes.md#d036-verificação-automática-da-equipe-do-gabinete-por-vínculo), [D037](decisoes.md#d037-exibição-por-tipo-de-dado-e-freio-de-segurança)) |
@@ -206,19 +206,19 @@ Metas a medir, não resultados já obtidos:
 
 ## 13. Ordem de construção
 
-1. Pipeline de despesas, com validação e testes.
-2. **Camada de verificação** (cruzamentos, relatório, falha fechada).
-3. Banco e carga completa dos senadores em exercício.
-4. Perfil, salário (quando provado), equipe e moradia.
-5. API.
-6. Site: perfil, depois início, ranking, comparação, "Sobre os dados" e "Verificações".
-7. Destaque do maior mês.
-8. Automação diária e publicação.
-9. Revisão final da documentação.
+| # | Etapa | Estado em 18/11/2026 |
+|---|---|---|
+| 1 | Pipeline de despesas, com validação e testes | **Feito** ([D033](decisoes.md#d033-coleta-local-que-só-grava-quem-está-em-exercício), [D034](decisoes.md#d034-limpeza-com-validação-em-sqlite-local-sem-nome-nem-documento-de-pessoa-física)) |
+| 2 | **Camada de verificação** (cruzamentos, relatório, falha fechada) | **Feito** para cota, equipe, moradia, contato e salário ([D035](decisoes.md#d035-verificação-automática-da-cota-por-categoria-na-mesma-foto-dos-dados) a [D041](decisoes.md#d041-verificação-automática-do-salário-pela-identidade-do-senador)) |
+| 3 | Banco e carga completa dos senadores em exercício | **Próximo** (Neon, 19/11/2026) |
+| 4 | Perfil, salário (quando provado), equipe e moradia | A fazer, no site |
+| 5 | API | A fazer |
+| 6 | Site: perfil, depois início, ranking, comparação, "Sobre os dados" e "Verificações" | A fazer |
+| 7 | Destaque do maior mês | A fazer |
+| 8 | Automação diária e publicação | A fazer |
+| 9 | Revisão final da documentação | A fazer |
 
-Cada etapa termina com a documentação atualizada e um commit no padrão do [AGENTS.md](../AGENTS.md).
-
-**Andamento (18/11/2026):** a etapa 1 começou. A **coleta** está pronta e testada (lista de senadores e despesas por ano, só de quem está em exercício, [D033](decisoes.md#d033-coleta-local-que-só-grava-quem-está-em-exercício)). A **validação com Pandera e a limpeza** também estão prontas, com testes das regras de sujeira e banco SQLite local ([D034](decisoes.md#d034-limpeza-com-validação-em-sqlite-local-sem-nome-nem-documento-de-pessoa-física)). Falta a etapa 2, a **verificação automática** entre bases (hoje a cota de 2026 foi conferida por um roteiro avulso: 74 idênticos, 7 explicados, 0 sem explicação). A **verificação automática da cota** por categoria também está pronta ([D035](decisoes.md#d035-verificação-automática-da-cota-por-categoria-na-mesma-foto-dos-dados)). A **verificação da equipe do gabinete** também ([D036](decisoes.md#d036-verificação-automática-da-equipe-do-gabinete-por-vínculo)): 80 de 81 gabinetes idênticos, 1 sem explicação. A **verificação da moradia** também ([D039](decisoes.md#d039-verificação-automática-da-moradia-mês-a-mês)): 76 idênticos, 1 explicado, 4 pendentes. A **verificação do contato** também ([D040](decisoes.md#d040-verificação-automática-do-contato-do-gabinete)): endereço e telefones aparecem para os 81, e o e-mail para 79. A **verificação do salário** também ([D041](decisoes.md#d041-verificação-automática-do-salário-pela-identidade-do-senador)): 79 de 81 provados. **As verificações da etapa 2 estão completas.**
+Cada etapa termina com a documentação atualizada e um commit no padrão do [AGENTS.md](../AGENTS.md). O resumo do que existe e do que vem a seguir está em [andamento.md](andamento.md).
 
 ## 14. Perguntas em aberto para o mantenedor
 

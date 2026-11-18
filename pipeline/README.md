@@ -2,6 +2,40 @@
 
 Código em Python que coleta, limpa e verifica os dados abertos do Senado. Hoje existem a **coleta**, a **validação e limpeza** e a **verificação da cota**, a **da equipe do gabinete**, a **da moradia**, a **do contato** e a **do salário**; as verificações estão completas ([ordem de construção](../docs/escopo.md#13-ordem-de-construção)).
 
+## Rodar tudo, na ordem
+
+De dentro de `pipeline/`, **no mesmo dia** (a verificação se recusa a rodar com bases de dias diferentes). Uma execução completa leva cerca de 6 minutos e ocupa 68 MB de dados brutos e 34 MB de banco.
+
+```bash
+uv run python -m senadados_pipeline.coleta --sobrescrever
+```
+
+```bash
+uv run python -m senadados_pipeline.limpeza
+```
+
+```bash
+uv run python -m senadados_pipeline.verificacao
+```
+
+```bash
+uv run python -m senadados_pipeline.equipe
+```
+
+```bash
+uv run python -m senadados_pipeline.moradia
+```
+
+```bash
+uv run python -m senadados_pipeline.contato
+```
+
+```bash
+uv run python -m senadados_pipeline.salario
+```
+
+A limpeza recria o banco do zero e **apaga as tabelas de verificação**; por isso as verificações rodam depois dela. Quem ler o banco (API e site) deve tratar a ausência de uma tabela de verificação como "não verificado" e ocultar o dado.
+
 ## O que a coleta faz
 
 - Baixa a **lista dos senadores em exercício** (API administrativa do Senado).
