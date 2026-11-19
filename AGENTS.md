@@ -8,7 +8,7 @@ Instruções para qualquer agente (humano ou de IA) que trabalhe neste repositó
 
 **Escopo de pessoas:** só os **senadores em exercício**, pela lista oficial do Senado (D026). Quem sai do mandato sai do site.
 
-**Estado atual (18/11/2026):** escopo, regras e protótipo da página fechados; fontes e conferências documentadas; **a coleta, a validação e a limpeza do pipeline existem** (veja [pipeline/README.md](pipeline/README.md)); a **verificação automática da cota** (D035), a **da equipe do gabinete** (D036), a **da moradia** (D039), a **do contato** (D040) e a **do salário** (D041) também, e as verificações estão completas; ainda sem banco no Neon, API ou site. Próximo passo: o banco (ordem de construção em [docs/escopo.md](docs/escopo.md)). Índice dos documentos em [docs/README.md](docs/README.md).
+**Estado atual (18/11/2026):** escopo, regras e protótipo da página fechados; fontes e conferências documentadas; **a coleta, a validação e a limpeza do pipeline existem** (veja [pipeline/README.md](pipeline/README.md)); a **verificação automática da cota** (D035), a **da equipe do gabinete** (D036), a **da moradia** (D039), a **do contato** (D040) e a **do salário** (D041) também, e as verificações estão completas; ainda sem banco no Neon, API ou site (o desenho do banco está na [D042](docs/decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível), provisória). Próximo passo: o banco (ordem de construção em [docs/escopo.md](docs/escopo.md)). Índice dos documentos em [docs/README.md](docs/README.md).
 
 ## 2. Princípios inegociáveis
 

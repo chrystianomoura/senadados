@@ -54,6 +54,7 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 | D039 | Verificação automática da moradia, mês a mês | Vale |
 | D040 | Verificação automática do contato do gabinete | Vale |
 | D041 | Verificação automática do salário pela identidade do senador | Vale (altera a ligação da D016) |
+| D042 | Banco no Neon: só dados agregados, dois esquemas e carga repetível | Provisória (desenho, ainda sem código) |
 
 ---
 
@@ -76,6 +77,7 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 - **Plano B:** arquivos Parquet ou SQLite versionados, também de custo zero.
 - **Status:** aceita.
 - **Atualização (18/11/2026):** o banco local da D034 (SQLite) ocupa **34 MB** com os 154.298 registros dos senadores em exercício e todas as tabelas de verificação, bem abaixo dos números estimados acima, que contavam todos os ex-senadores. O Neon entra na etapa 3 da ordem de construção.
+- **Atualização (19/11/2026):** só os dados **agregados** vão para o Neon, então o que será gravado lá é bem menor do que as estimativas acima (as 154.298 despesas linha a linha ficam no SQLite local). Detalhes na [D042](#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível).
 
 ## D003: Site em Next.js estático no Cloudflare Pages
 
@@ -502,3 +504,23 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 - **Limites:** (1) fonte única do valor. (2) A identificação vem do HTML do portal, que pode mudar; se mudar, o senador cai em `sem_explicacao`. (3) Suplentes que assumem no meio do mês têm folhas parciais e ficam ocultos até a folha completa. (4) Prova consistência e identidade, não é auditoria (D027). (5) O site não diz se o valor está dentro ou fora de qualquer regra (D024).
 - **Altera:** a ligação da D016 (nome completo da lista legislativa).
 - **Status:** aceita.
+
+## D042: Banco no Neon, só dados agregados, dois esquemas e carga repetível
+
+- **Contexto:** a etapa 3 da ordem de construção é o banco na nuvem, de onde a API (D004) vai ler. O banco local (SQLite, D034) tem 154.298 despesas linha a linha e 34 MB. Os endpoints do escopo (§7) pedem totais por mês e por categoria, maiores fornecedores por ano, ranking, contato, equipe, moradia, salário e o relatório de verificações. **Nenhum precisa da nota fiscal linha a linha.**
+- **Decidido pelo mantenedor em 19/11/2026:**
+  1. **Só dados agregados vão para o Neon.** Em 18/11/2026, **antes de aplicar a regra de exibição**, são 25.902 linhas de despesa por senador, ano, mês e categoria (25.526 de 2010 em diante e 376 de 2008 e 2009, anos em que a cota não aparece, D035) e 30.992 de fornecedores (empresas) por senador e ano, de 2009 em diante (30.594 de 2010 em diante e 398 de 2009). O que for para o `publico` será menor que isso, porque só segue o que passou nas verificações. Pessoas físicas continuam agrupadas e sem nome (D008). As 154.298 despesas linha a linha **ficam só no SQLite local**.
+  2. **A carga será testada numa branch do Neon com validade**, e não num Postgres local (não há Postgres instalado na máquina de desenvolvimento). A branch herda as senhas do projeto, então leva `expires_at` de 1 dia e é apagada ao terminar.
+  3. **Documentar antes de criar:** o projeto no Neon só é criado depois da revisão deste desenho pelo mantenedor.
+- **Proposta ainda a confirmar na revisão** (o mantenedor respondeu às três perguntas acima, mas não revisou o resto):
+  - **Dois esquemas.** `publico` guarda só o que passou nas verificações (`exibir = 1`); a API e o site leem só ele, e a ausência de um dado significa "não verificado". `interno` guarda o detalhe das verificações (`resultado` e `detalhe`); o resumo da página "Verificações" sai por uma view do `publico`. Os dados descritivos pequenos (contato, equipe, moradia mês a mês e salário) seguem para o `publico` só para quem tem `exibir = 1`. Conferi **todos** os valores de `detalhe` de 18/11/2026 (9 padrões de texto, nas cinco tabelas de verificação): trazem categorias, valores e contagens, **sem nome de senador nem de outra pessoa**. O texto de `detalhe` é gerado pelo código; se algum dia ele passar a incluir nomes, esta conferência precisa ser refeita antes de a carga o levar para a nuvem.
+  - **Ponto aberto: o que a view mostra dos ocultos.** A D037 diz que o gabinete oculto "é listado na página Verificações", e o `escopo.md` §4.5 diz que, fora da seção de divergências, a página é **agregada e sem nomes**. Os dois textos precisam ser conciliados antes de desenhar a view (mostrar só quantos ficaram ocultos, ou também quais). **Decisão do mantenedor.**
+  - **Três papéis de banco**, de menor privilégio: o dono (só migrações), `sd_carga` (escreve; usado pela rotina diária) e `sd_leitura` (`SELECT` só no `publico`; usado pela API). Cada papel recebe só o que a sua tarefa precisa, e tabelas novas não herdam permissão.
+  - **Carga repetível numa transação:** apaga e recarrega as tabelas, então quem saiu da lista some sozinho (D026). Recusa carregar se as verificações não forem da mesma foto dos dados (D035).
+  - **Projeto separado** `senadados`, plano gratuito e PostgreSQL 18. **Região:** a proposta é `aws-us-east-2` (Ohio), mas isso **depende de onde a API vai ficar**: a D004 escolhe a Render e não fixa a região dela, e convém que o banco e a API fiquem na mesma região, para cada consulta ser mais rápida. Decidir a região da API primeiro.
+  - **Dados que comparam senadores** (posição, ranking): a regra de tudo ou nada (D037) vale na carga; onde calcular (no pipeline ou numa view) **fica para a implementação**.
+- **Limites do plano gratuito**, conferidos em 19/11/2026 na página oficial de planos da Neon (atualizada em 12/11/2026): 1 GB de armazenamento por projeto, 100 horas de computação por mês por projeto, 10 branches por projeto, até 100 projetos por conta, o banco "dorme" após 5 minutos parado, e 6 horas de histórico para recuperação. **Se o plano gratuito pede cartão: não verificado** (a conta que existe está no plano gratuito, mas não conferi se há cartão cadastrado). Os ~57 mil registros agregados devem caber com folga, **mas o tamanho no PostgreSQL não foi medido**.
+- **Por quê:** levar só o que as telas usam reduz o tamanho, a carga e a superfície de dados pessoais, e mantém o que o cidadão vê reproduzível a partir do pipeline. Separar `publico` e `interno` faz "só o comprovado" (D025) valer também na leitura: quem consulta o banco não alcança um dado não provado.
+- **Descartado:** levar as despesas linha a linha (ocuparia mais, sem tela que as use; **pode voltar** se um dia a D008 mudar); testar num Postgres local (exigiria instalar algo e a versão poderia diferir da Neon); criar o projeto antes de revisar o desenho.
+- **Custo:** com só agregados não dá para mostrar a nota individual sem recarregar o banco com outra carga.
+- **Status:** provisória. Vira `aceita` quando o mantenedor revisar a proposta acima.
