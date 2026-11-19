@@ -21,10 +21,11 @@ O pipeline que coleta, limpa e **prova** os dados do Senado está pronto e roda 
 | Verificação do **contato** (endereço, telefones, e-mail) | Pronta |
 | Verificação do **salário** | Pronta |
 | Documento público de divergências nos dados do Senado | Pronto |
-| Banco no Neon | **No ar com os dados provados de 18/11/2026** (20 MB, 17 tabelas, permissões testadas) ([D042](decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível), [D043](decisoes.md#d043-migrações-em-sql-puro-driver-psycopg-e-carga-que-ensaia-antes-de-gravar)). Atualização diária ainda manual |
+| Banco no Neon | **No ar com os dados provados de 18/11/2026** (20 MB, 17 tabelas, permissões testadas). A migração 003 (`moradia_verificada`) foi ensaiada numa branch e **ainda não foi aplicada na produção** ([D042](decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível), [D043](decisoes.md#d043-migrações-em-sql-puro-driver-psycopg-e-carga-que-ensaia-antes-de-gravar)). Atualização diária ainda manual |
+| Exportador dos JSON do site | **Pronto e ensaiado numa branch** (84 arquivos, 1,6 MB; [contrato](contrato-dos-dados.md)). Lê a produção depois da 003 |
 | API, site, automação diária | **Não começaram** |
 
-O código está em [pipeline/](../pipeline/README.md), com 310 testes (270 em 18/11 e 40 novos da carga, das migrações e dos papéis) e 95% de cobertura nos módulos de verificação (a cobertura é de 18/11 e não foi medida de novo). Os dados ficam em `data/` e **não vão para o git**.
+O código está em [pipeline/](../pipeline/README.md), com 340 testes (270 em 18/11 e 70 novos da carga, das migrações, dos papéis e do exportador) e 95% de cobertura nos módulos de verificação (a cobertura é de 18/11 e não foi medida de novo). Os dados ficam em `data/` e **não vão para o git**.
 
 ## Como rodar tudo, do zero
 
@@ -100,8 +101,8 @@ Etapa 3 da ordem de construção, concluída: o projeto `senadados` na Neon (pla
 
 O site vem antes da API ([D044](decisoes.md#d044-site-antes-da-api-com-dados-em-arquivos-json-gerados-do-esquema-público)). A ordem:
 
-1. **Contrato dos dados e exportador** (Python, com testes): arquivos JSON gerados do esquema `publico` com o papel `sd_leitura`, um por senador, mais a lista, as verificações e os metadados. O contrato está em rascunho em [contrato-dos-dados.md](contrato-dos-dados.md). O exportador começa pela lista e por **um** perfil real. Os JSON não vão para o git.
-2. **Esqueleto do site** em `web/` (Next.js, TypeScript, exportação estática, identidade da D029), com um `README.md` curto, como toda pasta nova.
+1. **Contrato dos dados e exportador** (**feito em 19/11/2026**, ensaiado numa branch): arquivos JSON gerados do esquema `publico` com o papel `sd_leitura`, um por senador, mais a lista, as verificações e os metadados ([contrato-dos-dados.md](contrato-dos-dados.md)). Os JSON não vão para o git. **Falta aplicar a migração 003 na produção e recarregar**, com o OK do mantenedor, para o exportador ler a produção.
+2. **Esqueleto do site** (próximo) em `web/` (Next.js, TypeScript, exportação estática, identidade da D029), com um `README.md` curto, como toda pasta nova.
 3. **Primeira página real:** o perfil de um senador, lendo o JSON do passo 1.
 4. **Depois, em fatias:** o bloco "Quem é" (foto e mandato, [D045](decisoes.md#d045-foto-e-mandato-do-senador-com-o-endereço-oficial-do-senado-e-verificação-entre-duas-listas)), a home com busca, a página "Verificações" (com a seção de divergências já escrita), o ranking e a comparação.
 
@@ -145,3 +146,4 @@ Na branch `docs/site-primeiro`, a partir da `main` depois do PR #2:
 |---|---|
 | `docs: registra que o site vem antes da API (D044)` | Nova ordem de construção |
 | `docs: define o contrato dos dados do site e a foto do senador (D045)` | Contrato em rascunho e decisão da foto e do mandato |
+| `feat(pipeline): adiciona o exportador dos dados do site` | Migração 003, ajuste da carga e exportador (branch `feat/exportador-site`) |

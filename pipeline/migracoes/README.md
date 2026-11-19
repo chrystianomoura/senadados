@@ -6,5 +6,6 @@ Arquivos SQL numerados que criam e alteram o banco no Neon ([D042](../../docs/de
 |---|---|
 | `001_esquemas.sql` | Cria os esquemas `publico` e `interno` e as tabelas |
 | `002_papeis.sql` | Dá a `sd_carga` (escreve) e a `sd_leitura` (só lê o `publico`) o mínimo de que precisam. Exige que os papéis já existam |
+| `003_moradia_verificada.sql` | `publico.moradia_verificada`: quem teve a moradia provada, mesmo sem nenhum mês de uso. Sem ela, "não usou" e "não provado" não se distinguem |
 
 **Regras:** nome no formato `NNN_nome.sql`, numeração sem buracos; uma migração aplicada **nunca é editada** (cria-se uma nova); nenhuma senha nem URL de conexão entra aqui; tabela nova não herda permissão, então a própria migração concede o que for preciso.

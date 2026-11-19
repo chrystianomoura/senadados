@@ -85,7 +85,8 @@ def banco(*, dia_das_verificacoes=DIA, sem=()):
     )
     db.executemany(
         "INSERT INTO verificacao_moradia VALUES (?,?,?,?,?)",
-        [(1, 2026, "identico", None, 1), (2, 2026, "pendente", "p", 0)],
+        [(1, 2026, "identico", None, 1), (2, 2026, "pendente", "p", 0),
+         (3, 2026, "identico", None, 1)],  # o 3 foi provado e não usou nenhum benefício
     )
     db.executemany(
         "INSERT INTO verificacao_salario VALUES (?,?,?,?,?,?)",
@@ -159,6 +160,17 @@ def test_equipe_moradia_e_salario_so_de_quem_foi_provado(dados):
     assert {linha[0] for linha in dados["publico.moradia_meses"]} == {1}
     assert dados["publico.moradia_meses"][0][3:] == (True, False)
     assert [linha[0] for linha in dados["publico.salario"]] == [1]
+
+
+def test_moradia_verificada_inclui_quem_nao_usou_e_exclui_os_nao_provados(dados):
+    assert dados["publico.moradia_verificada"] == [(1, 2026), (3, 2026)]
+    assert 3 not in {linha[0] for linha in dados["publico.moradia_meses"]}
+
+
+def test_recusa_meses_de_moradia_sem_prova(dados):
+    dados["publico.moradia_meses"].append((2, 2026, "2026-01", True, False))  # o 2 está pendente
+    with pytest.raises(carga.CargaError, match="não foi provada"):
+        carga.conferir_coerencia(dados)
 
 
 def test_resumo_conta_pendentes_da_moradia_e_ocultos(dados):

@@ -532,6 +532,7 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 - **Descartado:** levar as despesas linha a linha (ocuparia mais, sem tela que as use; **pode voltar** se um dia a D008 mudar); testar num Postgres local (exigiria instalar algo e a versão poderia diferir da Neon); criar o projeto antes de revisar o desenho.
 - **Custo:** com só agregados não dá para mostrar a nota individual sem recarregar o banco com outra carga.
 - **Status:** aceita (19/11/2026). Aplicada na produção no mesmo dia, depois do ensaio numa branch; a atualização diária automática ainda não existe.
+- **Atualização (19/11/2026):** a migração 003 acrescenta `publico.moradia_verificada` (quem teve a moradia provada, mesmo sem mês de uso). `moradia_meses` só tem linha de quem usou algum benefício, e sem a nova tabela "não usou" e "não provado" não se distinguiam. Foi descoberto ao escrever o exportador dos dados do site ([D044](#d044-site-antes-da-api-com-dados-em-arquivos-json-gerados-do-esquema-público)). Ensaiada numa branch; **ainda não aplicada na produção**.
 
 ## D043: Migrações em SQL puro, driver psycopg e carga que ensaia antes de gravar
 
@@ -568,7 +569,7 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 - **Descartado:** gerar os JSON do SQLite local (dependeria de arquivos que só existem numa máquina e não exercitaria a fronteira pública); um único arquivo grande (pesado no celular); fazer a API primeiro (sem público imediato).
 - **Não verificado:** os limites atuais do Cloudflare Pages e do GitHub Actions, que precisam ser reconfirmados nas páginas oficiais antes de publicar (AGENTS.md, seção 7). Na máquina de desenvolvimento há Node 24 e npm 11 (conferido em 19/11/2026).
 - **Altera:** a ordem de construção do `escopo.md` §13.
-- **Status:** aceita quanto à ordem e à direção. O contrato dos JSON está em rascunho em [contrato-dos-dados.md](contrato-dos-dados.md) e será confirmado pela primeira implementação.
+- **Status:** aceita quanto à ordem e à direção. O contrato dos JSON está em [contrato-dos-dados.md](contrato-dos-dados.md) e já foi implementado pelo exportador (19/11/2026); a primeira tela do site o confirma.
 
 ## D045: Foto e mandato do senador, com o endereço oficial do Senado e verificação entre duas listas
 
