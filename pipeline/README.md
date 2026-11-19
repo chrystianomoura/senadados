@@ -1,6 +1,6 @@
 # Pipeline
 
-Código em Python que coleta, limpa e verifica os dados abertos do Senado. Hoje existem a **coleta**, a **validação e limpeza** e a **verificação da cota**, a **da equipe do gabinete**, a **da moradia**, a **do contato** e a **do salário**; as verificações estão completas ([ordem de construção](../docs/escopo.md#13-ordem-de-construção)).
+Código em Python que coleta, limpa e verifica os dados abertos do Senado. Hoje existem a **coleta**, a **validação e limpeza** e a **verificação da cota**, a **da equipe do gabinete**, a **da moradia**, a **do contato** e a **do salário**; as verificações estão completas, e também as **migrações** e a **carga** para o banco na nuvem ([ordem de construção](../docs/escopo.md#13-ordem-de-construção)).
 
 ## Rodar tudo, na ordem
 
@@ -144,6 +144,28 @@ uv run python -m senadados_pipeline.salario
 - A folha do mês mais recente é baixada na hora; **só as linhas dos senadores são guardadas**, e os nomes dos demais servidores são descartados na hora (D007). Se um nome tem duas matrículas, as linhas nem são guardadas.
 - Resultado em `verificacao_salario`, e o valor provado (remuneração básica e líquida do mês) em `salario`, só para quem tem `exibir = 1`.
 - A consulta de remuneração do portal de servidores exige reCAPTCHA, e o pipeline **não tenta contorná-lo**.
+
+## O que as migrações e a carga fazem
+
+Levam os dados provados para o banco na nuvem ([D042](../docs/decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível), [D043](../docs/decisoes.md#d043-migrações-em-sql-puro-driver-psycopg-e-carga-que-ensaia-antes-de-gravar)). Os dois comandos são **ensaio por padrão**: desfazem tudo no fim e só gravam com `--apply`. A conexão vem de variáveis de ambiente, que ficam num arquivo `.env` na raiz do repositório (o git o ignora) e **nunca** no código:
+
+| Variável | Quem usa | Papel no banco |
+|---|---|---|
+| `DATABASE_URL` | `migrar` | Dono do banco (cria esquemas e tabelas) |
+| `DATABASE_URL_CARGA` | `carga` | `sd_carga` (só escreve dados; não cria tabelas) |
+
+```bash
+uv run --env-file ../.env python -m senadados_pipeline.migrar
+```
+
+```bash
+uv run --env-file ../.env python -m senadados_pipeline.carga
+```
+
+- **Migrações:** os arquivos SQL de [migracoes/](migracoes/README.md), em ordem, só os que ainda não foram aplicados. Os papéis `sd_carga` e `sd_leitura` precisam existir antes.
+- **Carga:** lê o banco limpo local **só para leitura**, leva só dados **agregados** e só o que passou nas verificações, e apaga e regrava as tabelas numa transação, conferindo a contagem de cada uma. **Recusa carregar** se faltar alguma das 7 verificações ou se alguma não for do dia da coleta. As despesas linha a linha **não** vão para a nuvem.
+- Os registros mostram só o endereço do servidor, **nunca a senha**.
+- **Ainda não foram testados contra um banco de verdade** (só com conexões simuladas); veja a D043.
 
 ## Testes e qualidade
 

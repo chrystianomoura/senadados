@@ -19,3 +19,6 @@ MAX_FAILURE_RATE = 0.05
 
 # Identificação do pipeline nas consultas ao Senado (sem dados pessoais).
 USER_AGENT = "senadados-pipeline/0.1"
+
+# Migrações SQL do banco na nuvem (D042), aplicadas em ordem pelo `migrar`.
+MIGRACOES_DIR = ROOT / "pipeline" / "migracoes"
