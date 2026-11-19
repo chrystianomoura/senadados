@@ -54,6 +54,8 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 | D039 | Verificação automática da moradia, mês a mês | Vale |
 | D040 | Verificação automática do contato do gabinete | Vale |
 | D041 | Verificação automática do salário pela identidade do senador | Vale (altera a ligação da D016) |
+| D042 | Banco no Neon: só dados agregados, dois esquemas e carga repetível | Vale (o resumo virou tabela, ver D043) |
+| D043 | Migrações em SQL puro, driver psycopg e carga que ensaia antes de gravar | Vale (aplicada na produção em 19/11/2026) |
 
 ---
 
@@ -76,6 +78,7 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 - **Plano B:** arquivos Parquet ou SQLite versionados, também de custo zero.
 - **Status:** aceita.
 - **Atualização (18/11/2026):** o banco local da D034 (SQLite) ocupa **34 MB** com os 154.298 registros dos senadores em exercício e todas as tabelas de verificação, bem abaixo dos números estimados acima, que contavam todos os ex-senadores. O Neon entra na etapa 3 da ordem de construção.
+- **Atualização (19/11/2026):** só os dados **agregados** vão para o Neon, então o que será gravado lá é bem menor do que as estimativas acima (as 154.298 despesas linha a linha ficam no SQLite local). Detalhes na [D042](#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível).
 
 ## D003: Site em Next.js estático no Cloudflare Pages
 
@@ -92,6 +95,7 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 - **Por quê:** se a API dormir, o cidadão não percebe.
 - **Descartado:** Fly.io e Railway (sem plano gratuito de verdade).
 - **Status:** aceita. *Limites do plano gratuito a reconfirmar nas páginas oficiais.*
+- **Atualização (19/11/2026):** os limites do plano gratuito da Render foram lidos na página oficial (que não traz data): **750 horas de instância por mês por workspace**, divididas entre os serviços grátis; quando acabam, a Render suspende todos os serviços grátis do workspace até o mês seguinte; o serviço dorme após 15 minutos sem tráfego e leva cerca de 1 minuto para acordar. A mesma página diz que o plano grátis **não é para aplicações em produção**. A API do senadados ficará na Render, em Ohio, conforme a [D042](#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível).
 
 ## D005: API como fonte principal, CSV para conferência
 
@@ -437,6 +441,7 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 - **Implementação:** a coluna `exibir` da tabela `verificacao_equipe` no banco limpo. Quem ler o banco (a API e o site) usa `exibir`, e **trata a ausência da tabela como "não verificado"**.
 - **Altera:** a consequência da D036 e o texto da regra de tudo ou nada na D025 (que continua valendo para dados que comparam).
 - **Status:** aceita.
+- **Atualização (19/11/2026):** "o gabinete oculto é listado na página Verificações" passa a valer **em contagem**: a página mostra quantos ficaram ocultos em cada verificação, com um motivo de uma lista fechada. **Nomes de senadores só aparecem na seção de divergências**, onde há prova em imagem ([D038](#d038-documento-público-de-divergências-com-prova-em-imagem)), o que concilia esta decisão com o `escopo.md` §4.5. Ver [D042](#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível).
 
 ## D038: Documento público de divergências, com prova em imagem
 
@@ -502,3 +507,47 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 - **Limites:** (1) fonte única do valor. (2) A identificação vem do HTML do portal, que pode mudar; se mudar, o senador cai em `sem_explicacao`. (3) Suplentes que assumem no meio do mês têm folhas parciais e ficam ocultos até a folha completa. (4) Prova consistência e identidade, não é auditoria (D027). (5) O site não diz se o valor está dentro ou fora de qualquer regra (D024).
 - **Altera:** a ligação da D016 (nome completo da lista legislativa).
 - **Status:** aceita.
+
+## D042: Banco no Neon, só dados agregados, dois esquemas e carga repetível
+
+- **Contexto:** a etapa 3 da ordem de construção é o banco na nuvem, de onde a API (D004) vai ler. O banco local (SQLite, D034) tem 154.298 despesas linha a linha e 34 MB. Os endpoints do escopo (§7) pedem totais por mês e por categoria, maiores fornecedores por ano, ranking, contato, equipe, moradia, salário e o relatório de verificações. **Nenhum precisa da nota fiscal linha a linha.**
+- **Decidido pelo mantenedor em 19/11/2026:**
+  1. **Só dados agregados vão para o Neon.** Em 18/11/2026, **antes de aplicar a regra de exibição**, são 25.902 linhas de despesa por senador, ano, mês e categoria (25.526 de 2010 em diante e 376 de 2008 e 2009, anos em que a cota não aparece, D035) e 30.992 de fornecedores (empresas) por senador e ano, de 2009 em diante (30.594 de 2010 em diante e 398 de 2009). O que for para o `publico` será menor que isso, porque só segue o que passou nas verificações. Pessoas físicas continuam agrupadas e sem nome (D008). As 154.298 despesas linha a linha **ficam só no SQLite local**.
+  2. **A carga será testada numa branch do Neon com validade**, e não num Postgres local (não há Postgres instalado na máquina de desenvolvimento). A branch herda as senhas do projeto, então leva `expires_at` de 1 dia e é apagada ao terminar.
+  3. **Documentar antes de criar:** o projeto no Neon só foi criado depois da revisão deste desenho pelo mantenedor (cumprido: criado em 19/11/2026, depois da aprovação abaixo).
+  4. **Esquemas e papéis aprovados como propostos** (detalhes abaixo): `publico` e `interno`, e os papéis dono, `sd_carga` e `sd_leitura`.
+  5. **A página "Verificações" mostra contagens, e nomes só onde há prova em imagem.** Para cada verificação, quantos dados passaram e quantos ficaram ocultos, com um motivo de uma lista fechada. **Nomes de senadores só na seção de divergências** (D038). Isso concilia a D037 ("o gabinete oculto é listado") com o `escopo.md` §4.5 ("agregada e sem nomes"). Por quê: esconder um nome agora pode ser desfeito e publicar não (a mesma lógica da D008), e uma lista de senadores sem dado provado pode ser lida como acusação, contra a D010. Custo: quem quiser saber por que um senador específico está sem um dado só encontra a explicação geral; nomes podem ser acrescentados depois, se for decidido.
+  6. **Região e API.** O banco fica em `aws-us-east-2` (Ohio). A API será publicada na Render, também em Ohio, na etapa 5 ([D004](#d004-fastapi-no-render-e-o-site-não-depende-dela)).
+- **Desenho aceito pelo mantenedor em 19/11/2026** (implementado e aplicado: ver a D043):
+  - **Dois esquemas.** `publico` guarda só o que passou nas verificações (`exibir = 1`); a API e o site leem só ele, e a ausência de um dado significa "não verificado". `interno` guarda o detalhe das verificações (`resultado` e `detalhe`); o resumo da página "Verificações" sai de tabelas do `publico` calculadas na carga ([D043](#d043-migrações-em-sql-puro-driver-psycopg-e-carga-que-ensaia-antes-de-gravar); a redação original previa uma view). Os dados descritivos pequenos (contato, equipe, moradia mês a mês e salário) seguem para o `publico` só para quem tem `exibir = 1`. Conferi **todos** os valores de `detalhe` de 18/11/2026 (9 padrões de texto, nas cinco tabelas de verificação): trazem categorias, valores e contagens, **sem nome de senador nem de outra pessoa**. O texto de `detalhe` é gerado pelo código; se algum dia ele passar a incluir nomes, esta conferência precisa ser refeita antes de a carga o levar para a nuvem.
+  - **Página "Verificações"** (decidido no item 5): a view pública traz contagens por verificação e ano, com motivo de lista fechada e sem nomes. **A conferir na implementação:** a tabela `verificacoes` não guarda os `pendente` da moradia (só `verificacao_moradia` os tem), então a contagem de pendentes precisa ser calculada na carga.
+  - **Três papéis de banco**, de menor privilégio: o dono (só migrações), `sd_carga` (escreve; usado pela rotina diária) e `sd_leitura` (`SELECT` só no `publico`; usado pela API). Cada papel recebe só o que a sua tarefa precisa, e tabelas novas não herdam permissão.
+  - **Carga repetível numa transação:** apaga e recarrega as tabelas, então quem saiu da lista some sozinho (D026). Recusa carregar se as verificações não forem da mesma foto dos dados (D035).
+  - **Projeto** `senadados`, **criado na Neon em 19/11/2026** na organização que já existia: plano gratuito, PostgreSQL 18, região `aws-us-east-2`, branch `production`. Esquemas, papéis e dados aplicados em 19/11/2026 (ver a D043). A conexão (senha) fica só em variável de ambiente, nunca no repositório (`.env` está no `.gitignore`).
+  - **Dados que comparam senadores** (posição, ranking): a regra de tudo ou nada (D037) vale na carga; onde calcular (no pipeline ou numa view) **fica para a implementação**.
+- **Limites do plano gratuito**, conferidos em 19/11/2026 na página oficial de planos da Neon (atualizada em 12/11/2026): 1 GB de armazenamento por projeto, 100 horas de computação por mês por projeto, 10 branches por projeto, até 100 projetos por conta, o banco "dorme" após 5 minutos parado, e 6 horas de histórico para recuperação. O projeto foi criado em 19/11/2026 pelo plano gratuito sem que a operação pedisse cartão; **se há cartão cadastrado na conta, não conferi**. Os ~57 mil registros agregados devem caber com folga, **mas o tamanho no PostgreSQL não foi medido**.
+- **Por quê:** levar só o que as telas usam reduz o tamanho, a carga e a superfície de dados pessoais, e mantém o que o cidadão vê reproduzível a partir do pipeline. Separar `publico` e `interno` faz "só o comprovado" (D025) valer também na leitura: quem consulta o banco não alcança um dado não provado.
+- **Descartado:** levar as despesas linha a linha (ocuparia mais, sem tela que as use; **pode voltar** se um dia a D008 mudar); testar num Postgres local (exigiria instalar algo e a versão poderia diferir da Neon); criar o projeto antes de revisar o desenho.
+- **Custo:** com só agregados não dá para mostrar a nota individual sem recarregar o banco com outra carga.
+- **Status:** aceita (19/11/2026). Aplicada na produção no mesmo dia, depois do ensaio numa branch; a atualização diária automática ainda não existe.
+
+## D043: Migrações em SQL puro, driver psycopg e carga que ensaia antes de gravar
+
+- **Contexto:** a D042 aprovou os esquemas, os papéis e a carga repetível. Faltava decidir como aplicar as migrações e como carregar os dados.
+- **Decisão (19/11/2026):**
+  - **Migrações em arquivos SQL** numerados, em `pipeline/migracoes/`, aplicados em ordem por `python -m senadados_pipeline.migrar`, cada execução numa só transação. **Por padrão é um ensaio** (tudo é desfeito no fim); só `--apply` grava. As versões aplicadas ficam em `interno.migracoes`. Usa o dono do banco (`DATABASE_URL`). Migração já aplicada nunca é editada.
+  - **Driver: psycopg 3** (`psycopg[binary]`, instalado a 3.3.9), a única dependência nova. A conexão vem sempre de variável de ambiente, e os registros do comando mostram só o endereço do servidor, **nunca a senha**.
+  - **A carga** (`python -m senadados_pipeline.carga`) lê o SQLite limpo **só para leitura**, escolhe o que passou nas verificações, agrega, e numa transação apaga (`TRUNCATE`) e regrava as 17 tabelas, conferindo a contagem de cada uma antes de confirmar. Também é ensaio por padrão. Usa o papel `sd_carga` (`DATABASE_URL_CARGA`). **Recusa carregar** se faltar alguma das 7 verificações ou se alguma não for do dia da coleta (D035).
+  - **O resumo da página "Verificações" é gravado como tabelas calculadas na carga** (`verificacoes_resumo` e `verificacoes_motivos`), **e não como views**. Isto altera a redação da D042 ("uma view do `publico`"). Por quê: a regra fica em Python, com teste, e os motivos saem de uma **lista fechada** no código (`MOTIVOS`), nunca do texto livre do banco, que fica no esquema `interno`.
+  - **Fornecedores seguem a regra de exibição da cota do senador-ano**, porque saem das mesmas despesas (D025). Hoje isso esconde 2009, pois os 5 senadores com despesa naquele ano não passam na cota. O `escopo.md` §4.2 dizia "a partir de 2009"; vale a prova.
+  - **Nome do fornecedor:** a grafia mais frequente do CNPJ, e no empate a primeira em ordem alfabética. Em 18/11/2026, 2.373 CNPJs aparecem com mais de uma grafia.
+  - **Os papéis** são criados por `python -m senadados_pipeline.papeis`, **antes das migrações**: cria `sd_carga` e `sd_leitura` por SQL (o que os deixa fora do grupo de administração da Neon), gera as senhas, grava as URLs no `.env` **sem imprimir** e não troca a senha de um papel que já existe. A `002` só concede permissões e se recusa a rodar sem os papéis.
+- **Resultado da seleção sobre o banco local de 18/11/2026** (nada foi enviado): 81 senadores, 25.526 linhas de despesa mensal (2010 em diante), 30.594 de fornecedor (empresas), 279 de fornecedores agrupados (sem nome), 81 de contato, 80 de equipe, 686 meses de moradia, 79 de salário, 25 resumos e 5 motivos. São 40 testes novos, **310 no total**, e o lint passa.
+- **Ensaio ponta a ponta em 19/11/2026**, numa branch com validade (`ensaio-ponta-a-ponta`), com o executor, a carga e logins reais:
+  - Papéis criados pelo comando; migrações 001 e 002 aplicadas pelo executor (ensaio, gravação e uma repetição, que não achou nada pendente); carga em ensaio, gravada e repetida, sempre com as mesmas contagens. O driver aceitou cada arquivo de migração numa só chamada.
+  - **Permissões, testadas conectando como cada papel:** `sd_leitura` lê o `publico` (79 salários) e é **negado** em ler o `interno`, inserir, apagar, truncar e criar tabela. `sd_carga` é negado em `UPDATE`, em ler `interno.migracoes`, em criar ou apagar tabela e em criar papel.
+  - **Integridade:** em 610 pares senador-ano, a soma de `despesas_mensais` bate com a da verificação da cota; nada de 2008 e 2009 em despesas nem em fornecedores; a soma das despesas provadas é a mesma no SQLite e na nuvem (R$ 211.550.675,21). O banco inteiro ocupa **20 MB** no PostgreSQL, bem abaixo do 1 GB do plano gratuito.
+- **Aplicada na produção em 19/11/2026**, com o OK do mantenedor. Antes de mexer, conferi que o alvo era o endpoint da produção (o mesmo que a Neon informa) e que estava vazio (nenhum esquema do projeto, nenhum papel `sd_`). Os mesmos comandos do ensaio rodaram, cada um primeiro em ensaio: papéis, migrações 001 e 002 e carga, com as mesmas 17 tabelas e contagens do ensaio. As conferências repetidas na produção deram o mesmo resultado: permissões de `sd_leitura` e `sd_carga` como esperado, soma das despesas igual à do SQLite (R$ 211.550.675,21), nada de 2008 e 2009, banco com 20 MB.
+- **Ainda não feito:** a **atualização diária automática** (GitHub Actions, que guardaria as URLs como segredos do repositório) e a API, que vai ler com o papel `sd_leitura`.
+- **Descartado:** ORM e Alembic (complexidade sem ganho para 2 migrações); asyncpg (não há necessidade de assincronia); views para o resumo (menos testáveis).
+- **Status:** aceita e aplicada. Falta a atualização diária automática.

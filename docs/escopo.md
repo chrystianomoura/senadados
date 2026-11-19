@@ -98,6 +98,7 @@ Não há selos como "comprovado" ou "fonte única" na tela. As palavras técnica
 - A lista de checagens feitas e o resultado de cada uma, por exemplo "cota de 2026: 73 idênticos, 7 explicados".
 - Uma seção **“Onde os dados do Senado não batem entre si”**, com cada divergência provada por **prints** das telas e dos arquivos do Senado, sem dizer qual número está certo, nem o motivo, nem o que faremos a respeito ([D038](decisoes.md#d038-documento-público-de-divergências-com-prova-em-imagem)). Só entra o que tem print. O texto está em [divergencias-nos-dados-do-senado.md](divergencias-nos-dados-do-senado.md).
 - As divergências encontradas nos dados do Senado, **agregadas**, com a explicação quando existe. Os **nomes dos senadores só aparecem na seção de divergências**, onde o print mostra a tela do Senado, que traz o nome ([D038](decisoes.md#d038-documento-público-de-divergências-com-prova-em-imagem)).
+- Os dados **ocultos** aparecem **em contagem**, por verificação, com um motivo de uma lista fechada; **nomes de senadores só na seção de divergências**, onde há prova em imagem ([D037](decisoes.md#d037-exibição-por-tipo-de-dado-e-freio-de-segurança), [D042](decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível)).
 - A frase fixa: "verificamos se as bases do Senado concordam entre si. Não auditamos os dados."
 - Canal para **reportar um erro** e registro público das correções.
 
@@ -201,7 +202,7 @@ Metas a medir, não resultados já obtidos:
 | Internet Archive | Acusa cópia, mas não consegui listar | Testar de novo |
 | Virada de 2027 | Até 54 páginas saem de uma vez | Decidido: apagar os dados de quem sair (banco, arquivos brutos, site e API) |
 | Pessoas físicas ([D008](decisoes.md#d008-pessoas-físicas-agrupadas-e-cpf-nunca-exibido)) | Proteções mantidas; risco de LGPD aceito pelo mantenedor, por serem dados públicos | Nenhuma ação |
-| Limites dos planos gratuitos | Fontes secundárias | Reconfirmar antes de publicar |
+| Limites dos planos gratuitos | Neon reconfirmado na página oficial em 19/11/2026 ([D042](decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível)); Render, Cloudflare Pages e GitHub Actions seguem em fontes secundárias | Reconfirmar os três antes de publicar |
 | Foto dos senadores | Conteúdo "de propriedade autoral do Senado" | Carregar do endereço oficial com crédito |
 
 ## 13. Ordem de construção
@@ -210,7 +211,7 @@ Metas a medir, não resultados já obtidos:
 |---|---|---|
 | 1 | Pipeline de despesas, com validação e testes | **Feito** ([D033](decisoes.md#d033-coleta-local-que-só-grava-quem-está-em-exercício), [D034](decisoes.md#d034-limpeza-com-validação-em-sqlite-local-sem-nome-nem-documento-de-pessoa-física)) |
 | 2 | **Camada de verificação** (cruzamentos, relatório, falha fechada) | **Feito** para cota, equipe, moradia, contato e salário ([D035](decisoes.md#d035-verificação-automática-da-cota-por-categoria-na-mesma-foto-dos-dados) a [D041](decisoes.md#d041-verificação-automática-do-salário-pela-identidade-do-senador)) |
-| 3 | Banco e carga completa dos senadores em exercício | **Próximo** (Neon, 19/11/2026) |
+| 3 | Banco e carga completa dos senadores em exercício | **Feito em 19/11/2026** (banco no ar com os dados provados de 18/11; a atualização diária automática ainda falta; [D042](decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível)) |
 | 4 | Perfil, salário (quando provado), equipe e moradia | A fazer, no site |
 | 5 | API | A fazer |
 | 6 | Site: perfil, depois início, ranking, comparação, "Sobre os dados" e "Verificações" | A fazer |

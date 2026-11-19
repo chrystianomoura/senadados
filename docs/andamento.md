@@ -2,11 +2,11 @@
 
 Resumo do que existe, do que foi provado e do que vem a seguir. É o documento para quem chega agora e quer saber **em que pé o projeto está**. Os detalhes de cada decisão estão em [decisoes.md](decisoes.md), e os de cada conferência, em [verificacoes.md](verificacoes.md).
 
-**Última atualização:** 18/11/2026, fim do dia.
+**Última atualização:** 19/11/2026 (banco da Neon criado, com papéis, migrações e dados de 18/11 aplicados na produção).
 
 ## Em uma frase
 
-O pipeline que coleta, limpa e **prova** os dados do Senado está pronto e roda do zero em cerca de 6 minutos. Ainda não há banco na nuvem, API nem site: o próximo passo é o banco no Neon.
+O pipeline que coleta, limpa e **prova** os dados do Senado está pronto e roda do zero em cerca de 6 minutos, e os dados provados já estão no banco da Neon (19/11/2026). Ainda não há API, site nem atualização diária automática: o próximo passo é a API.
 
 ## O que existe hoje
 
@@ -21,9 +21,10 @@ O pipeline que coleta, limpa e **prova** os dados do Senado está pronto e roda 
 | Verificação do **contato** (endereço, telefones, e-mail) | Pronta |
 | Verificação do **salário** | Pronta |
 | Documento público de divergências nos dados do Senado | Pronto |
-| Banco no Neon, API, site, automação diária | **Não começaram** |
+| Banco no Neon | **No ar com os dados provados de 18/11/2026** (20 MB, 17 tabelas, permissões testadas) ([D042](decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível), [D043](decisoes.md#d043-migrações-em-sql-puro-driver-psycopg-e-carga-que-ensaia-antes-de-gravar)). Atualização diária ainda manual |
+| API, site, automação diária | **Não começaram** |
 
-O código está em [pipeline/](../pipeline/README.md), com 270 testes e 95% de cobertura nos módulos de verificação. Os dados ficam em `data/` e **não vão para o git**.
+O código está em [pipeline/](../pipeline/README.md), com 310 testes (270 em 18/11 e 40 novos da carga, das migrações e dos papéis) e 95% de cobertura nos módulos de verificação (a cobertura é de 18/11 e não foi medida de novo). Os dados ficam em `data/` e **não vão para o git**.
 
 ## Como rodar tudo, do zero
 
@@ -32,6 +33,7 @@ Detalhes em [pipeline/README.md](../pipeline/README.md#rodar-tudo-na-ordem). Em 
 1. `coleta` (baixa as despesas de 2008 a 2026 e a lista de senadores)
 2. `limpeza` (valida, limpa e grava o banco SQLite local)
 3. `verificacao`, `equipe`, `moradia`, `contato` e `salario`
+4. Para o banco na nuvem (precisa do `.env`): `papeis` (só na primeira vez), `migrar` e `carga`, cada um **primeiro em ensaio** e depois com `--apply`
 
 Uma execução completa, feita em 18/11/2026 numa pasta vazia, **reproduziu todos os números abaixo**. Ocupa 68 MB de dados brutos e 34 MB no banco local.
 
@@ -50,7 +52,7 @@ Uma execução completa, feita em 18/11/2026 numa pasta vazia, **reproduziu todo
 
 Os números da cota são os de 2026 contra o resumo do Senado **do mesmo dia**. Os dados totais: 81 senadores em exercício, 154.298 despesas de 2008 a 2026, R$ 213 milhões.
 
-## As decisões do dia
+## As decisões de 18 e 19/11/2026
 
 | Decisão | Em uma linha |
 |---|---|
@@ -63,9 +65,13 @@ Os números da cota são os de 2026 contra o resumo do Senado **do mesmo dia**. 
 | [D039](decisoes.md#d039-verificação-automática-da-moradia-mês-a-mês) | Moradia com quatro fontes; "pendente" separado de "sem explicação" |
 | [D040](decisoes.md#d040-verificação-automática-do-contato-do-gabinete) | Contato campo a campo, com freio por campo |
 | [D041](decisoes.md#d041-verificação-automática-do-salário-pela-identidade-do-senador) | Salário ligado pela identidade do senador, em cinco provas |
+| [D042](decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível) | Banco no Neon: só dados agregados, esquemas `publico` e `interno`, três papéis de menor privilégio (19/11) |
+| [D043](decisoes.md#d043-migrações-em-sql-puro-driver-psycopg-e-carga-que-ensaia-antes-de-gravar) | Migrações em SQL puro, driver psycopg e carga que ensaia antes de gravar (19/11) |
 
 ## O que aprendemos
 
+- **Os dados agregados cabem com folga.** O banco inteiro ocupa **20 MB** no PostgreSQL da Neon (17 tabelas), contra 34 MB do SQLite com as despesas linha a linha, e o plano gratuito dá 1 GB.
+- **Ensaiar antes de gravar compensa.** O ensaio numa branch e a repetição dos comandos (que não acharam nada pendente nem mudaram as contagens) deram segurança para aplicar na produção, onde a primeira carga saiu com o mesmo resultado.
 - **Comparar bases de dias diferentes gera divergência falsa.** A primeira conferência da cota estava errada por isso. Hoje a verificação se recusa a rodar se as bases não forem do mesmo dia.
 - **Falhar fechado funciona.** Um endereço de página sem o ano fez 81 senadores caírem em "sem explicação" e **nenhum contato foi exibido**, em vez de um dado errado aparecer.
 - **O Senado mostra números diferentes em publicações do próprio Senado.** Isso virou o documento [divergencias-nos-dados-do-senado.md](divergencias-nos-dados-do-senado.md), com 11 imagens de prova. Um dos casos (a equipe do gabinete de um senador) foi visto também na API e pode ser corrigido a qualquer momento.
@@ -80,20 +86,23 @@ Os números da cota são os de 2026 contra o resumo do Senado **do mesmo dia**. 
 - **Cota de 2008 e 2009:** sem explicação, só o Senado pode dar. Ficam ocultas.
 - **Manter o documento de divergências:** os prints são de 18/11/2026. Se o Senado corrigir um caso, o texto deve ser atualizado.
 - **Verificação diária automática:** o pipeline roda à mão. A automação (GitHub Actions) vem depois do banco e do site.
-- **Limites dos planos gratuitos:** foram pesquisados em fonte secundária e precisam ser reconfirmados nas páginas oficiais.
+- **Limites dos planos gratuitos:** os da **Neon** foram reconfirmados na página oficial em 19/11/2026 ([D042](decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível)). Os da Render, do Cloudflare Pages e do GitHub Actions seguem de fonte secundária e precisam ser reconfirmados.
 - **Licença do código:** ainda não escolhida.
 
-## Próximo passo: o banco no Neon (19/11/2026)
+## O banco no Neon (feito em 19/11/2026)
 
-Ordem de construção, etapa 3: "banco e carga completa dos senadores em exercício". O que preparar:
+Etapa 3 da ordem de construção, concluída: o projeto `senadados` na Neon (plano gratuito, `aws-us-east-2`, PostgreSQL 18) tem os esquemas `publico` e `interno`, os papéis `sd_carga` (escreve) e `sd_leitura` (só lê o `publico`), as migrações 001 e 002 e os dados provados de 18/11/2026. As decisões estão na [D042](decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível) e na [D043](decisoes.md#d043-migrações-em-sql-puro-driver-psycopg-e-carga-que-ensaia-antes-de-gravar); o que foi conferido na produção (permissões, soma das despesas igual à do SQLite, 20 MB) está na D043.
 
-1. **Conta e projeto no Neon**, no plano gratuito. Antes, **reconfirmar nas páginas oficiais** os limites (armazenamento, horas de computação, se pede cartão). O banco local tem 34 MB.
-2. **A conexão fica em variável de ambiente** (por exemplo `DATABASE_URL`) e **nunca no repositório**. `.env` já está no `.gitignore`.
-3. **Desenho do banco.** Proposta a discutir: dois esquemas, um **público**, só com o que passou nas verificações (`exibir = 1`), e outro **interno**, com os detalhes das verificações. Quem ler o banco (API e site) lê só o público, e a ausência de um dado significa "não verificado".
-4. **Um passo de carga** no pipeline, que copia o SQLite limpo para o Neon dentro de uma transação, de forma repetível, e **remove os dados de quem saiu da lista** (D026).
-5. **Decisões que dependem de você:** como testar a carga sem gastar o plano gratuito (um Postgres local ou uma branch do Neon), e se algum dado do esquema interno deve ficar fora do Neon.
+## Próximo passo: a API (etapa 5)
 
-## Registro dos commits do dia
+O que preparar:
+
+1. **Onde publicar.** A D004 escolheu a Render (plano gratuito, região Ohio, perto do banco), com os limites lidos na página oficial em 19/11/2026: 750 horas de instância por mês por workspace, dorme após 15 minutos parado, e a página diz que o plano grátis não é para aplicações em produção. **A decisão final de hospedagem é do mantenedor.**
+2. **A API lê só o `publico`**, com o papel `sd_leitura` (`DATABASE_URL_LEITURA`), que fica como variável de ambiente no serviço, nunca no repositório.
+3. **Os endpoints** estão em [escopo.md](escopo.md) §7 (senadores, despesas, fornecedores, ranking, verificações e metadados). Cada um devolve só o que está no `publico`, e a ausência de um dado significa "não verificado".
+4. **A atualização diária** (etapa 8) é uma rotina do GitHub Actions que repete coleta, limpeza, verificações e carga. As URLs do papel `sd_carga` e as demais viram segredos do repositório.
+
+## Registro dos commits de 18/11/2026
 
 A branch `feat/pipeline-coleta`, a partir da `main` (o histórico do git tem os detalhes e os hashes):
 
@@ -111,3 +120,16 @@ A branch `feat/pipeline-coleta`, a partir da `main` (o histórico do git tem os 
 | `feat(pipeline): verifica o salário pela identidade do senador` | Salário |
 | `refactor(pipeline): junta constantes e a conferência da mesma foto` | Revisão geral: código |
 | `docs: documenta o dia e atualiza o que ficou para trás` | Revisão geral: documentos e este arquivo |
+
+## Registro dos commits de 19/11/2026
+
+A branch `feat/banco-neon`, a partir da `main`:
+
+| Título do commit | O quê |
+|---|---|
+| `docs: registra o desenho do banco no Neon (D042)` | Desenho do banco |
+| `docs: aceita a D042 e registra a criação do projeto no Neon` | Decisão aceita e projeto criado |
+| `feat(pipeline): adiciona migrações e carga dos dados no banco do Neon` | Migrações, executor e carga |
+| `feat(pipeline): cria os papéis do banco e ensaia tudo numa branch da Neon` | Papéis e ensaio ponta a ponta |
+| `docs: registra a aplicação do banco na produção do Neon` | Banco aplicado na produção |
+| `docs: atualiza os documentos depois do banco no ar` | Revisão geral dos documentos |

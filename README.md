@@ -2,7 +2,7 @@
 
 > Os valores que o Senado publica sobre os senadores em exercício, explicados para qualquer pessoa.
 
-**Status (12/11/2026):** escopo e protótipo da página fechados, fontes conferidas; **a coleta, a limpeza e as verificações da cota, da equipe, da moradia, do contato e do salário existem** (18/11/2026). Este documento descreve o que o projeto **vai ser** e **vai mudar** conforme aprendermos mais. Cada mudança relevante é registrada com o motivo (veja [Como este projeto é documentado](#como-este-projeto-é-documentado)).
+**Status (19/11/2026):** escopo e protótipo da página fechados, fontes conferidas; **a coleta, a limpeza e as verificações da cota, da equipe, da moradia, do contato e do salário existem** (18/11/2026), e **o banco na Neon já tem os dados provados** (19/11/2026). Ainda faltam a API, o site e a atualização diária automática. Este documento descreve o que o projeto **vai ser** e **vai mudar** conforme aprendermos mais. Cada mudança relevante é registrada com o motivo (veja [Como este projeto é documentado](#como-este-projeto-é-documentado)).
 
 ---
 
@@ -136,7 +136,12 @@ A regra do projeto: **nenhuma tecnologia entra "porque é moderna"**. Cada uma r
 ### PostgreSQL no Neon: o banco de dados
 **Em uma frase:** é o arquivo organizado onde os dados limpos ficam guardados.
 **Por quê:** o Neon oferece um plano gratuito, e o PostgreSQL é um banco sério usado em empresas. O plano gratuito não cobra por excesso: se o limite estourar, ele para de gravar em vez de gerar fatura. Para um projeto sem orçamento, isso protege.
-**Descartado:** SQLite como banco da API (mais simples, mas guardaria o dado num arquivo que só atualiza a cada nova publicação do site). **Por enquanto** o pipeline grava num SQLite local ([D034](docs/decisoes.md#d034-limpeza-com-validação-em-sqlite-local-sem-nome-nem-documento-de-pessoa-física)), e o Neon entra na próxima etapa.
+**Descartado:** SQLite como banco da API (mais simples, mas guardaria o dado num arquivo que só atualiza a cada nova publicação do site). O pipeline limpa e prova os dados num SQLite local ([D034](docs/decisoes.md#d034-limpeza-com-validação-em-sqlite-local-sem-nome-nem-documento-de-pessoa-física)) e carrega no Neon só os dados **agregados e provados**, em dois esquemas: um público, que a API lê, e um interno, com o detalhe das verificações ([D042](docs/decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível), [D043](docs/decisoes.md#d043-migrações-em-sql-puro-driver-psycopg-e-carga-que-ensaia-antes-de-gravar)). As despesas linha a linha ficam só no SQLite local.
+
+### psycopg: a ligação com o banco
+**Em uma frase:** é o driver que conversa com o PostgreSQL a partir do Python.
+**Por quê:** as migrações e a carga precisam falar com o Neon, e este foi o único acréscimo de tecnologia do banco.
+**Descartado:** ORM e Alembic (complexidade sem ganho para duas migrações) e asyncpg (não há necessidade de assincronia). Motivos em [D043](docs/decisoes.md#d043-migrações-em-sql-puro-driver-psycopg-e-carga-que-ensaia-antes-de-gravar).
 
 ### FastAPI: a API
 **Em uma frase:** é o "balcão de atendimento" dos dados.
@@ -202,6 +207,7 @@ Documentos (índice completo em [docs/README.md](docs/README.md)):
 |---|---|
 | **Primeiros passos** (feito) | Baixar os dados, medir o tamanho real, conferir colunas, formatos e a prova real; definir escopo e protótipo |
 | **Pipeline e prova real** (feito em 18/11/2026) | Coleta, limpeza e cinco verificações automáticas (cota, equipe, moradia, contato e salário). Resumo em [docs/andamento.md](docs/andamento.md) |
+| **Banco na nuvem** (feito em 19/11/2026) | Esquemas público e interno, papéis de menor privilégio, migrações e carga repetível dos dados provados no Neon ([D042](docs/decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível), [D043](docs/decisoes.md#d043-migrações-em-sql-puro-driver-psycopg-e-carga-que-ensaia-antes-de-gravar)) |
 | **MVP (versão 1)** | Perfil do senador, verba por categoria e mês, principais fornecedores (de 2009 em diante), número de pessoas na equipe, moradia mês a mês, salário (quando comprovado), ranking e comparação entre os senadores em exercício, destaque do maior mês e a página de verificações |
 | **Versão 2** | Atuação parlamentar (votações, projetos, comissões), histórico desde 2008 e, se fizer sentido, um modelo de anomalias |
 | **Versão 3 (talvez)** | Dados de outras fontes públicas, como o TSE. Aumenta muito o escopo e a responsabilidade |
@@ -210,7 +216,7 @@ Este roadmap é uma intenção, não uma promessa, e será revisado conforme os 
 
 ## Como rodar
 
-Hoje existem a coleta, a limpeza e as verificações da cota, da equipe, da moradia, do contato e do salário. Instruções em [pipeline/README.md](pipeline/README.md). Para ver o protótipo da página, abra `design/perfil-do-senador.html` no navegador.
+Hoje existem a coleta, a limpeza, as verificações da cota, da equipe, da moradia, do contato e do salário, e as migrações e a carga para o banco na nuvem. Instruções em [pipeline/README.md](pipeline/README.md). Para ver o protótipo da página, abra `design/perfil-do-senador.html` no navegador.
 
 ## Licença e citação dos dados
 
