@@ -211,7 +211,7 @@ Metas a medir, não resultados já obtidos:
 |---|---|---|
 | 1 | Pipeline de despesas, com validação e testes | **Feito** ([D033](decisoes.md#d033-coleta-local-que-só-grava-quem-está-em-exercício), [D034](decisoes.md#d034-limpeza-com-validação-em-sqlite-local-sem-nome-nem-documento-de-pessoa-física)) |
 | 2 | **Camada de verificação** (cruzamentos, relatório, falha fechada) | **Feito** para cota, equipe, moradia, contato e salário ([D035](decisoes.md#d035-verificação-automática-da-cota-por-categoria-na-mesma-foto-dos-dados) a [D041](decisoes.md#d041-verificação-automática-do-salário-pela-identidade-do-senador)) |
-| 3 | Banco e carga completa dos senadores em exercício | **Em andamento** (projeto criado na Neon em 19/11/2026; migrações e carga escritas, ainda sem tabelas na produção; [D042](decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível)) |
+| 3 | Banco e carga completa dos senadores em exercício | **Em andamento** (projeto criado na Neon em 19/11/2026; migrações e carga ensaiadas numa branch, ainda sem tabelas na produção; [D042](decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível)) |
 | 4 | Perfil, salário (quando provado), equipe e moradia | A fazer, no site |
 | 5 | API | A fazer |
 | 6 | Site: perfil, depois início, ranking, comparação, "Sobre os dados" e "Verificações" | A fazer |

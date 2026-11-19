@@ -151,8 +151,15 @@ Levam os dados provados para o banco na nuvem ([D042](../docs/decisoes.md#d042-b
 
 | Variável | Quem usa | Papel no banco |
 |---|---|---|
-| `DATABASE_URL` | `migrar` | Dono do banco (cria esquemas e tabelas) |
-| `DATABASE_URL_CARGA` | `carga` | `sd_carga` (só escreve dados; não cria tabelas) |
+| `DATABASE_URL` | `papeis`, `migrar` | Dono do banco (cria papéis, esquemas e tabelas) |
+| `DATABASE_URL_CARGA` | `carga` | `sd_carga` (só escreve dados; não cria tabelas). Gravada pelo `papeis` |
+| `DATABASE_URL_LEITURA` | a API (etapa 5) | `sd_leitura` (só lê o `publico`). Gravada pelo `papeis` |
+
+Na primeira vez, crie os papéis (as senhas vão direto para o `.env`, sem aparecer na tela):
+
+```bash
+uv run --env-file ../.env python -m senadados_pipeline.papeis
+```
 
 ```bash
 uv run --env-file ../.env python -m senadados_pipeline.migrar
@@ -165,7 +172,7 @@ uv run --env-file ../.env python -m senadados_pipeline.carga
 - **Migrações:** os arquivos SQL de [migracoes/](migracoes/README.md), em ordem, só os que ainda não foram aplicados. Os papéis `sd_carga` e `sd_leitura` precisam existir antes.
 - **Carga:** lê o banco limpo local **só para leitura**, leva só dados **agregados** e só o que passou nas verificações, e apaga e regrava as tabelas numa transação, conferindo a contagem de cada uma. **Recusa carregar** se faltar alguma das 7 verificações ou se alguma não for do dia da coleta. As despesas linha a linha **não** vão para a nuvem.
 - Os registros mostram só o endereço do servidor, **nunca a senha**.
-- **Ainda não foram testados contra um banco de verdade** (só com conexões simuladas); veja a D043.
+- **Já foram ensaiados numa branch da Neon** em 19/11/2026, com logins reais (veja a D043). A produção ainda não foi tocada.
 
 ## Testes e qualidade
 
