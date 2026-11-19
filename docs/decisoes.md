@@ -54,7 +54,7 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 | D039 | Verificação automática da moradia, mês a mês | Vale |
 | D040 | Verificação automática do contato do gabinete | Vale |
 | D041 | Verificação automática do salário pela identidade do senador | Vale (altera a ligação da D016) |
-| D042 | Banco no Neon: só dados agregados, dois esquemas e carga repetível | Provisória (desenho, ainda sem código) |
+| D042 | Banco no Neon: só dados agregados, dois esquemas e carga repetível | Vale (projeto criado na Neon; ainda sem código) |
 
 ---
 
@@ -94,6 +94,7 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 - **Por quê:** se a API dormir, o cidadão não percebe.
 - **Descartado:** Fly.io e Railway (sem plano gratuito de verdade).
 - **Status:** aceita. *Limites do plano gratuito a reconfirmar nas páginas oficiais.*
+- **Atualização (19/11/2026):** os limites do plano gratuito da Render foram lidos na página oficial (que não traz data): **750 horas de instância por mês por workspace**, divididas entre os serviços grátis; quando acabam, a Render suspende todos os serviços grátis do workspace até o mês seguinte; o serviço dorme após 15 minutos sem tráfego e leva cerca de 1 minuto para acordar. A mesma página diz que o plano grátis **não é para aplicações em produção**. A API do senadados ficará na Render, em Ohio, conforme a [D042](#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível).
 
 ## D005: API como fonte principal, CSV para conferência
 
@@ -439,6 +440,7 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 - **Implementação:** a coluna `exibir` da tabela `verificacao_equipe` no banco limpo. Quem ler o banco (a API e o site) usa `exibir`, e **trata a ausência da tabela como "não verificado"**.
 - **Altera:** a consequência da D036 e o texto da regra de tudo ou nada na D025 (que continua valendo para dados que comparam).
 - **Status:** aceita.
+- **Atualização (19/11/2026):** "o gabinete oculto é listado na página Verificações" passa a valer **em contagem**: a página mostra quantos ficaram ocultos em cada verificação, com um motivo de uma lista fechada. **Nomes de senadores só aparecem na seção de divergências**, onde há prova em imagem ([D038](#d038-documento-público-de-divergências-com-prova-em-imagem)), o que concilia esta decisão com o `escopo.md` §4.5. Ver [D042](#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível).
 
 ## D038: Documento público de divergências, com prova em imagem
 
@@ -511,16 +513,19 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 - **Decidido pelo mantenedor em 19/11/2026:**
   1. **Só dados agregados vão para o Neon.** Em 18/11/2026, **antes de aplicar a regra de exibição**, são 25.902 linhas de despesa por senador, ano, mês e categoria (25.526 de 2010 em diante e 376 de 2008 e 2009, anos em que a cota não aparece, D035) e 30.992 de fornecedores (empresas) por senador e ano, de 2009 em diante (30.594 de 2010 em diante e 398 de 2009). O que for para o `publico` será menor que isso, porque só segue o que passou nas verificações. Pessoas físicas continuam agrupadas e sem nome (D008). As 154.298 despesas linha a linha **ficam só no SQLite local**.
   2. **A carga será testada numa branch do Neon com validade**, e não num Postgres local (não há Postgres instalado na máquina de desenvolvimento). A branch herda as senhas do projeto, então leva `expires_at` de 1 dia e é apagada ao terminar.
-  3. **Documentar antes de criar:** o projeto no Neon só é criado depois da revisão deste desenho pelo mantenedor.
-- **Proposta ainda a confirmar na revisão** (o mantenedor respondeu às três perguntas acima, mas não revisou o resto):
+  3. **Documentar antes de criar:** o projeto no Neon só foi criado depois da revisão deste desenho pelo mantenedor (cumprido: criado em 19/11/2026, depois da aprovação abaixo).
+  4. **Esquemas e papéis aprovados como propostos** (detalhes abaixo): `publico` e `interno`, e os papéis dono, `sd_carga` e `sd_leitura`.
+  5. **A página "Verificações" mostra contagens, e nomes só onde há prova em imagem.** Para cada verificação, quantos dados passaram e quantos ficaram ocultos, com um motivo de uma lista fechada. **Nomes de senadores só na seção de divergências** (D038). Isso concilia a D037 ("o gabinete oculto é listado") com o `escopo.md` §4.5 ("agregada e sem nomes"). Por quê: esconder um nome agora pode ser desfeito e publicar não (a mesma lógica da D008), e uma lista de senadores sem dado provado pode ser lida como acusação, contra a D010. Custo: quem quiser saber por que um senador específico está sem um dado só encontra a explicação geral; nomes podem ser acrescentados depois, se for decidido.
+  6. **Região e API.** O banco fica em `aws-us-east-2` (Ohio). A API será publicada na Render, também em Ohio, na etapa 5 ([D004](#d004-fastapi-no-render-e-o-site-não-depende-dela)).
+- **Desenho aceito pelo mantenedor em 19/11/2026** (o código ainda não existe):
   - **Dois esquemas.** `publico` guarda só o que passou nas verificações (`exibir = 1`); a API e o site leem só ele, e a ausência de um dado significa "não verificado". `interno` guarda o detalhe das verificações (`resultado` e `detalhe`); o resumo da página "Verificações" sai por uma view do `publico`. Os dados descritivos pequenos (contato, equipe, moradia mês a mês e salário) seguem para o `publico` só para quem tem `exibir = 1`. Conferi **todos** os valores de `detalhe` de 18/11/2026 (9 padrões de texto, nas cinco tabelas de verificação): trazem categorias, valores e contagens, **sem nome de senador nem de outra pessoa**. O texto de `detalhe` é gerado pelo código; se algum dia ele passar a incluir nomes, esta conferência precisa ser refeita antes de a carga o levar para a nuvem.
-  - **Ponto aberto: o que a view mostra dos ocultos.** A D037 diz que o gabinete oculto "é listado na página Verificações", e o `escopo.md` §4.5 diz que, fora da seção de divergências, a página é **agregada e sem nomes**. Os dois textos precisam ser conciliados antes de desenhar a view (mostrar só quantos ficaram ocultos, ou também quais). **Decisão do mantenedor.**
+  - **Página "Verificações"** (decidido no item 5): a view pública traz contagens por verificação e ano, com motivo de lista fechada e sem nomes. **A conferir na implementação:** a tabela `verificacoes` não guarda os `pendente` da moradia (só `verificacao_moradia` os tem), então a contagem de pendentes precisa ser calculada na carga.
   - **Três papéis de banco**, de menor privilégio: o dono (só migrações), `sd_carga` (escreve; usado pela rotina diária) e `sd_leitura` (`SELECT` só no `publico`; usado pela API). Cada papel recebe só o que a sua tarefa precisa, e tabelas novas não herdam permissão.
   - **Carga repetível numa transação:** apaga e recarrega as tabelas, então quem saiu da lista some sozinho (D026). Recusa carregar se as verificações não forem da mesma foto dos dados (D035).
-  - **Projeto separado** `senadados`, plano gratuito e PostgreSQL 18. **Região:** a proposta é `aws-us-east-2` (Ohio), mas isso **depende de onde a API vai ficar**: a D004 escolhe a Render e não fixa a região dela, e convém que o banco e a API fiquem na mesma região, para cada consulta ser mais rápida. Decidir a região da API primeiro.
+  - **Projeto** `senadados`, **criado na Neon em 19/11/2026** na organização que já existia: plano gratuito, PostgreSQL 18, região `aws-us-east-2`, branch `production`, **sem tabelas ainda**. A conexão (senha) fica só em variável de ambiente, nunca no repositório (`.env` está no `.gitignore`).
   - **Dados que comparam senadores** (posição, ranking): a regra de tudo ou nada (D037) vale na carga; onde calcular (no pipeline ou numa view) **fica para a implementação**.
-- **Limites do plano gratuito**, conferidos em 19/11/2026 na página oficial de planos da Neon (atualizada em 12/11/2026): 1 GB de armazenamento por projeto, 100 horas de computação por mês por projeto, 10 branches por projeto, até 100 projetos por conta, o banco "dorme" após 5 minutos parado, e 6 horas de histórico para recuperação. **Se o plano gratuito pede cartão: não verificado** (a conta que existe está no plano gratuito, mas não conferi se há cartão cadastrado). Os ~57 mil registros agregados devem caber com folga, **mas o tamanho no PostgreSQL não foi medido**.
+- **Limites do plano gratuito**, conferidos em 19/11/2026 na página oficial de planos da Neon (atualizada em 12/11/2026): 1 GB de armazenamento por projeto, 100 horas de computação por mês por projeto, 10 branches por projeto, até 100 projetos por conta, o banco "dorme" após 5 minutos parado, e 6 horas de histórico para recuperação. O projeto foi criado em 19/11/2026 pelo plano gratuito sem que a operação pedisse cartão; **se há cartão cadastrado na conta, não conferi**. Os ~57 mil registros agregados devem caber com folga, **mas o tamanho no PostgreSQL não foi medido**.
 - **Por quê:** levar só o que as telas usam reduz o tamanho, a carga e a superfície de dados pessoais, e mantém o que o cidadão vê reproduzível a partir do pipeline. Separar `publico` e `interno` faz "só o comprovado" (D025) valer também na leitura: quem consulta o banco não alcança um dado não provado.
 - **Descartado:** levar as despesas linha a linha (ocuparia mais, sem tela que as use; **pode voltar** se um dia a D008 mudar); testar num Postgres local (exigiria instalar algo e a versão poderia diferir da Neon); criar o projeto antes de revisar o desenho.
 - **Custo:** com só agregados não dá para mostrar a nota individual sem recarregar o banco com outra carga.
-- **Status:** provisória. Vira `aceita` quando o mantenedor revisar a proposta acima.
+- **Status:** aceita (19/11/2026). O projeto existe na Neon, mas **esquemas, papéis e carga ainda não foram feitos**; as migrações serão ensaiadas antes numa branch com validade, e só gravam na produção com o OK do mantenedor.

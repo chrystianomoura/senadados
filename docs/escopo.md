@@ -98,6 +98,7 @@ Não há selos como "comprovado" ou "fonte única" na tela. As palavras técnica
 - A lista de checagens feitas e o resultado de cada uma, por exemplo "cota de 2026: 73 idênticos, 7 explicados".
 - Uma seção **“Onde os dados do Senado não batem entre si”**, com cada divergência provada por **prints** das telas e dos arquivos do Senado, sem dizer qual número está certo, nem o motivo, nem o que faremos a respeito ([D038](decisoes.md#d038-documento-público-de-divergências-com-prova-em-imagem)). Só entra o que tem print. O texto está em [divergencias-nos-dados-do-senado.md](divergencias-nos-dados-do-senado.md).
 - As divergências encontradas nos dados do Senado, **agregadas**, com a explicação quando existe. Os **nomes dos senadores só aparecem na seção de divergências**, onde o print mostra a tela do Senado, que traz o nome ([D038](decisoes.md#d038-documento-público-de-divergências-com-prova-em-imagem)).
+- Os dados **ocultos** aparecem **em contagem**, por verificação, com um motivo de uma lista fechada; **nomes de senadores só na seção de divergências**, onde há prova em imagem ([D037](decisoes.md#d037-exibição-por-tipo-de-dado-e-freio-de-segurança), [D042](decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível)).
 - A frase fixa: "verificamos se as bases do Senado concordam entre si. Não auditamos os dados."
 - Canal para **reportar um erro** e registro público das correções.
 
@@ -210,7 +211,7 @@ Metas a medir, não resultados já obtidos:
 |---|---|---|
 | 1 | Pipeline de despesas, com validação e testes | **Feito** ([D033](decisoes.md#d033-coleta-local-que-só-grava-quem-está-em-exercício), [D034](decisoes.md#d034-limpeza-com-validação-em-sqlite-local-sem-nome-nem-documento-de-pessoa-física)) |
 | 2 | **Camada de verificação** (cruzamentos, relatório, falha fechada) | **Feito** para cota, equipe, moradia, contato e salário ([D035](decisoes.md#d035-verificação-automática-da-cota-por-categoria-na-mesma-foto-dos-dados) a [D041](decisoes.md#d041-verificação-automática-do-salário-pela-identidade-do-senador)) |
-| 3 | Banco e carga completa dos senadores em exercício | **Em desenho** (Neon; [D042](decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível), 19/11/2026) |
+| 3 | Banco e carga completa dos senadores em exercício | **Em andamento** (projeto criado na Neon em 19/11/2026, ainda sem tabelas; [D042](decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível)) |
 | 4 | Perfil, salário (quando provado), equipe e moradia | A fazer, no site |
 | 5 | API | A fazer |
 | 6 | Site: perfil, depois início, ranking, comparação, "Sobre os dados" e "Verificações" | A fazer |

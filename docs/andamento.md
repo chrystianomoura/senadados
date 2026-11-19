@@ -2,7 +2,7 @@
 
 Resumo do que existe, do que foi provado e do que vem a seguir. É o documento para quem chega agora e quer saber **em que pé o projeto está**. Os detalhes de cada decisão estão em [decisoes.md](decisoes.md), e os de cada conferência, em [verificacoes.md](verificacoes.md).
 
-**Última atualização:** 19/11/2026 (desenho do banco registrado na D042; o código segue como estava em 18/11).
+**Última atualização:** 19/11/2026 (D042 aceita e projeto criado na Neon, ainda sem tabelas; o código segue como estava em 18/11).
 
 ## Em uma frase
 
@@ -21,7 +21,8 @@ O pipeline que coleta, limpa e **prova** os dados do Senado está pronto e roda 
 | Verificação do **contato** (endereço, telefones, e-mail) | Pronta |
 | Verificação do **salário** | Pronta |
 | Documento público de divergências nos dados do Senado | Pronto |
-| Banco no Neon, API, site, automação diária | **Não começaram** (o desenho do banco está na [D042](decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível), ainda provisória) |
+| Banco no Neon | Projeto criado em 19/11/2026, **sem tabelas** (desenho na [D042](decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível), aceita) |
+| API, site, automação diária | **Não começaram** |
 
 O código está em [pipeline/](../pipeline/README.md), com 270 testes e 95% de cobertura nos módulos de verificação. Os dados ficam em `data/` e **não vão para o git**.
 
@@ -87,11 +88,11 @@ Os números da cota são os de 2026 contra o resumo do Senado **do mesmo dia**. 
 
 Ordem de construção, etapa 3: "banco e carga completa dos senadores em exercício". O que preparar:
 
-1. **Conta e projeto no Neon**, no plano gratuito. Os limites foram **reconfirmados na página oficial da Neon em 19/11/2026** (armazenamento, horas de computação, branches; ver a [D042](decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível)); **se o plano pede cartão, não foi verificado**. O banco local tem 34 MB.
+1. **Conta e projeto no Neon**, no plano gratuito. Os limites foram **reconfirmados na página oficial da Neon em 19/11/2026** (armazenamento, horas de computação, branches; ver a [D042](decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível)). **O projeto `senadados` foi criado em 19/11/2026**, sem que a operação pedisse cartão. O banco local tem 34 MB.
 2. **A conexão fica em variável de ambiente** (por exemplo `DATABASE_URL`) e **nunca no repositório**. `.env` já está no `.gitignore`.
-3. **Desenho do banco** ([D042](decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível), provisória): dois esquemas, um **público**, só com o que passou nas verificações (`exibir = 1`), e outro **interno**, com os detalhes das verificações. Quem ler o banco (API e site) lê só o público, e a ausência de um dado significa "não verificado". Só **dados agregados** vão para o Neon; as despesas linha a linha ficam no SQLite local.
+3. **Desenho do banco** ([D042](decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível), aceita): dois esquemas, um **público**, só com o que passou nas verificações (`exibir = 1`), e outro **interno**, com os detalhes das verificações. Quem ler o banco (API e site) lê só o público, e a ausência de um dado significa "não verificado". Só **dados agregados** vão para o Neon; as despesas linha a linha ficam no SQLite local.
 4. **Um passo de carga** no pipeline, que copia os dados agregados do SQLite limpo para o Neon dentro de uma transação, de forma repetível, e **remove os dados de quem saiu da lista** (D026).
-5. **Decidido em 19/11/2026:** só agregados no Neon, a carga testada numa **branch do Neon com validade** (não há Postgres local), e a documentação vem antes de criar o projeto. **Falta:** o mantenedor revisar a proposta da D042 (esquemas, papéis, região da API e do banco, e o que a página "Verificações" mostra dos dados ocultos) e, depois, criar o projeto no Neon e escrever o código da carga.
+5. **Decidido em 19/11/2026:** só agregados no Neon; a carga testada numa **branch do Neon com validade** (não há Postgres local); esquemas `publico` e `interno` com três papéis; a página "Verificações" mostra **contagens**, com nomes só na seção de divergências; banco em `aws-us-east-2` e API na Render, também em Ohio. **Falta:** escrever as migrações (esquemas e papéis), ensaiá-las numa branch com validade e só então gravar na produção com o OK do mantenedor; depois, o passo de carga no pipeline.
 
 ## Registro dos commits do dia
 
