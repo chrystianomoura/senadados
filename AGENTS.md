@@ -108,7 +108,7 @@ senador fica errada.
 
 ## 7. Stack aprovada
 
-Python (httpx, Pandas, Pandera) para pipeline e verificação (scikit-learn só se o modelo voltar na versão 2); SQLite local para os dados limpos por enquanto ([D034](docs/decisoes.md#d034-limpeza-com-validação-em-sqlite-local-sem-nome-nem-documento-de-pessoa-física)) e PostgreSQL no Neon como banco da API; FastAPI para a API; Next.js com TypeScript como site, exportado de forma estática no Cloudflare Pages; GitHub Actions para atualização diária; pytest, ruff e uv para qualidade. O motivo de cada escolha está no [README.md](README.md).
+Python (httpx, Pandas, Pandera e, para falar com o Neon, psycopg 3: [D043](docs/decisoes.md#d043-migrações-em-sql-puro-driver-psycopg-e-carga-que-ensaia-antes-de-gravar)) para pipeline, verificação, migrações e carga do banco (scikit-learn só se o modelo voltar na versão 2); SQLite local para os dados limpos por enquanto ([D034](docs/decisoes.md#d034-limpeza-com-validação-em-sqlite-local-sem-nome-nem-documento-de-pessoa-física)) e PostgreSQL no Neon como banco da API; FastAPI para a API; Next.js com TypeScript como site, exportado de forma estática no Cloudflare Pages; GitHub Actions para atualização diária; pytest, ruff e uv para qualidade. O motivo de cada escolha está no [README.md](README.md).
 
 Não troque nem acrescente tecnologia sem registrar a decisão e o motivo. Os limites dos planos gratuitos foram pesquisados em 11/11/2026, em grande parte em fontes secundárias, e precisam ser reconfirmados nas páginas oficiais antes de publicar.
 

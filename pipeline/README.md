@@ -34,6 +34,8 @@ uv run python -m senadados_pipeline.contato
 uv run python -m senadados_pipeline.salario
 ```
 
+Depois das verificações, para levar os dados provados ao banco na nuvem (precisa do `.env`, veja abaixo): `papeis` (só na primeira vez), `migrar` e `carga`, cada um **primeiro em ensaio** e só então com `--apply`.
+
 A limpeza recria o banco do zero e **apaga as tabelas de verificação**; por isso as verificações rodam depois dela. Quem ler o banco (API e site) deve tratar a ausência de uma tabela de verificação como "não verificado" e ocultar o dado.
 
 ## O que a coleta faz
