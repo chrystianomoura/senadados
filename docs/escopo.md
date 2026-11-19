@@ -212,12 +212,14 @@ Metas a medir, não resultados já obtidos:
 | 1 | Pipeline de despesas, com validação e testes | **Feito** ([D033](decisoes.md#d033-coleta-local-que-só-grava-quem-está-em-exercício), [D034](decisoes.md#d034-limpeza-com-validação-em-sqlite-local-sem-nome-nem-documento-de-pessoa-física)) |
 | 2 | **Camada de verificação** (cruzamentos, relatório, falha fechada) | **Feito** para cota, equipe, moradia, contato e salário ([D035](decisoes.md#d035-verificação-automática-da-cota-por-categoria-na-mesma-foto-dos-dados) a [D041](decisoes.md#d041-verificação-automática-do-salário-pela-identidade-do-senador)) |
 | 3 | Banco e carga completa dos senadores em exercício | **Feito em 19/11/2026** (banco no ar com os dados provados de 18/11; a atualização diária automática ainda falta; [D042](decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível)) |
-| 4 | Perfil, salário (quando provado), equipe e moradia | A fazer, no site |
-| 5 | API | A fazer |
-| 6 | Site: perfil, depois início, ranking, comparação, "Sobre os dados" e "Verificações" | A fazer |
-| 7 | Destaque do maior mês | A fazer |
-| 8 | Automação diária e publicação | A fazer |
+| 4 | **Contrato dos dados e exportador** (arquivos JSON gerados do esquema `publico`; [D044](decisoes.md#d044-site-antes-da-api-com-dados-em-arquivos-json-gerados-do-esquema-público)) | **Próximo** |
+| 5 | Site: perfil (salário quando provado, equipe e moradia), depois início, ranking, comparação, "Sobre os dados" e "Verificações" | A fazer |
+| 6 | Destaque do maior mês | A fazer |
+| 7 | Automação diária e publicação | A fazer |
+| 8 | API (depois do site; [D044](decisoes.md#d044-site-antes-da-api-com-dados-em-arquivos-json-gerados-do-esquema-público)) | A fazer |
 | 9 | Revisão final da documentação | A fazer |
+
+A ordem foi alterada em 19/11/2026: o site vem antes da API ([D044](decisoes.md#d044-site-antes-da-api-com-dados-em-arquivos-json-gerados-do-esquema-público)).
 
 Cada etapa termina com a documentação atualizada e um commit no padrão do [AGENTS.md](../AGENTS.md). O resumo do que existe e do que vem a seguir está em [andamento.md](andamento.md).
 

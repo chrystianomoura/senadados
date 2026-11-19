@@ -56,6 +56,7 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 | D041 | Verificação automática do salário pela identidade do senador | Vale (altera a ligação da D016) |
 | D042 | Banco no Neon: só dados agregados, dois esquemas e carga repetível | Vale (o resumo virou tabela, ver D043) |
 | D043 | Migrações em SQL puro, driver psycopg e carga que ensaia antes de gravar | Vale (aplicada na produção em 19/11/2026) |
+| D044 | Site antes da API, com dados em arquivos JSON gerados do esquema público | Aceita quanto à direção; o contrato dos JSON está por definir |
 
 ---
 
@@ -95,7 +96,7 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 - **Por quê:** se a API dormir, o cidadão não percebe.
 - **Descartado:** Fly.io e Railway (sem plano gratuito de verdade).
 - **Status:** aceita. *Limites do plano gratuito a reconfirmar nas páginas oficiais.*
-- **Atualização (19/11/2026):** os limites do plano gratuito da Render foram lidos na página oficial (que não traz data): **750 horas de instância por mês por workspace**, divididas entre os serviços grátis; quando acabam, a Render suspende todos os serviços grátis do workspace até o mês seguinte; o serviço dorme após 15 minutos sem tráfego e leva cerca de 1 minuto para acordar. A mesma página diz que o plano grátis **não é para aplicações em produção**. A API do senadados ficará na Render, em Ohio, conforme a [D042](#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível).
+- **Atualização (19/11/2026):** os limites do plano gratuito da Render foram lidos na página oficial (que não traz data): **750 horas de instância por mês por workspace**, divididas entre os serviços grátis; quando acabam, a Render suspende todos os serviços grátis do workspace até o mês seguinte; o serviço dorme após 15 minutos sem tráfego e leva cerca de 1 minuto para acordar. A mesma página diz que o plano grátis **não é para aplicações em produção**. A API do senadados ficará na Render, em Ohio, conforme a [D042](#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível). A [D044](#d044-site-antes-da-api-com-dados-em-arquivos-json-gerados-do-esquema-público) confirma que o site vem antes da API e lê arquivos, não a API.
 
 ## D005: API como fonte principal, CSV para conferência
 
@@ -517,7 +518,7 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
   3. **Documentar antes de criar:** o projeto no Neon só foi criado depois da revisão deste desenho pelo mantenedor (cumprido: criado em 19/11/2026, depois da aprovação abaixo).
   4. **Esquemas e papéis aprovados como propostos** (detalhes abaixo): `publico` e `interno`, e os papéis dono, `sd_carga` e `sd_leitura`.
   5. **A página "Verificações" mostra contagens, e nomes só onde há prova em imagem.** Para cada verificação, quantos dados passaram e quantos ficaram ocultos, com um motivo de uma lista fechada. **Nomes de senadores só na seção de divergências** (D038). Isso concilia a D037 ("o gabinete oculto é listado") com o `escopo.md` §4.5 ("agregada e sem nomes"). Por quê: esconder um nome agora pode ser desfeito e publicar não (a mesma lógica da D008), e uma lista de senadores sem dado provado pode ser lida como acusação, contra a D010. Custo: quem quiser saber por que um senador específico está sem um dado só encontra a explicação geral; nomes podem ser acrescentados depois, se for decidido.
-  6. **Região e API.** O banco fica em `aws-us-east-2` (Ohio). A API será publicada na Render, também em Ohio, na etapa 5 ([D004](#d004-fastapi-no-render-e-o-site-não-depende-dela)).
+  6. **Região e API.** O banco fica em `aws-us-east-2` (Ohio). A API será publicada na Render, também em Ohio, depois do site ([D044](#d044-site-antes-da-api-com-dados-em-arquivos-json-gerados-do-esquema-público); antes, na etapa 5, hoje na 8) ([D004](#d004-fastapi-no-render-e-o-site-não-depende-dela)).
 - **Desenho aceito pelo mantenedor em 19/11/2026** (implementado e aplicado: ver a D043):
   - **Dois esquemas.** `publico` guarda só o que passou nas verificações (`exibir = 1`); a API e o site leem só ele, e a ausência de um dado significa "não verificado". `interno` guarda o detalhe das verificações (`resultado` e `detalhe`); o resumo da página "Verificações" sai de tabelas do `publico` calculadas na carga ([D043](#d043-migrações-em-sql-puro-driver-psycopg-e-carga-que-ensaia-antes-de-gravar); a redação original previa uma view). Os dados descritivos pequenos (contato, equipe, moradia mês a mês e salário) seguem para o `publico` só para quem tem `exibir = 1`. Conferi **todos** os valores de `detalhe` de 18/11/2026 (9 padrões de texto, nas cinco tabelas de verificação): trazem categorias, valores e contagens, **sem nome de senador nem de outra pessoa**. O texto de `detalhe` é gerado pelo código; se algum dia ele passar a incluir nomes, esta conferência precisa ser refeita antes de a carga o levar para a nuvem.
   - **Página "Verificações"** (decidido no item 5): a view pública traz contagens por verificação e ano, com motivo de lista fechada e sem nomes. **A conferir na implementação:** a tabela `verificacoes` não guarda os `pendente` da moradia (só `verificacao_moradia` os tem), então a contagem de pendentes precisa ser calculada na carga.
@@ -551,3 +552,19 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 - **Ainda não feito:** a **atualização diária automática** (GitHub Actions, que guardaria as URLs como segredos do repositório) e a API, que vai ler com o papel `sd_leitura`.
 - **Descartado:** ORM e Alembic (complexidade sem ganho para 2 migrações); asyncpg (não há necessidade de assincronia); views para o resumo (menos testáveis).
 - **Status:** aceita e aplicada. Falta a atualização diária automática.
+
+## D044: Site antes da API, com dados em arquivos JSON gerados do esquema público
+
+- **Contexto:** a ordem de construção do `escopo.md` §13 punha a API (etapa 5) antes do site (etapa 6). Mas a D004 já diz que o site **não depende da API**: ele lê arquivos gerados pelo pipeline. O banco da Neon está no ar desde 19/11/2026 ([D042](#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível), [D043](#d043-migrações-em-sql-puro-driver-psycopg-e-carga-que-ensaia-antes-de-gravar)). O público principal é o cidadão, que usa o site; a API serve a jornalistas e pesquisadores (`escopo.md` §2).
+- **Decisão (19/11/2026, do mantenedor):**
+  1. **O site vem antes da API.** A ordem passa a ser: contrato dos dados e exportador, site, destaque do maior mês, automação diária e, só depois, a API. A API continua no escopo do MVP, mas sem data.
+  2. **Os dados do site são arquivos JSON gerados pelo pipeline a partir do esquema `publico`**, lendo com o papel `sd_leitura` (`DATABASE_URL_LEITURA`). Assim o site, e depois a API, leem a mesma fronteira pública (só o provado; ausência = "não verificado").
+  3. **Um arquivo por senador**, mais a lista de senadores, as verificações e os metadados. Em arquivos pequenos o celular baixa só o que usa. **Os nomes e os campos exatos ainda não estão definidos**: são o primeiro passo da construção, a partir do que o protótipo `design/perfil-do-senador.html` precisa.
+  4. **Os JSON não vão para o git**, como os dados brutos (D014) e os limpos (`data/limpo/`, ignorado): são gerados na hora do build, com as URLs de conexão em variáveis de ambiente.
+  5. **O site é Next.js com TypeScript, exportado como páginas estáticas, no Cloudflare Pages** (D003 mantida), na pasta `web/`, com a identidade da D029.
+- **Primeira fatia:** o contrato e um exportador em Python, com testes, começando pela lista de senadores e **um** perfil real; depois o esqueleto do site com a página de perfil lendo esse JSON.
+- **Por quê:** o site é o que o cidadão vê, e fazê-lo primeiro não gasta as horas grátis de hospedagem da API (D004). Gerar os JSON do `publico` força o site a respeitar a regra "só o comprovado" e exercita o caminho que a API usaria depois. Um contrato de dados definido antes da tela evita refazer a tela.
+- **Descartado:** gerar os JSON do SQLite local (dependeria de arquivos que só existem numa máquina e não exercitaria a fronteira pública); um único arquivo grande (pesado no celular); fazer a API primeiro (sem público imediato).
+- **Não verificado:** os limites atuais do Cloudflare Pages e do GitHub Actions, que precisam ser reconfirmados nas páginas oficiais antes de publicar (AGENTS.md, seção 7). Na máquina de desenvolvimento há Node 24 e npm 11 (conferido em 19/11/2026).
+- **Altera:** a ordem de construção do `escopo.md` §13.
+- **Status:** aceita quanto à ordem e à direção; o contrato dos JSON ainda será definido e registrado.
