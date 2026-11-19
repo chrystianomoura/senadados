@@ -67,7 +67,7 @@ Não há selos como "comprovado" ou "fonte única" na tela. As palavras técnica
 
 | Bloco | Mostra | Estado hoje |
 |---|---|---|
-| **Quem é** | Foto oficial com crédito, partido, estado, mandato, titular ou suplente. | Pronto para provar |
+| **Quem é** | Foto oficial com crédito, partido, estado, mandato, titular ou suplente. | Partido, estado e tipo prontos. **Foto e mandato dependem de uma verificação nova** ([D045](decisoes.md#d045-foto-e-mandato-do-senador-com-o-endereço-oficial-do-senado-e-verificação-entre-duas-listas)), depois da primeira fatia do site |
 | **Salário** | Remuneração do último mês da folha | Provado para 79 de 81 ([D041](decisoes.md#d041-verificação-automática-do-salário-pela-identidade-do-senador)); 2 suplentes ficam sem salário |
 | **Verba (a cota)** | Total do ano e do mês, mês a mês, por categoria, e a posição entre os outros senadores em três faixas | Provado de 2010 a 2026 (em 2026: 73 idênticos, 7 explicados); 2008 e 2009 não se provam e não aparecem |
 | **Para onde vai** | Maiores fornecedores (empresas) e "pessoas físicas" agrupadas ([D008](decisoes.md#d008-pessoas-físicas-agrupadas-e-cpf-nunca-exibido)) | A partir de 2009 |
@@ -203,7 +203,7 @@ Metas a medir, não resultados já obtidos:
 | Virada de 2027 | Até 54 páginas saem de uma vez | Decidido: apagar os dados de quem sair (banco, arquivos brutos, site e API) |
 | Pessoas físicas ([D008](decisoes.md#d008-pessoas-físicas-agrupadas-e-cpf-nunca-exibido)) | Proteções mantidas; risco de LGPD aceito pelo mantenedor, por serem dados públicos | Nenhuma ação |
 | Limites dos planos gratuitos | Neon reconfirmado na página oficial em 19/11/2026 ([D042](decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível)); Render, Cloudflare Pages e GitHub Actions seguem em fontes secundárias | Reconfirmar os três antes de publicar |
-| Foto dos senadores | Conteúdo "de propriedade autoral do Senado" | Carregar do endereço oficial com crédito |
+| Foto dos senadores | Conteúdo "de propriedade autoral do Senado" | **Decidido em 19/11/2026 ([D045](decisoes.md#d045-foto-e-mandato-do-senador-com-o-endereço-oficial-do-senado-e-verificação-entre-duas-listas)):** carregar do endereço oficial, com o crédito "Foto oficial publicada pelo Senado Federal", sem copiar. Copiar e reduzir só se o Senado confirmar que pode (não verificado) |
 
 ## 13. Ordem de construção
 
@@ -212,7 +212,7 @@ Metas a medir, não resultados já obtidos:
 | 1 | Pipeline de despesas, com validação e testes | **Feito** ([D033](decisoes.md#d033-coleta-local-que-só-grava-quem-está-em-exercício), [D034](decisoes.md#d034-limpeza-com-validação-em-sqlite-local-sem-nome-nem-documento-de-pessoa-física)) |
 | 2 | **Camada de verificação** (cruzamentos, relatório, falha fechada) | **Feito** para cota, equipe, moradia, contato e salário ([D035](decisoes.md#d035-verificação-automática-da-cota-por-categoria-na-mesma-foto-dos-dados) a [D041](decisoes.md#d041-verificação-automática-do-salário-pela-identidade-do-senador)) |
 | 3 | Banco e carga completa dos senadores em exercício | **Feito em 19/11/2026** (banco no ar com os dados provados de 18/11; a atualização diária automática ainda falta; [D042](decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível)) |
-| 4 | **Contrato dos dados e exportador** (arquivos JSON gerados do esquema `publico`; [D044](decisoes.md#d044-site-antes-da-api-com-dados-em-arquivos-json-gerados-do-esquema-público)) | **Próximo** |
+| 4 | **Contrato dos dados e exportador** (arquivos JSON gerados do esquema `publico`; [contrato em rascunho](contrato-dos-dados.md); [D044](decisoes.md#d044-site-antes-da-api-com-dados-em-arquivos-json-gerados-do-esquema-público)) | **Próximo** |
 | 5 | Site: perfil (salário quando provado, equipe e moradia), depois início, ranking, comparação, "Sobre os dados" e "Verificações" | A fazer |
 | 6 | Destaque do maior mês | A fazer |
 | 7 | Automação diária e publicação | A fazer |

@@ -56,7 +56,8 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 | D041 | Verificação automática do salário pela identidade do senador | Vale (altera a ligação da D016) |
 | D042 | Banco no Neon: só dados agregados, dois esquemas e carga repetível | Vale (o resumo virou tabela, ver D043) |
 | D043 | Migrações em SQL puro, driver psycopg e carga que ensaia antes de gravar | Vale (aplicada na produção em 19/11/2026) |
-| D044 | Site antes da API, com dados em arquivos JSON gerados do esquema público | Aceita quanto à direção; o contrato dos JSON está por definir |
+| D044 | Site antes da API, com dados em arquivos JSON gerados do esquema público | Aceita (o contrato dos JSON está em rascunho) |
+| D045 | Foto e mandato do senador, com o endereço oficial do Senado e verificação entre duas listas | Aceita (ainda sem código) |
 
 ---
 
@@ -559,7 +560,7 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 - **Decisão (19/11/2026, do mantenedor):**
   1. **O site vem antes da API.** A ordem passa a ser: contrato dos dados e exportador, site, destaque do maior mês, automação diária e, só depois, a API. A API continua no escopo do MVP, mas sem data.
   2. **Os dados do site são arquivos JSON gerados pelo pipeline a partir do esquema `publico`**, lendo com o papel `sd_leitura` (`DATABASE_URL_LEITURA`). Assim o site, e depois a API, leem a mesma fronteira pública (só o provado; ausência = "não verificado").
-  3. **Um arquivo por senador**, mais a lista de senadores, as verificações e os metadados. Em arquivos pequenos o celular baixa só o que usa. **Os nomes e os campos exatos ainda não estão definidos**: são o primeiro passo da construção, a partir do que o protótipo `design/perfil-do-senador.html` precisa.
+  3. **Um arquivo por senador**, mais a lista de senadores, as verificações e os metadados. Em arquivos pequenos o celular baixa só o que usa. **Os nomes e os campos exatos** estão em rascunho em [contrato-dos-dados.md](contrato-dos-dados.md), a partir do que o protótipo `design/perfil-do-senador.html` precisa.
   4. **Os JSON não vão para o git**, como os dados brutos (D014) e os limpos (`data/limpo/`, ignorado): são gerados na hora do build, com as URLs de conexão em variáveis de ambiente.
   5. **O site é Next.js com TypeScript, exportado como páginas estáticas, no Cloudflare Pages** (D003 mantida), na pasta `web/`, com a identidade da D029.
 - **Primeira fatia:** o contrato e um exportador em Python, com testes, começando pela lista de senadores e **um** perfil real; depois o esqueleto do site com a página de perfil lendo esse JSON.
@@ -567,4 +568,27 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 - **Descartado:** gerar os JSON do SQLite local (dependeria de arquivos que só existem numa máquina e não exercitaria a fronteira pública); um único arquivo grande (pesado no celular); fazer a API primeiro (sem público imediato).
 - **Não verificado:** os limites atuais do Cloudflare Pages e do GitHub Actions, que precisam ser reconfirmados nas páginas oficiais antes de publicar (AGENTS.md, seção 7). Na máquina de desenvolvimento há Node 24 e npm 11 (conferido em 19/11/2026).
 - **Altera:** a ordem de construção do `escopo.md` §13.
-- **Status:** aceita quanto à ordem e à direção; o contrato dos JSON ainda será definido e registrado.
+- **Status:** aceita quanto à ordem e à direção. O contrato dos JSON está em rascunho em [contrato-dos-dados.md](contrato-dos-dados.md) e será confirmado pela primeira implementação.
+
+## D045: Foto e mandato do senador, com o endereço oficial do Senado e verificação entre duas listas
+
+- **Contexto:** o perfil do senador mostra "Mandato" e a foto oficial (`escopo.md` §4.2), mas o pipeline ainda não coleta nenhum dos dois. Os dois estão na lista de senadores em exercício da API legislativa (`lista/atual`): o endereço da foto (`UrlFotoParlamentar`) e as datas do mandato.
+- **Medido em 19/11/2026** (a lista legislativa baixada à mão em 11/11 e pedidos só de cabeçalho feitos nesse dia; **nenhuma imagem foi baixada**):
+  - os 81 senadores têm endereço de foto, no padrão `…/fotos-oficiais/senador{código}.jpg`, com os mesmos 81 códigos da lista administrativa;
+  - o endereço da API é `http://` e redireciona para `https://legis.senado.leg.br/senadores/fotos-oficiais/{código}`; nos 81 a resposta final é 200 com tipo `image/jpeg`;
+  - os arquivos têm de 78 KB a 1,4 MB, média de 280 KB e soma de 22 MB;
+  - as duas listas concordam em UF (81 de 81), partido (81 de 81) e anos do mandato (81 de 81), e em nome em 80 de 81 (a exceção é "Nelsinho Trad" contra "NELSINHO TRAD FILHO", o caso que a [D036](#d036-verificação-automática-da-equipe-do-gabinete-por-vínculo) já trata com a regra de nome inteiro dentro do outro).
+- **Decisão (19/11/2026, do mantenedor): opção A.**
+  1. **O site carrega a foto do endereço oficial do Senado, com o crédito "Foto oficial publicada pelo Senado Federal"**, sem copiar nem hospedar as imagens. É o que o `escopo.md` §12 já previa. O crédito diz só o que se prova: que a foto é a que o Senado publica para aquele parlamentar, e não que "esta é a foto de fulano".
+  2. **A foto só aparece na página do perfil.** A lista de senadores usa as iniciais: as 81 fotos somam 22 MB e não há controle do tamanho de uma imagem que não é nossa.
+  3. **O mandato** mostra o ano em que começa e o ano em que termina, tirados das datas da lista legislativa; as datas completas vão no JSON.
+  4. **Verificação nova, "perfil"**, no mesmo dia da coleta (D035): a lista legislativa deve ter os mesmos códigos da administrativa; nome (pela regra da D036), UF, partido e anos do mandato devem ser iguais nas duas listas; e o endereço da foto, já com o redirecionamento resolvido e em `https`, deve responder 200 com `image/jpeg` no dia da carga. O endereço guardado é o final.
+  5. **Exibição (D037):** é dado descritivo. Foto e mandato aparecem para quem foi provado, cada um com o seu freio de segurança de 5%. Falhou, o campo some, sem aviso no perfil, e a página "Verificações" conta o caso.
+  6. **A política de conteúdo do site** (CSP) passa a liberar `https://legis.senado.leg.br` em `img-src`.
+  7. **Checagem opcional, ainda não aprovada:** pedir só os primeiros bytes de cada foto, para confirmar que é um JPEG de tamanho razoável e não uma imagem substituta (o menor dos 81 arquivos tem 78 KB). Pelo `AGENTS.md`, baixar arquivos pede o aval do mantenedor; sem ele, vale só a conferência de cabeçalho do item 4.
+- **Quando:** depois da primeira fatia do site, que sai sem foto e sem mandato. A implementação será um módulo novo do pipeline, a migração 003 (`publico.perfil`) e a carga, com testes; o JSON do perfil ganha o bloco `quem_e` ([contrato dos dados](contrato-dos-dados.md)).
+- **Por quê:** carregar do endereço oficial não copia conteúdo de autoria do Senado e mantém a foto atualizada. A verificação segue a regra "só o comprovado" (D025): duas publicações do Senado precisam concordar sobre quem é a pessoa.
+- **Limites:** a verificação prova **consistência** entre listas do Senado, e não que a foto é mesmo da pessoa. A ligação entre o código e a foto é a que o próprio Senado publica. Os riscos que sobram são uma foto desatualizada, uma imagem substituta ou um erro do Senado: os dois primeiros são cobertos pelas checagens acima, e o canal para reportar erros do `escopo.md` §4.5 cobre o resto. A foto depende do servidor do Senado: se ele sair do ar, a imagem some até voltar. Nada garante que o endereço oficial continue o mesmo; por isso a verificação roda a cada carga.
+- **Descartado:** copiar as fotos e reduzi-las para uns 200 px (opção B). Ficaria mais leve e independente, mas **não foi verificado** se a política do portal, que permite usar o conteúdo citando a fonte e o declara de autoria do Senado, cobre redistribuir fotos. Pode voltar se o Senado confirmar.
+- **Também descartado (19/11/2026):** confirmar a identidade pelo CPF ou comparando rostos com outra base, como a do TSE. O pipeline não tem o CPF dos senadores (a D005 mantém o CPF fora do pipeline), o arquivo da foto não carrega CPF, e comparar rostos é reconhecimento facial sobre dados biométricos de pessoas reais: sensível pela LGPD, sujeito a erro e dependente de uma fonte fora do Senado, que só entra com aprovação (AGENTS.md, seção 6).
+- **Status:** aceita.
