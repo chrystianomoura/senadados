@@ -2,7 +2,7 @@
 
 Resumo do que existe, do que foi provado e do que vem a seguir. É o documento para quem chega agora e quer saber **em que pé o projeto está**. Os detalhes de cada decisão estão em [decisoes.md](decisoes.md), e os de cada conferência, em [verificacoes.md](verificacoes.md).
 
-**Última atualização:** 19/11/2026 (D042 aceita e projeto criado na Neon, ainda sem tabelas; o código segue como estava em 18/11).
+**Última atualização:** 19/11/2026 (banco da Neon criado, com papéis, migrações e dados de 18/11 aplicados na produção).
 
 ## Em uma frase
 
@@ -21,7 +21,7 @@ O pipeline que coleta, limpa e **prova** os dados do Senado está pronto e roda 
 | Verificação do **contato** (endereço, telefones, e-mail) | Pronta |
 | Verificação do **salário** | Pronta |
 | Documento público de divergências nos dados do Senado | Pronto |
-| Banco no Neon | Projeto criado em 19/11/2026. Papéis, migrações e carga **ensaiados com sucesso numa branch** (20 MB, permissões testadas); a **produção continua sem tabelas** ([D042](decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível), [D043](decisoes.md#d043-migrações-em-sql-puro-driver-psycopg-e-carga-que-ensaia-antes-de-gravar)) |
+| Banco no Neon | **No ar com os dados provados de 18/11/2026** (20 MB, 17 tabelas, permissões testadas) ([D042](decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível), [D043](decisoes.md#d043-migrações-em-sql-puro-driver-psycopg-e-carga-que-ensaia-antes-de-gravar)). Atualização diária ainda manual |
 | API, site, automação diária | **Não começaram** |
 
 O código está em [pipeline/](../pipeline/README.md), com 310 testes (270 em 18/11 e 40 novos da carga, das migrações e dos papéis) e 95% de cobertura nos módulos de verificação (a cobertura é de 18/11 e não foi medida de novo). Os dados ficam em `data/` e **não vão para o git**.
@@ -92,7 +92,7 @@ Ordem de construção, etapa 3: "banco e carga completa dos senadores em exercí
 2. **A conexão fica em variável de ambiente** (por exemplo `DATABASE_URL`) e **nunca no repositório**. `.env` já está no `.gitignore`.
 3. **Desenho do banco** ([D042](decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível), aceita): dois esquemas, um **público**, só com o que passou nas verificações (`exibir = 1`), e outro **interno**, com os detalhes das verificações. Quem ler o banco (API e site) lê só o público, e a ausência de um dado significa "não verificado". Só **dados agregados** vão para o Neon; as despesas linha a linha ficam no SQLite local.
 4. **Um passo de carga** no pipeline, que copia os dados agregados do SQLite limpo para o Neon dentro de uma transação, de forma repetível, e **remove os dados de quem saiu da lista** (D026).
-5. **Decidido em 19/11/2026:** só agregados no Neon; a carga testada numa **branch do Neon com validade** (não há Postgres local); esquemas `publico` e `interno` com três papéis; a página "Verificações" mostra **contagens**, com nomes só na seção de divergências; banco em `aws-us-east-2` e API na Render, também em Ohio. **Falta:** aplicar na produção (papéis, migrações e carga, só com o OK do mantenedor) e, depois, a atualização diária automática.
+5. **Decidido em 19/11/2026:** só agregados no Neon; a carga testada numa **branch do Neon com validade** (não há Postgres local); esquemas `publico` e `interno` com três papéis; a página "Verificações" mostra **contagens**, com nomes só na seção de divergências; banco em `aws-us-east-2` e API na Render, também em Ohio. **Aplicado na produção em 19/11/2026.** **Falta:** a atualização diária automática e a API.
 
 ## Registro dos commits do dia
 

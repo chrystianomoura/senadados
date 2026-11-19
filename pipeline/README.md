@@ -172,7 +172,7 @@ uv run --env-file ../.env python -m senadados_pipeline.carga
 - **Migrações:** os arquivos SQL de [migracoes/](migracoes/README.md), em ordem, só os que ainda não foram aplicados. Os papéis `sd_carga` e `sd_leitura` precisam existir antes.
 - **Carga:** lê o banco limpo local **só para leitura**, leva só dados **agregados** e só o que passou nas verificações, e apaga e regrava as tabelas numa transação, conferindo a contagem de cada uma. **Recusa carregar** se faltar alguma das 7 verificações ou se alguma não for do dia da coleta. As despesas linha a linha **não** vão para a nuvem.
 - Os registros mostram só o endereço do servidor, **nunca a senha**.
-- **Já foram ensaiados numa branch da Neon** em 19/11/2026, com logins reais (veja a D043). A produção ainda não foi tocada.
+- **Já foram ensaiados numa branch da Neon** em 19/11/2026, com logins reais (veja a D043). Foram aplicados na produção no mesmo dia, com o OK do mantenedor.
 
 ## Testes e qualidade
 

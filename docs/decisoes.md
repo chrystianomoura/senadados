@@ -55,7 +55,7 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 | D040 | Verificação automática do contato do gabinete | Vale |
 | D041 | Verificação automática do salário pela identidade do senador | Vale (altera a ligação da D016) |
 | D042 | Banco no Neon: só dados agregados, dois esquemas e carga repetível | Vale (o resumo virou tabela, ver D043) |
-| D043 | Migrações em SQL puro, driver psycopg e carga que ensaia antes de gravar | Vale (ensaiada numa branch; falta a produção) |
+| D043 | Migrações em SQL puro, driver psycopg e carga que ensaia antes de gravar | Vale (aplicada na produção em 19/11/2026) |
 
 ---
 
@@ -523,13 +523,13 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
   - **Página "Verificações"** (decidido no item 5): a view pública traz contagens por verificação e ano, com motivo de lista fechada e sem nomes. **A conferir na implementação:** a tabela `verificacoes` não guarda os `pendente` da moradia (só `verificacao_moradia` os tem), então a contagem de pendentes precisa ser calculada na carga.
   - **Três papéis de banco**, de menor privilégio: o dono (só migrações), `sd_carga` (escreve; usado pela rotina diária) e `sd_leitura` (`SELECT` só no `publico`; usado pela API). Cada papel recebe só o que a sua tarefa precisa, e tabelas novas não herdam permissão.
   - **Carga repetível numa transação:** apaga e recarrega as tabelas, então quem saiu da lista some sozinho (D026). Recusa carregar se as verificações não forem da mesma foto dos dados (D035).
-  - **Projeto** `senadados`, **criado na Neon em 19/11/2026** na organização que já existia: plano gratuito, PostgreSQL 18, região `aws-us-east-2`, branch `production`, **sem tabelas ainda**. A conexão (senha) fica só em variável de ambiente, nunca no repositório (`.env` está no `.gitignore`).
+  - **Projeto** `senadados`, **criado na Neon em 19/11/2026** na organização que já existia: plano gratuito, PostgreSQL 18, região `aws-us-east-2`, branch `production`. Esquemas, papéis e dados aplicados em 19/11/2026 (ver a D043). A conexão (senha) fica só em variável de ambiente, nunca no repositório (`.env` está no `.gitignore`).
   - **Dados que comparam senadores** (posição, ranking): a regra de tudo ou nada (D037) vale na carga; onde calcular (no pipeline ou numa view) **fica para a implementação**.
 - **Limites do plano gratuito**, conferidos em 19/11/2026 na página oficial de planos da Neon (atualizada em 12/11/2026): 1 GB de armazenamento por projeto, 100 horas de computação por mês por projeto, 10 branches por projeto, até 100 projetos por conta, o banco "dorme" após 5 minutos parado, e 6 horas de histórico para recuperação. O projeto foi criado em 19/11/2026 pelo plano gratuito sem que a operação pedisse cartão; **se há cartão cadastrado na conta, não conferi**. Os ~57 mil registros agregados devem caber com folga, **mas o tamanho no PostgreSQL não foi medido**.
 - **Por quê:** levar só o que as telas usam reduz o tamanho, a carga e a superfície de dados pessoais, e mantém o que o cidadão vê reproduzível a partir do pipeline. Separar `publico` e `interno` faz "só o comprovado" (D025) valer também na leitura: quem consulta o banco não alcança um dado não provado.
 - **Descartado:** levar as despesas linha a linha (ocuparia mais, sem tela que as use; **pode voltar** se um dia a D008 mudar); testar num Postgres local (exigiria instalar algo e a versão poderia diferir da Neon); criar o projeto antes de revisar o desenho.
 - **Custo:** com só agregados não dá para mostrar a nota individual sem recarregar o banco com outra carga.
-- **Status:** aceita (19/11/2026). O projeto existe na Neon, mas **esquemas, papéis e carga ainda não foram feitos**; as migrações serão ensaiadas antes numa branch com validade, e só gravam na produção com o OK do mantenedor.
+- **Status:** aceita (19/11/2026). Aplicada na produção no mesmo dia, depois do ensaio numa branch; a atualização diária automática ainda não existe.
 
 ## D043: Migrações em SQL puro, driver psycopg e carga que ensaia antes de gravar
 
@@ -547,6 +547,7 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
   - Papéis criados pelo comando; migrações 001 e 002 aplicadas pelo executor (ensaio, gravação e uma repetição, que não achou nada pendente); carga em ensaio, gravada e repetida, sempre com as mesmas contagens. O driver aceitou cada arquivo de migração numa só chamada.
   - **Permissões, testadas conectando como cada papel:** `sd_leitura` lê o `publico` (79 salários) e é **negado** em ler o `interno`, inserir, apagar, truncar e criar tabela. `sd_carga` é negado em `UPDATE`, em ler `interno.migracoes`, em criar ou apagar tabela e em criar papel.
   - **Integridade:** em 610 pares senador-ano, a soma de `despesas_mensais` bate com a da verificação da cota; nada de 2008 e 2009 em despesas nem em fornecedores; a soma das despesas provadas é a mesma no SQLite e na nuvem (R$ 211.550.675,21). O banco inteiro ocupa **20 MB** no PostgreSQL, bem abaixo do 1 GB do plano gratuito.
-- **Ainda não feito:** aplicar na **produção** (repetir `papeis`, `migrar --apply` e `carga --apply` com as URLs da produção, só com o OK do mantenedor) e a atualização diária automática.
+- **Aplicada na produção em 19/11/2026**, com o OK do mantenedor. Antes de mexer, conferi que o alvo era o endpoint da produção (o mesmo que a Neon informa) e que estava vazio (nenhum esquema do projeto, nenhum papel `sd_`). Os mesmos comandos do ensaio rodaram, cada um primeiro em ensaio: papéis, migrações 001 e 002 e carga, com as mesmas 17 tabelas e contagens do ensaio. As conferências repetidas na produção deram o mesmo resultado: permissões de `sd_leitura` e `sd_carga` como esperado, soma das despesas igual à do SQLite (R$ 211.550.675,21), nada de 2008 e 2009, banco com 20 MB.
+- **Ainda não feito:** a **atualização diária automática** (GitHub Actions, que guardaria as URLs como segredos do repositório) e a API, que vai ler com o papel `sd_leitura`.
 - **Descartado:** ORM e Alembic (complexidade sem ganho para 2 migrações); asyncpg (não há necessidade de assincronia); views para o resumo (menos testáveis).
-- **Status:** aceita. Falta aplicar na produção, o que só acontece com o OK do mantenedor.
+- **Status:** aceita e aplicada. Falta a atualização diária automática.
