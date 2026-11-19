@@ -23,9 +23,10 @@ O pipeline que coleta, limpa e **prova** os dados do Senado está pronto e roda 
 | Documento público de divergências nos dados do Senado | Pronto |
 | Banco no Neon | **No ar com os dados provados de 18/11/2026** (20 MB, 18 tabelas, permissões testadas). A migração 003 (`moradia_verificada`) foi aplicada na produção em 19/11/2026 ([D042](decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível), [D043](decisoes.md#d043-migrações-em-sql-puro-driver-psycopg-e-carga-que-ensaia-antes-de-gravar)). Atualização diária ainda manual |
 | Exportador dos JSON do site | **Pronto e rodando contra a produção** (84 arquivos, 1,6 MB; [contrato](contrato-dos-dados.md)). A saída da produção é igual à do ensaio, exceto pela hora da carga |
-| API, site, automação diária | **Não começaram** |
+| Site (`web/`) | **Primeira fatia pronta:** o perfil do senador, com os dados reais, e uma lista provisória ([D046](decisoes.md#d046-site-em-nextjs-16-com-exportação-estática-fontes-hospedadas-e-testes-com-vitest)). Faltam início com busca, ranking, comparação, "Sobre os dados", "Verificações" e foto e mandato |
+| API, automação diária | **Não começaram** |
 
-O código está em [pipeline/](../pipeline/README.md), com 340 testes (270 em 18/11 e 70 novos da carga, das migrações, dos papéis e do exportador) e 95% de cobertura nos módulos de verificação (a cobertura é de 18/11 e não foi medida de novo). Os dados ficam em `data/` e **não vão para o git**.
+O código está em [pipeline/](../pipeline/README.md), com 340 testes de Python (270 em 18/11 e 70 novos da carga, das migrações, dos papéis e do exportador) e 12 de TypeScript no site e 95% de cobertura nos módulos de verificação (a cobertura é de 18/11 e não foi medida de novo). Os dados ficam em `data/` e **não vão para o git**.
 
 ## Como rodar tudo, do zero
 
@@ -97,13 +98,13 @@ Os números da cota são os de 2026 contra o resumo do Senado **do mesmo dia**. 
 
 Etapa 3 da ordem de construção, concluída: o projeto `senadados` na Neon (plano gratuito, `aws-us-east-2`, PostgreSQL 18) tem os esquemas `publico` e `interno`, os papéis `sd_carga` (escreve) e `sd_leitura` (só lê o `publico`), as migrações 001 e 002 e os dados provados de 18/11/2026. As decisões estão na [D042](decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível) e na [D043](decisoes.md#d043-migrações-em-sql-puro-driver-psycopg-e-carga-que-ensaia-antes-de-gravar); o que foi conferido na produção (permissões, soma das despesas igual à do SQLite, 20 MB) está na D043.
 
-## Próximo passo: contrato dos dados e site (etapas 4 e 5)
+## Próximo passo: as próximas telas do site (etapa 5)
 
 O site vem antes da API ([D044](decisoes.md#d044-site-antes-da-api-com-dados-em-arquivos-json-gerados-do-esquema-público)). A ordem:
 
 1. **Contrato dos dados e exportador** (**feito em 19/11/2026**, ensaiado numa branch e depois rodado contra a produção): arquivos JSON gerados do esquema `publico` com o papel `sd_leitura`, um por senador, mais a lista, as verificações e os metadados ([contrato-dos-dados.md](contrato-dos-dados.md)). Os JSON não vão para o git. A migração 003 já foi aplicada na produção e os dados recarregados (19/11/2026).
-2. **Esqueleto do site** (próximo) em `web/` (Next.js, TypeScript, exportação estática, identidade da D029), com um `README.md` curto, como toda pasta nova.
-3. **Primeira página real:** o perfil de um senador, lendo o JSON do passo 1.
+2. **Esqueleto do site** em `web/` (**feito em 19/11/2026**: Next.js, TypeScript, exportação estática, identidade da D029, com um `README.md` curto).
+3. **Primeira página real** (**feita em 19/11/2026**): o perfil do senador, lendo o JSON do passo 1, e uma lista provisória.
 4. **Depois, em fatias:** o bloco "Quem é" (foto e mandato, [D045](decisoes.md#d045-foto-e-mandato-do-senador-com-o-endereço-oficial-do-senado-e-verificação-entre-duas-listas)), a home com busca, a página "Verificações" (com a seção de divergências já escrita), o ranking e a comparação.
 
 **A atualização diária** (etapa 7) é uma rotina do GitHub Actions que repete coleta, limpeza, verificações, carga e exportação; as URLs de `sd_carga` e `sd_leitura` viram segredos do repositório. Antes de publicar, reconfirmar os limites do Cloudflare Pages e do GitHub Actions. A API fica depois do site, e a hospedagem dela só precisa ser decidida então (a D004 escolheu a Render, com os limites lidos em 19/11/2026).
@@ -147,3 +148,9 @@ Na branch `docs/site-primeiro`, a partir da `main` depois do PR #2:
 | `docs: registra que o site vem antes da API (D044)` | Nova ordem de construção |
 | `docs: define o contrato dos dados do site e a foto do senador (D045)` | Contrato em rascunho e decisão da foto e do mandato |
 | `feat(pipeline): adiciona o exportador dos dados do site` | Migração 003, ajuste da carga e exportador (branch `feat/exportador-site`) |
+
+Na branch `feat/site-perfil`, a partir da `feat/exportador-site`:
+
+| Título do commit | O quê |
+|---|---|
+| `feat(web): adiciona o site com o perfil do senador (D046)` | Esqueleto do site, perfil com dados reais e lista provisória |

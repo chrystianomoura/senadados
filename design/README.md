@@ -14,4 +14,4 @@ Protótipo e identidade visual do site. **São páginas estáticas de referênci
 - Fontes: Fraunces, Hanken Grotesk e Bricolage Grotesque, carregadas do Google Fonts (gratuitas).
 - Decisões de identidade e de exibição: [D029](../docs/decisoes.md#d029-identidade-visual) e [docs/escopo.md](../docs/escopo.md).
 - A logo é provisória: o anel verde, sem contorno. Uma versão final por um designer é pendência.
-- Quando o site em Next.js existir (`web/`), estas páginas continuam como referência, não como código de produção.
+- O site em Next.js (`web/`) já segue estas páginas, e elas continuam como referência, não como código de produção.

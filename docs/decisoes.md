@@ -58,6 +58,7 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 | D043 | Migrações em SQL puro, driver psycopg e carga que ensaia antes de gravar | Vale (aplicada na produção em 19/11/2026) |
 | D044 | Site antes da API, com dados em arquivos JSON gerados do esquema público | Aceita (o contrato dos JSON está em rascunho) |
 | D045 | Foto e mandato do senador, com o endereço oficial do Senado e verificação entre duas listas | Aceita (ainda sem código) |
+| D046 | Site em Next.js 16 com exportação estática, fontes hospedadas e testes com Vitest | Aceita |
 
 ---
 
@@ -335,6 +336,8 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 - **Atualização (12/11/2026):** a coluna da esquerda voltou ao básico (cargo, mandato, salário, verba, equipe), sem a seção Contato. O **sexto cartão do resumo é "Posição entre os senadores"** ("Faixa do meio", "Usam menos" ou "Usam mais"), e o cartão da verba ficou só com o valor e a média mensal. Ordem dos cartões: salário, verba, posição, maior mês, equipe e moradia.
 - **Atualização (12/11/2026):** o bloco de categorias usa **nomes curtos** derivados dos oficiais (por exemplo, "Locomoção, hospedagem e alimentação", em vez de "…combustíveis e lubrificantes"), sem tentar listar tudo o que cada categoria inclui. A tabela de equivalência está em `docs/fontes-de-dados.md`, e o nome completo fica na página do senador no Senado. A resposta fechada do bloco passou a mostrar o nome da maior categoria ("Locomoção: 33%"), e não mais "Viagens".
 
+- **Atualização (19/11/2026):** as fontes passam a ser **hospedadas no próprio site**, e não mais carregadas do Google Fonts ([D046](#d046-site-em-nextjs-16-com-exportação-estática-fontes-hospedadas-e-testes-com-vitest)).
+
 ## D030: Destaque do maior mês no lugar do alerta "fora do padrão"
 
 - **Contexto:** o alerta do MVP seria uma regra simples ("o mês passou de X vezes a média") ou um modelo de computador. Os dois pedem um limite escolhido por nós, e a expressão "fora do padrão" pode soar como acusação. O modelo ainda precisaria de validação (D023).
@@ -592,4 +595,22 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 - **Limites:** a verificação prova **consistência** entre listas do Senado, e não que a foto é mesmo da pessoa. A ligação entre o código e a foto é a que o próprio Senado publica. Os riscos que sobram são uma foto desatualizada, uma imagem substituta ou um erro do Senado: os dois primeiros são cobertos pelas checagens acima, e o canal para reportar erros do `escopo.md` §4.5 cobre o resto. A foto depende do servidor do Senado: se ele sair do ar, a imagem some até voltar. Nada garante que o endereço oficial continue o mesmo; por isso a verificação roda a cada carga.
 - **Descartado:** copiar as fotos e reduzi-las para uns 200 px (opção B). Ficaria mais leve e independente, mas **não foi verificado** se a política do portal, que permite usar o conteúdo citando a fonte e o declara de autoria do Senado, cobre redistribuir fotos. Pode voltar se o Senado confirmar.
 - **Também descartado (19/11/2026):** confirmar a identidade pelo CPF ou comparando rostos com outra base, como a do TSE. O pipeline não tem o CPF dos senadores (a D005 mantém o CPF fora do pipeline), o arquivo da foto não carrega CPF, e comparar rostos é reconhecimento facial sobre dados biométricos de pessoas reais: sensível pela LGPD, sujeito a erro e dependente de uma fonte fora do Senado, que só entra com aprovação (AGENTS.md, seção 6).
+- **Status:** aceita.
+
+## D046: Site em Next.js 16 com exportação estática, fontes hospedadas e testes com Vitest
+
+- **Contexto:** a [D003](#d003-site-em-nextjs-estático-no-cloudflare-pages) escolheu Next.js estático no Cloudflare Pages, a [D044](#d044-site-antes-da-api-com-dados-em-arquivos-json-gerados-do-esquema-público) pôs o site antes da API, com dados em JSON, e a [D029](#d029-identidade-visual) carregava as fontes do Google Fonts. Faltava decidir as versões, como o site lê os dados e o que fazer com as fontes.
+- **Decisão (19/11/2026; o mantenedor aprovou as fontes hospedadas e a instalação das dependências):**
+  1. **Next.js 16.4.6, React 19.3.1 e TypeScript 5.9**, com `output: "export"` e `trailingSlash`: `next build` gera as páginas prontas em `web/out/`, sem servidor. A versão 7.0.2 do TypeScript existe e **não foi testada** com o Next.js; usei a 5.9 por prudência. Todos os componentes rodam no build, exceto um pequeno componente de cliente que abre a pergunta quando se toca num cartão do resumo.
+  2. **Os JSON são lidos na hora do build** (`web/dados/`, gerados pelo exportador e fora do git). Sem eles, o build para com uma mensagem que diz o que rodar.
+  3. **As fontes ficam no próprio site** (pacotes `@fontsource-variable` de Fraunces, Hanken Grotesk e Bricolage Grotesque), e não mais no Google Fonts. **Altera a D029.** Conferido no navegador: a página só faz pedidos ao próprio endereço, nenhum ao Google.
+  4. **Testes: Vitest** para as funções de formatação (12 testes), mais `tsc --noEmit` e o próprio build. Não há teste automatizado de tela nesta fatia.
+  5. **`agentRules: false`:** o `next dev` escreve sozinho um `AGENTS.md` em `web/` com regras para agentes de código. Desliguei, porque as regras do projeto estão no `AGENTS.md` da raiz e um segundo arquivo, gerado por uma dependência, só confunde.
+  6. **Primeira fatia:** o perfil do senador e uma lista provisória só para navegar. Ficam de fora foto e mandato (D045), posição entre os senadores, ranking, comparação, busca e a página "Verificações".
+  7. **O perfil segue o protótipo** (`design/perfil-do-senador.html`) com os dados reais, em texto neutro quanto a gênero ("Quanto ganha?", "Usa moradia do Senado?"), porque o banco não tem o sexo do senador. O texto do salário diz que a remuneração básica **não** é o total antes dos descontos, como a [D041](#d041-verificação-automática-do-salário-pela-identidade-do-senador) pede (o protótipo dizia o contrário).
+- **Conferido em 19/11/2026:** o build gera 84 páginas (os 81 perfis, a lista e a de erro), 14 MB no total, contando as fontes; as dependências instaladas são 62 pacotes e o `npm install` não acusou vulnerabilidade. No navegador, o perfil completo de um senador e o de outro com poucos blocos abrem sem erro de console e sem rolagem lateral em 375 px; tocar num cartão do resumo abre a pergunta; nenhum texto mostra `NaN`, `undefined` ou `null`.
+- **Não verificado:** Safari e Firefox, leitor de tela, contraste medido e desempenho. A publicação no Cloudflare Pages (cabeçalhos de segurança e política de conteúdo) ainda não foi feita, e os limites do Cloudflare Pages seguem por reconfirmar.
+- **Por quê:** páginas prontas são rápidas e baratas e não dependem de servidor nem da API ([D004](#d004-fastapi-no-render-e-o-site-não-depende-dela)). Hospedar as fontes evita que cada visita entregue o endereço do visitante ao Google, no mesmo espírito da D008.
+- **Descartado:** `create-next-app` interativo (os arquivos foram escritos à mão, para entrarem só os necessários); ESLint e outras ferramentas nesta fatia (menos dependências); carregar as fontes do Google Fonts.
+- **Altera:** a D029, no que diz respeito às fontes.
 - **Status:** aceita.

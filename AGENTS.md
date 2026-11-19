@@ -8,7 +8,7 @@ Instruções para qualquer agente (humano ou de IA) que trabalhe neste repositó
 
 **Escopo de pessoas:** só os **senadores em exercício**, pela lista oficial do Senado (D026). Quem sai do mandato sai do site.
 
-**Estado atual (19/11/2026):** escopo, regras e protótipo da página fechados; fontes e conferências documentadas; **a coleta, a validação e a limpeza do pipeline existem** (veja [pipeline/README.md](pipeline/README.md)); a **verificação automática da cota** (D035), a **da equipe do gabinete** (D036), a **da moradia** (D039), a **do contato** (D040) e a **do salário** (D041) também, e as verificações estão completas; o **banco no Neon está no ar desde 19/11/2026**, com os dados provados de 18/11 (desenho na [D042](docs/decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível), aceita), e ainda faltam o site, a atualização diária automática e a API. O exportador dos dados do site (contrato em [docs/contrato-dos-dados.md](docs/contrato-dos-dados.md)) está pronto e roda contra a produção (migração 003 aplicada em 19/11/2026). Próximo passo: o site em `web/`, que vem antes da API ([D044](docs/decisoes.md#d044-site-antes-da-api-com-dados-em-arquivos-json-gerados-do-esquema-público)); ordem de construção em [docs/escopo.md](docs/escopo.md)). Índice dos documentos em [docs/README.md](docs/README.md).
+**Estado atual (19/11/2026):** escopo, regras e protótipo da página fechados; fontes e conferências documentadas; **a coleta, a validação e a limpeza do pipeline existem** (veja [pipeline/README.md](pipeline/README.md)); a **verificação automática da cota** (D035), a **da equipe do gabinete** (D036), a **da moradia** (D039), a **do contato** (D040) e a **do salário** (D041) também, e as verificações estão completas; o **banco no Neon está no ar desde 19/11/2026**, com os dados provados de 18/11 (desenho na [D042](docs/decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível), aceita), e ainda faltam o site, a atualização diária automática e a API. O exportador dos dados do site (contrato em [docs/contrato-dos-dados.md](docs/contrato-dos-dados.md)) está pronto e roda contra a produção (migração 003 aplicada em 19/11/2026). Hoje o site tem o perfil do senador e uma lista provisória ([D046](docs/decisoes.md#d046-site-em-nextjs-16-com-exportação-estática-fontes-hospedadas-e-testes-com-vitest)). Próximo passo: as outras telas do site, que vêm antes da API ([D044](docs/decisoes.md#d044-site-antes-da-api-com-dados-em-arquivos-json-gerados-do-esquema-público)); ordem de construção em [docs/escopo.md](docs/escopo.md)). Índice dos documentos em [docs/README.md](docs/README.md).
 
 ## 2. Princípios inegociáveis
 
@@ -133,7 +133,7 @@ senadados/
 ├── data/            # README versionado; data/raw/ (dados baixados) fora do git
 ├── pipeline/        # coleta, limpeza, verificações, migrações e carga do banco (Python, uv)
 ├── api/             # (a criar) FastAPI
-├── web/             # (a criar) site (Next.js)
+├── web/             # site (Next.js, TypeScript): perfil do senador e lista provisória
 └── .github/         # (a criar) automações
 ```
 

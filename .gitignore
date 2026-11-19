@@ -26,3 +26,10 @@ out/
 
 # Arquivos JSON do site, gerados pelo exportador (D044); nascem do banco a cada build
 web/dados/
+
+# Site (web/): dependências, build e arquivos gerados pelo Next.js
+web/node_modules/
+web/.next/
+web/out/
+web/next-env.d.ts
+web/tsconfig.tsbuildinfo

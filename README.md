@@ -159,6 +159,7 @@ A regra do projeto: **nenhuma tecnologia entra "porque é moderna"**. Cada uma r
 - Cada senador tem **seu próprio endereço** (por exemplo, `/senador/nome`), que dá para compartilhar.
 - O site carrega rápido e funciona bem no celular, onde a maioria das pessoas vai acessar.
 - Permite um design pensado para quem não é técnico.
+- As fontes são hospedadas no próprio site, e não carregadas de terceiros ([D046](docs/decisoes.md#d046-site-em-nextjs-16-com-exportação-estática-fontes-hospedadas-e-testes-com-vitest)).
 **Descartado:** Streamlit. É mais rápido de montar, mas limita justamente o que o projeto quer garantir: endereço por senador, boa experiência no celular e visual cuidadoso.
 
 ### Site gerado antecipadamente, hospedado no Cloudflare Pages
@@ -216,7 +217,7 @@ Este roadmap é uma intenção, não uma promessa, e será revisado conforme os 
 
 ## Como rodar
 
-Hoje existem a coleta, a limpeza, as verificações da cota, da equipe, da moradia, do contato e do salário, e as migrações e a carga para o banco na nuvem. Instruções em [pipeline/README.md](pipeline/README.md). Para ver o protótipo da página, abra `design/perfil-do-senador.html` no navegador.
+Hoje existem a coleta, a limpeza, as verificações da cota, da equipe, da moradia, do contato e do salário, e as migrações e a carga para o banco na nuvem. Instruções em [pipeline/README.md](pipeline/README.md). O site está em [web/README.md](web/README.md). Para ver o protótipo da página, abra `design/perfil-do-senador.html` no navegador.
 
 ## Licença e citação dos dados
 
