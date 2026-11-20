@@ -62,6 +62,7 @@ TABELAS = {
     ),
     "publico.contato": ("cod_senador", "endereco", "telefones", "email"),
     "publico.equipe": ("cod_senador", "ano", "pessoas"),
+    "publico.moradia_verificada": ("cod_senador", "ano"),
     "publico.moradia_meses": (
         "cod_senador", "ano", "mes", "auxilio_moradia", "imovel_funcional",
     ),
@@ -211,6 +212,11 @@ def selecionar(db: sqlite3.Connection, agora: datetime) -> dict[str, list[tuple]
         """SELECT cod_senador, ano, equipe_resumo FROM verificacao_equipe
             WHERE exibir = 1 AND equipe_resumo IS NOT NULL ORDER BY 1, 2""",
     )
+    # Quem teve a moradia provada, mesmo sem nenhum mês de uso (sem isto, "não usou" e "não provado"
+    # seriam indistinguíveis no site).
+    dados["publico.moradia_verificada"] = _tudo(
+        db, "SELECT cod_senador, ano FROM verificacao_moradia WHERE exibir = 1 ORDER BY 1, 2"
+    )
     dados["publico.moradia_meses"] = _como_bool(
         _tudo(
             db,
@@ -311,6 +317,10 @@ def _motivos(db: sqlite3.Connection) -> list[tuple]:
 
 def conferir_coerencia(dados: dict[str, list[tuple]]) -> None:
     """Uma checagem interna: o resumo e os motivos contam a mesma coisa."""
+    verificada = {(c, a) for c, a in dados["publico.moradia_verificada"]}
+    for cod, ano, *_ in dados["publico.moradia_meses"]:
+        if (cod, ano) not in verificada:
+            raise CargaError(f"moradia do senador {cod} em {ano} tem meses mas não foi provada")
     por_chave: dict[tuple, int] = {}
     for verificacao, ano, situacao, _motivo, qtd in dados["publico.verificacoes_motivos"]:
         chave = (verificacao, ano, situacao)

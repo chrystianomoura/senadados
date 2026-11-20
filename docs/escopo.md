@@ -212,8 +212,8 @@ Metas a medir, não resultados já obtidos:
 | 1 | Pipeline de despesas, com validação e testes | **Feito** ([D033](decisoes.md#d033-coleta-local-que-só-grava-quem-está-em-exercício), [D034](decisoes.md#d034-limpeza-com-validação-em-sqlite-local-sem-nome-nem-documento-de-pessoa-física)) |
 | 2 | **Camada de verificação** (cruzamentos, relatório, falha fechada) | **Feito** para cota, equipe, moradia, contato e salário ([D035](decisoes.md#d035-verificação-automática-da-cota-por-categoria-na-mesma-foto-dos-dados) a [D041](decisoes.md#d041-verificação-automática-do-salário-pela-identidade-do-senador)) |
 | 3 | Banco e carga completa dos senadores em exercício | **Feito em 19/11/2026** (banco no ar com os dados provados de 18/11; a atualização diária automática ainda falta; [D042](decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível)) |
-| 4 | **Contrato dos dados e exportador** (arquivos JSON gerados do esquema `publico`; [contrato em rascunho](contrato-dos-dados.md); [D044](decisoes.md#d044-site-antes-da-api-com-dados-em-arquivos-json-gerados-do-esquema-público)) | **Próximo** |
-| 5 | Site: perfil (salário quando provado, equipe e moradia), depois início, ranking, comparação, "Sobre os dados" e "Verificações" | A fazer |
+| 4 | **Contrato dos dados e exportador** (arquivos JSON gerados do esquema `publico`; [contrato](contrato-dos-dados.md); [D044](decisoes.md#d044-site-antes-da-api-com-dados-em-arquivos-json-gerados-do-esquema-público)) | **Feito em 19/11/2026**, rodando contra a produção |
+| 5 | Site: perfil (salário quando provado, equipe e moradia), depois início, ranking, comparação, "Sobre os dados" e "Verificações" | **Próximo** |
 | 6 | Destaque do maior mês | A fazer |
 | 7 | Automação diária e publicação | A fazer |
 | 8 | API (depois do site; [D044](decisoes.md#d044-site-antes-da-api-com-dados-em-arquivos-json-gerados-do-esquema-público)) | A fazer |

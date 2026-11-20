@@ -176,6 +176,19 @@ uv run --env-file ../.env python -m senadados_pipeline.carga
 - Os registros mostram só o endereço do servidor, **nunca a senha**.
 - **Já foram ensaiados numa branch da Neon** em 19/11/2026, com logins reais (veja a D043). Foram aplicados na produção no mesmo dia, com o OK do mantenedor.
 
+## O que o exportador faz
+
+Gera os arquivos JSON que o site lê, a partir do esquema `publico` do banco na nuvem, seguindo o [contrato dos dados](../docs/contrato-dos-dados.md) ([D044](../docs/decisoes.md#d044-site-antes-da-api-com-dados-em-arquivos-json-gerados-do-esquema-público)). Só **lê** o banco, com o papel `sd_leitura` (`DATABASE_URL_LEITURA`).
+
+```bash
+uv run --env-file ../.env python -m senadados_pipeline.exportar
+```
+
+- Grava em `web/dados/` (o git ignora) ou na pasta de `--saida`. **Troca a pasta inteira** a cada execução, então o arquivo de quem saiu da lista não fica para trás.
+- **Falha fechado:** se uma conferência quebrar (endereço repetido, soma que não fecha, algo com formato de CPF), nenhum arquivo é gravado e a pasta anterior continua.
+- Dado não provado vem como `null`; o site não mostra nada no lugar.
+- Com os dados de 18/11/2026: 84 arquivos, 1,6 MB, perfis de 20 KB em média.
+
 ## Testes e qualidade
 
 ```bash

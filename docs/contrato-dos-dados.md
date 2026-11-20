@@ -2,7 +2,7 @@
 
 Quais arquivos JSON o site lê e o que cada um traz. É o elo entre o banco e as telas: o pipeline **gera** esses arquivos a partir do esquema `publico` do Neon, e o site só os **lê**. Decisão em [D044](decisoes.md#d044-site-antes-da-api-com-dados-em-arquivos-json-gerados-do-esquema-público).
 
-**Status:** rascunho de 19/11/2026. Define a **primeira fatia** do site (o perfil sem foto e sem mandato). Será confirmado, e corrigido se preciso, pela primeira implementação do exportador. As partes marcadas como "depois" ainda não têm dados no banco.
+**Status:** rascunho de 19/11/2026, **implementado pelo exportador** (`python -m senadados_pipeline.exportar`) e ensaiado com os dados reais numa branch da Neon. Define a **primeira fatia** do site (o perfil sem foto e sem mandato). Será confirmado de vez pela primeira tela do site; mudança que quebra o site sobe a `versao_contrato`.
 
 ## Regras gerais
 
@@ -100,7 +100,7 @@ Todos os nomes e valores do exemplo são inventados, só mostram o formato. Cada
 | `fornecedores.anos` | Os mesmos anos da cota (a regra de exibição é a mesma). `empresas` traz as **10 maiores** por valor, e `total_empresas` diz quantas existem, porque há em média 50 por senador e ano e no máximo 1.503. `agrupados` traz pessoas físicas, documentos fora do padrão e despesas sem documento, **sem nome e sem documento** ([D008](decisoes.md#d008-pessoas-físicas-agrupadas-e-cpf-nunca-exibido)) | `publico.fornecedores_anuais` e `publico.fornecedores_agrupados_anuais` |
 | `equipe` | `null` se o gabinete não foi provado. Só o número de pessoas | `publico.equipe` |
 | `contato` | `null` se nenhum campo foi provado. Dentro dele, cada campo ausente é `null`. Os telefones vêm um por linha no banco e viram uma lista | `publico.contato` |
-| `moradia` | `null` se não foi provada (inclui os pendentes). `meses` pode vir vazio, e então o senador não usou nenhum benefício | `publico.moradia_meses` |
+| `moradia` | `null` se não foi provada (inclui os pendentes). Provada e sem nenhum mês de uso: `meses` vazio, e então o senador não usou nenhum benefício. Quem foi provado vem de `publico.moradia_verificada` (migração 003), porque `moradia_meses` não tem linha de quem não usou | `publico.moradia_verificada` e `publico.moradia_meses` |
 
 ### `verificacoes.json`
 
@@ -115,14 +115,14 @@ Todos os nomes e valores do exemplo são inventados, só mostram o formato. Cada
 
 Falha fechada: se qualquer conferência quebrar, **nenhum arquivo é gravado**.
 
-- `slug` único e válido; todo `codigo` do perfil existe em `senadores.json`.
-- Nenhum valor em `_centavos` que não seja inteiro; totais mensais somam o total do ano; categorias somam o total do ano.
-- Nenhum campo de nome de pessoa que não seja o do senador, e nenhum documento de pessoa física.
-- O número de perfis é igual ao de `senadores` em `metadados.json`.
+- `slug` único e não vazio; o número de senadores da lista é igual ao dos metadados.
+- Em cada ano da cota, os meses somam o total e as categorias somam o total.
+- Nada com formato de CPF, inteiro ou mascarado, em nenhum lugar (o CNPJ de empresa tem outro formato, e nomes como "CPFL" não são confundidos com CPF).
+- Cada lista é ordenada pelo próprio exportador (por mês, por valor, por tipo), sem depender da ordem que o banco devolve.
 
 ## O que ainda não está neste contrato
 
 - **Foto e mandato** (`quem_e`): [D045](decisoes.md#d045-foto-e-mandato-do-senador-com-o-endereço-oficial-do-senado-e-verificação-entre-duas-listas), depois da primeira fatia.
 - **Posição entre os senadores, ranking e comparação:** comparam senadores, então seguem o "tudo ou nada" da [D037](decisoes.md#d037-exibição-por-tipo-de-dado-e-freio-de-segurança). Falta definir quem entra no grupo (um senador, sem despesa em 2026, não tem valor para comparar). Ficam para uma fatia própria.
-- **Onde os arquivos ficam no site** (pasta de saída e como o Next.js os lê): definido na implementação do site; a sugestão é uma pasta `web/dados/`, ignorada pelo git.
-- **Tamanho dos arquivos:** não foi medido. A estimativa é de poucas dezenas de KB por senador, mas isso só se confirma com o exportador.
+- **Como o Next.js lê os arquivos:** definido na implementação do site. O exportador grava por padrão em `web/dados/`, que o git ignora, e troca a pasta inteira a cada execução (o arquivo de quem saiu da lista não fica para trás, [D026](decisoes.md#d026-só-senadores-em-exercício)).
+- **Tamanho (medido em 19/11/2026, na branch de ensaio):** 84 arquivos, 1,6 MB no total. Cada perfil tem 20 KB em média e 49 KB no máximo. O maior número de empresas num ano é 418, e o perfil leva só as 10 maiores.

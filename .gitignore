@@ -23,3 +23,6 @@ out/
 
 # Sistema
 .DS_Store
+
+# Arquivos JSON do site, gerados pelo exportador (D044); nascem do banco a cada build
+web/dados/
