@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 
 import {
-  NBSP, dataBr, iniciais, mesCurto, milhares, nomeEstado, nomeMes, percentual, periodo, reais,
-  reaisMil, telefone, tituloNome, usoTexto,
+  NBSP, dataBr, iniciais, mesAno, mesCurto, periodoAno, milhares, nomeEstado, nomeMes, nomePartido, percentual, periodo, reais,
+  reaisMil, telefone, tituloNome, usoCurto, usoTexto,
 } from "./formato";
 
 describe("dinheiro", () => {
@@ -75,5 +75,28 @@ describe("outros", () => {
   it("escreve a data como no Brasil", () => {
     expect(dataBr("2026-11-18")).toBe("18/11/2026");
     expect(dataBr("2026-11-18T12:00:00+00:00")).toBe("18/11/2026");
+  });
+});
+
+describe("nomePartido", () => {
+  it("troca S/Partido por Sem Partido e mantém as demais siglas", () => {
+    expect(nomePartido("S/Partido")).toBe("Sem Partido");
+    expect(nomePartido("PSD")).toBe("PSD");
+  });
+});
+
+describe("usoCurto", () => {
+  it("resume o uso de um benefício em poucas palavras", () => {
+    expect(usoCurto(0, 10)).toBe("não usou");
+    expect(usoCurto(10, 10)).toBe("usou nos 10 meses");
+    expect(usoCurto(3, 10)).toBe("usou em 3 de 10 meses");
+    expect(usoCurto(1, 1)).toBe("usou no mês");
+  });
+});
+
+describe("datas coladas", () => {
+  it("não deixa o mês se separar do ano", () => {
+    expect(mesAno(10, 2026)).toBe(`outubro${NBSP}de${NBSP}2026`);
+    expect(periodoAno("de janeiro a outubro", 2026)).toBe(`de janeiro a${NBSP}outubro${NBSP}de${NBSP}2026`);
   });
 });

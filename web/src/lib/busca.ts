@@ -1,5 +1,5 @@
 // Busca e filtros da lista de senadores. Funções puras, com testes, usadas pela home.
-import { tituloNome } from "./formato";
+import { nomePartido, tituloNome } from "./formato";
 import type { ItemLista } from "./types";
 
 export interface Filtros {
@@ -30,5 +30,9 @@ export function filtrar(senadores: ItemLista[], { texto, uf, partido }: Filtros)
 
 /** Valores distintos de um campo, em ordem alfabética, para as listas de escolha. */
 export function opcoes(senadores: ItemLista[], campo: "uf" | "partido"): string[] {
-  return [...new Set(senadores.map((s) => s[campo]))].sort((a, b) => a.localeCompare(b, "pt-BR"));
+  // O partido é ordenado pelo nome que aparece na tela ("Sem Partido" fica entre as letras S).
+  const rotulo = (v: string) => (campo === "partido" ? nomePartido(v) : v);
+  return [...new Set(senadores.map((s) => s[campo]))].sort((a, b) =>
+    rotulo(a).localeCompare(rotulo(b), "pt-BR"),
+  );
 }

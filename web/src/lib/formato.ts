@@ -49,6 +49,11 @@ export function nomeEstado(uf: string): string {
   return ESTADOS[uf] ?? uf;
 }
 
+/** A sigla como o Senado publica ("S/Partido") vira "Sem Partido"; as demais ficam como estão. */
+export function nomePartido(sigla: string): string {
+  return sigla.trim().toLocaleLowerCase("pt-BR") === "s/partido" ? "Sem Partido" : sigla;
+}
+
 /** "ALAN RICK" -> "Alan Rick"; "RODRIGO DE OLIVEIRA" -> "Rodrigo de Oliveira". */
 export function tituloNome(nome: string): string {
   return nome
@@ -79,6 +84,16 @@ export function percentual(parte: number, total: number): number {
   return Math.round((Math.max(parte, 0) / total) * 100);
 }
 
+/** "outubro de 2026", com espaços que não quebram: a data nunca se parte no fim da linha. */
+export function mesAno(mes: number, ano: number): string {
+  return `${nomeMes(mes)}${NBSP}de${NBSP}${ano}`;
+}
+
+/** Cola o ano ao último mês de um período: "de janeiro a outubro" + 2026 -> "de janeiro a outubro de 2026". */
+export function periodoAno(texto: string, ano: number): string {
+  return `${texto.replace(/ (\S+)$/, `${NBSP}$1`)}${NBSP}de${NBSP}${ano}`.trim();
+}
+
 /** "de janeiro a outubro", "em outubro" ou "" (sem meses). */
 export function periodo(meses: number[]): string {
   if (meses.length === 0) return "";
@@ -94,6 +109,13 @@ export function usoTexto(usados: number, total: number): string {
   if (usados === 0) return "Não usou em nenhum mês";
   if (usados === total) return `Usou em todos os ${total} meses`;
   return `Usou em ${usados} de ${total} meses`;
+}
+
+/** Versão curta para os cartões: "usou nos 10 meses", "usou em 3 de 10 meses" ou "não usou". */
+export function usoCurto(usados: number, total: number): string {
+  if (usados === 0) return "não usou";
+  if (usados === total) return total === 1 ? "usou no mês" : `usou nos ${total} meses`;
+  return `usou em ${usados} de ${total} meses`;
 }
 
 export function telefone(texto: string): string {
