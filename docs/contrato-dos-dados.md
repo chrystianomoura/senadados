@@ -2,7 +2,7 @@
 
 Quais arquivos JSON o site lê e o que cada um traz. É o elo entre o banco e as telas: o pipeline **gera** esses arquivos a partir do esquema `publico` do Neon, e o site só os **lê**. Decisão em [D044](decisoes.md#d044-site-antes-da-api-com-dados-em-arquivos-json-gerados-do-esquema-público).
 
-**Status:** rascunho de 19/11/2026, **implementado pelo exportador** (`python -m senadados_pipeline.exportar`) e ensaiado com os dados reais numa branch da Neon. Define a **primeira fatia** do site (o perfil sem foto e sem mandato). Será confirmado de vez pela primeira tela do site; mudança que quebra o site sobe a `versao_contrato`.
+**Status:** versão 1 (rascunho de 19/11/2026), **implementada pelo exportador** (`python -m senadados_pipeline.exportar`) e ensaiado com os dados reais numa branch da Neon. Define a **primeira fatia** do site (o perfil sem foto e sem mandato). Será confirmado de vez pela primeira tela do site; mudança que quebra o site sobe a `versao_contrato`.
 
 ## Regras gerais
 

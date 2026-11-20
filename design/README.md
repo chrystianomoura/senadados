@@ -14,4 +14,4 @@ Protótipo e identidade visual do site. **São páginas estáticas de referênci
 - Fontes: Fraunces, Hanken Grotesk e Bricolage Grotesque, carregadas do Google Fonts (gratuitas).
 - Decisões de identidade e de exibição: [D029](../docs/decisoes.md#d029-identidade-visual) e [docs/escopo.md](../docs/escopo.md).
 - A logo é provisória: o anel verde, sem contorno. Uma versão final por um designer é pendência.
-- O site em Next.js (`web/`) já segue estas páginas, e elas continuam como referência, não como código de produção.
+- O site em Next.js (`web/`) nasceu destas páginas e **já passou delas**: os textos (por exemplo "Quem recebeu o dinheiro?" e "remuneração básica"), o resumo e o cartão do senador mudaram em 20/11/2026. Em caso de diferença, vale o site e o [D046](../docs/decisoes.md#d046-site-em-nextjs-16-com-exportação-estática-fontes-hospedadas-e-testes-com-vitest). O protótipo fica como referência da identidade visual, não como especificação.
