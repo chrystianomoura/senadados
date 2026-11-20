@@ -46,6 +46,7 @@ Uma lista, um item por senador, ordenada por `codigo`.
 | `nome` | Nome parlamentar | `publico.senadores.nome` |
 | `uf`, `partido` | Estado e partido | `publico.senadores` |
 | `tipo` | `Titular` ou `1º Suplente` | `publico.senadores.tipo` |
+| `foto_url` | **Opcional, a decidir ([D045](decisoes.md#d045-foto-e-mandato-do-senador-com-o-endereço-oficial-do-senado-e-verificação-entre-duas-listas)):** o endereço da foto, só se provado, para a lista mostrar a foto em vez das iniciais. Hoje não existe nos dados reais | `publico.perfil`, que ainda não existe |
 
 Se dois nomes gerarem o mesmo `slug`, o exportador **para com erro** (falha fechada), em vez de escolher um.
 

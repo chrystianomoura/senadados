@@ -2,7 +2,7 @@
 
 O site do Senadados: páginas estáticas em Next.js (TypeScript), geradas a partir dos arquivos JSON do pipeline ([D044](../docs/decisoes.md#d044-site-antes-da-api-com-dados-em-arquivos-json-gerados-do-esquema-público), [D046](../docs/decisoes.md#d046-site-em-nextjs-16-com-exportação-estática-fontes-hospedadas-e-testes-com-vitest)). O site **não** consulta o banco nem a API: só lê arquivos, na hora do build.
 
-**Hoje existem:** o perfil do senador (`/senador/{endereço}/`) e uma lista provisória só para navegar (`/`). Foto, mandato, posição entre os senadores, ranking, comparação, busca e a página "Verificações" ainda não existem.
+**Hoje existem:** a home com busca por nome e filtros por estado e partido (`/`) e o perfil do senador (`/senador/{endereço}/`). O site mostra a foto e o crédito quando o JSON os traz, e as iniciais quando não. Mandato, posição entre os senadores, ranking, comparação e a página "Verificações" ainda não existem.
 
 ## Como rodar
 

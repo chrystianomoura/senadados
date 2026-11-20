@@ -17,6 +17,8 @@ export interface ItemLista {
   tipo: string; // "Titular" ou "1º Suplente"
   uf: string;
   partido: string;
+  /** Endereço da foto oficial, só quando provado (D045). Ainda não existe nos dados reais. */
+  foto_url?: string | null;
 }
 
 export interface Salario {
@@ -89,12 +91,41 @@ export interface Moradia {
   meses: MesMoradia[];
 }
 
+export interface QuemE {
+  foto: { url: string; credito: string } | null;
+  mandato: { inicio: number; fim: number } | null;
+}
+
 export interface Perfil extends ItemLista {
-  quem_e: null; // foto e mandato: D045, ainda sem dados
+  quem_e: QuemE | null; // foto e mandato: D045, ainda sem dados reais
   salario: Salario | null;
   cota: { anos: CotaAno[] } | null;
   fornecedores: { anos: FornecedoresAno[] } | null;
   equipe: Equipe | null;
   contato: Contato | null;
   moradia: Moradia | null;
+}
+
+export interface ResumoVerificacao {
+  verificacao: string;
+  ano: number;
+  identicos: number;
+  explicados: number;
+  pendentes: number;
+  ocultos: number;
+  verificado_em: string;
+}
+
+export interface MotivoVerificacao {
+  verificacao: string;
+  ano: number;
+  situacao: "pendente" | "oculto";
+  motivo: string;
+  qtd: number;
+}
+
+/** O que a página "Verificações" mostra: só contagens e motivos, nunca nomes (D042). */
+export interface Verificacoes {
+  resumo: ResumoVerificacao[];
+  motivos: MotivoVerificacao[];
 }

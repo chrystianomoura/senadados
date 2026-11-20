@@ -596,6 +596,7 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 - **Descartado:** copiar as fotos e reduzi-las para uns 200 px (opção B). Ficaria mais leve e independente, mas **não foi verificado** se a política do portal, que permite usar o conteúdo citando a fonte e o declara de autoria do Senado, cobre redistribuir fotos. Pode voltar se o Senado confirmar.
 - **Também descartado (19/11/2026):** confirmar a identidade pelo CPF ou comparando rostos com outra base, como a do TSE. O pipeline não tem o CPF dos senadores (a D005 mantém o CPF fora do pipeline), o arquivo da foto não carrega CPF, e comparar rostos é reconhecimento facial sobre dados biométricos de pessoas reais: sensível pela LGPD, sujeito a erro e dependente de uma fonte fora do Senado, que só entra com aprovação (AGENTS.md, seção 6).
 - **Status:** aceita.
+- **Prévia (20/11/2026):** o mantenedor viu as fotos no perfil e na lista dos 81 senadores, com o endereço oficial preenchido **só nos arquivos locais de teste** (a verificação "perfil" ainda não existe, e o exportador apaga esse preenchimento na próxima execução). As imagens têm 480 por 600 pontos, na proporção 4 por 5, e cabem na caixa do perfil sem corte. A página mostra as iniciais no lugar de uma foto que não carrega. **Em aberto, decisão do mantenedor:** a lista de senadores mostra a foto (como na prévia) ou só as iniciais (como decidido acima, por causa do peso: 22 MB para as 81, mesmo carregando só as que aparecem na tela).
 
 ## D046: Site em Next.js 16 com exportação estática, fontes hospedadas e testes com Vitest
 
@@ -614,3 +615,4 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 - **Descartado:** `create-next-app` interativo (os arquivos foram escritos à mão, para entrarem só os necessários); ESLint e outras ferramentas nesta fatia (menos dependências); carregar as fontes do Google Fonts.
 - **Altera:** a D029, no que diz respeito às fontes.
 - **Status:** aceita.
+- **Atualização (20/11/2026):** a home passou a ter a busca por nome (sem exigir acento) e os filtros por estado e partido, e os cartões da lista têm todos a mesma altura. O site já sabe mostrar a foto e o crédito quando o JSON os trouxer (`quem_e.foto` no perfil e `foto_url` na lista); sem eles, mostra as iniciais. Mais 6 testes (18 no total).

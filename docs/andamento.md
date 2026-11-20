@@ -23,7 +23,7 @@ O pipeline que coleta, limpa e **prova** os dados do Senado está pronto e roda 
 | Documento público de divergências nos dados do Senado | Pronto |
 | Banco no Neon | **No ar com os dados provados de 18/11/2026** (20 MB, 18 tabelas, permissões testadas). A migração 003 (`moradia_verificada`) foi aplicada na produção em 19/11/2026 ([D042](decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível), [D043](decisoes.md#d043-migrações-em-sql-puro-driver-psycopg-e-carga-que-ensaia-antes-de-gravar)). Atualização diária ainda manual |
 | Exportador dos JSON do site | **Pronto e rodando contra a produção** (84 arquivos, 1,6 MB; [contrato](contrato-dos-dados.md)). A saída da produção é igual à do ensaio, exceto pela hora da carga |
-| Site (`web/`) | **Primeira fatia pronta:** o perfil do senador, com os dados reais, e uma lista provisória ([D046](decisoes.md#d046-site-em-nextjs-16-com-exportação-estática-fontes-hospedadas-e-testes-com-vitest)). Faltam início com busca, ranking, comparação, "Sobre os dados", "Verificações" e foto e mandato |
+| Site (`web/`) | **Home com busca e filtros e perfil do senador prontos**, com os dados reais ([D046](decisoes.md#d046-site-em-nextjs-16-com-exportação-estática-fontes-hospedadas-e-testes-com-vitest)). A foto já aparece quando o JSON a traz, mas a verificação que a fornece ainda não existe. Faltam ranking, comparação, "Sobre os dados", "Verificações" e mandato |
 | API, automação diária | **Não começaram** |
 
 O código está em [pipeline/](../pipeline/README.md), com 340 testes de Python (270 em 18/11 e 70 novos da carga, das migrações, dos papéis e do exportador) e 12 de TypeScript no site e 95% de cobertura nos módulos de verificação (a cobertura é de 18/11 e não foi medida de novo). Os dados ficam em `data/` e **não vão para o git**.
@@ -154,3 +154,4 @@ Na branch `feat/site-perfil`, a partir da `feat/exportador-site`:
 | Título do commit | O quê |
 |---|---|
 | `feat(web): adiciona o site com o perfil do senador (D046)` | Esqueleto do site, perfil com dados reais e lista provisória |
+| `feat(web): adiciona a home com busca e a foto oficial` | Home, cartões de mesma altura e suporte à foto (branch `feat/site-home`) |

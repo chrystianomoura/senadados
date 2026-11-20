@@ -3,7 +3,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 
-import type { ItemLista, Metadados, Perfil } from "./types";
+import type { ItemLista, Metadados, Perfil, Verificacoes } from "./types";
 
 const PASTA = path.join(process.cwd(), "dados");
 
@@ -21,4 +21,5 @@ function ler<T>(...partes: string[]): T {
 export const metadados = (): Metadados => ler<Metadados>("metadados.json");
 export const lista = (): ItemLista[] => ler<ItemLista[]>("senadores.json");
 export const perfil = (slug: string): Perfil => ler<Perfil>("senadores", `${slug}.json`);
+export const verificacoes = (): Verificacoes => ler<Verificacoes>("verificacoes.json");
 export const slugs = (): string[] => lista().map((s) => s.slug);

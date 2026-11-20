@@ -1,7 +1,8 @@
 import { AbreCartao } from "./AbreCartao";
+import { FotoSenador } from "./FotoSenador";
 import { Barras, GraficoMensal, Linha, Origem, Pergunta } from "./perguntas";
 import {
-  dataBr, iniciais, nomeEstado, nomeMes, periodo, reais, reaisMil, telefone, tituloNome, usoTexto,
+  dataBr, nomeEstado, nomeMes, periodo, reais, reaisMil, telefone, tituloNome, usoTexto,
 } from "@/lib/formato";
 import type { Perfil } from "@/lib/types";
 
@@ -83,8 +84,12 @@ export function PerfilPagina({ perfil, dataReferencia }: { perfil: Perfil; dataR
   return (
     <div className="lay">
       <aside>
-        <div className="av" aria-hidden="true">
-          {iniciais(perfil.nome)}
+        <div className={perfil.quem_e?.foto ? "av com-foto" : "av"}>
+          <FotoSenador
+            url={perfil.quem_e?.foto?.url}
+            nome={perfil.nome}
+            rotulo={`Foto oficial de ${nome}`}
+          />
         </div>
         <div>
           <h1>{nome}</h1>
@@ -117,7 +122,10 @@ export function PerfilPagina({ perfil, dataReferencia }: { perfil: Perfil; dataR
             </>
           ) : null}
         </dl>
-        <p className="help">Fonte: Senado Federal. Dados de {atualizado}.</p>
+        <p className="help">
+          {perfil.quem_e?.foto ? `${perfil.quem_e.foto.credito}. ` : "Fonte: Senado Federal. "}Dados de{" "}
+          {atualizado}.
+        </p>
       </aside>
 
       <main id="conteudo">
