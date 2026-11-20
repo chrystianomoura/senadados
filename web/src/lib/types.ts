@@ -105,27 +105,3 @@ export interface Perfil extends ItemLista {
   contato: Contato | null;
   moradia: Moradia | null;
 }
-
-export interface ResumoVerificacao {
-  verificacao: string;
-  ano: number;
-  identicos: number;
-  explicados: number;
-  pendentes: number;
-  ocultos: number;
-  verificado_em: string;
-}
-
-export interface MotivoVerificacao {
-  verificacao: string;
-  ano: number;
-  situacao: "pendente" | "oculto";
-  motivo: string;
-  qtd: number;
-}
-
-/** O que a página "Verificações" mostra: só contagens e motivos, nunca nomes (D042). */
-export interface Verificacoes {
-  resumo: ResumoVerificacao[];
-  motivos: MotivoVerificacao[];
-}
