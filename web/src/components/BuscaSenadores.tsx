@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 
 import { FotoSenador } from "./FotoSenador";
 import { filtrar, opcoes } from "@/lib/busca";
-import { nomeEstado, tituloNome } from "@/lib/formato";
+import { nomeEstado, nomePartido, tituloNome } from "@/lib/formato";
 import type { ItemLista } from "@/lib/types";
 
 /** Busca por nome e filtros por estado e partido. Roda no navegador, sobre a lista já carregada. */
@@ -29,12 +29,12 @@ export function BuscaSenadores({ senadores }: { senadores: ItemLista[] }) {
       </h2>
       <form className="busca" role="search" onSubmit={(e) => e.preventDefault()}>
         <label className="campo grande">
-          <span>Nome do senador</span>
+          <span>Nome do senador ou da senadora</span>
           <input
             type="search"
             value={texto}
             onChange={(e) => setTexto(e.target.value)}
-            placeholder="Digite um nome, por exemplo “Alan”"
+            placeholder="Digite um nome: “Alan” ou “Ana”"
             autoComplete="off"
           />
         </label>
@@ -55,7 +55,7 @@ export function BuscaSenadores({ senadores }: { senadores: ItemLista[] }) {
             <option value="">Todos</option>
             {partidos.map((p) => (
               <option key={p} value={p}>
-                {p}
+                {nomePartido(p)}
               </option>
             ))}
           </select>
@@ -76,9 +76,15 @@ export function BuscaSenadores({ senadores }: { senadores: ItemLista[] }) {
       </form>
 
       <p className="contagem" aria-live="polite">
-        {achados.length === senadores.length
-          ? `${senadores.length} senadores em exercício`
-          : `${achados.length} de ${senadores.length} senadores`}
+        {achados.length === senadores.length ? (
+          <>
+            <span className="n">{senadores.length}</span> senadores em exercício
+          </>
+        ) : (
+          <>
+            <span className="n">{achados.length}</span> de {senadores.length} senadores
+          </>
+        )}
       </p>
 
       {achados.length === 0 ? (
@@ -94,7 +100,7 @@ export function BuscaSenadores({ senadores }: { senadores: ItemLista[] }) {
                 <span className="info">
                   <b>{tituloNome(s.nome)}</b>
                   <span className="selos">
-                    <span className="selo partido">{s.partido}</span>
+                    <span className="selo partido">{nomePartido(s.partido)}</span>
                     <span className="selo uf">{s.uf}</span>
                     {s.tipo === "Titular" ? null : <span className="selo sup">Suplente</span>}
                   </span>

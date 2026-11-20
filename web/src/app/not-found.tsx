@@ -6,7 +6,7 @@ export default function NaoEncontrada() {
   return (
     <>
       <Cabecalho />
-      <main id="conteudo" className="lista">
+      <main id="conteudo" className="erro">
         <h1>Página não encontrada</h1>
         <p>
           Não achamos essa página. O Senadados só mostra os senadores em exercício; quem deixa o

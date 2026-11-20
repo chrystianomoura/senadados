@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { Cabecalho, Rodape } from "@/components/base";
+import { Cabecalho } from "@/components/base";
 import { PerfilPagina } from "@/components/PerfilPagina";
 import { metadados, perfil, slugs } from "@/lib/dados";
 import { tituloNome } from "@/lib/formato";
@@ -31,7 +31,6 @@ export default async function PaginaDoSenador({ params }: Props) {
     <>
       <Cabecalho />
       <PerfilPagina perfil={dados} dataReferencia={meta.data_referencia} />
-      <Rodape dataReferencia={meta.data_referencia} />
     </>
   );
 }
