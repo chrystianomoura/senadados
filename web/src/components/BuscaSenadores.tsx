@@ -91,12 +91,13 @@ export function BuscaSenadores({ senadores }: { senadores: ItemLista[] }) {
                 <span className="ini">
                   <FotoSenador url={s.foto_url} nome={s.nome} rotulo={`Foto oficial de ${tituloNome(s.nome)}`} />
                 </span>
-                <span>
+                <span className="info">
                   <b>{tituloNome(s.nome)}</b>
-                  <small>
-                    {s.partido} · {s.uf}
-                    {s.tipo === "Titular" ? "" : " · suplente"}
-                  </small>
+                  <span className="selos">
+                    <span className="selo partido">{s.partido}</span>
+                    <span className="selo uf">{s.uf}</span>
+                    {s.tipo === "Titular" ? null : <span className="selo sup">Suplente</span>}
+                  </span>
                 </span>
               </Link>
             </li>

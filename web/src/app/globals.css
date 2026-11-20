@@ -36,7 +36,7 @@ footer.base { max-width: 1140px; margin: 0 auto; padding: 0 22px 40px; font-size
 /* ===== perfil: lateral fixa e conteúdo ===== */
 .lay { max-width: 1140px; margin: 0 auto; padding: 26px 22px 70px; display: grid; grid-template-columns: 290px 1fr; gap: 38px; }
 aside { position: sticky; top: 18px; align-self: start; }
-.av { width: 100%; max-width: 200px; aspect-ratio: 4/5; background: var(--limesoft); border: 1.5px solid var(--ink); border-radius: 14px; overflow: hidden; display: grid; place-items: center; font: 800 3.2rem/1 var(--serif); color: var(--ink); }
+.av { width: 100%; max-width: 260px; aspect-ratio: 4/5; background: var(--limesoft); border: 1.5px solid var(--ink); border-radius: 14px; overflow: hidden; display: grid; place-items: center; font: 800 3.2rem/1 var(--serif); color: var(--ink); }
 aside h1 { font: 700 1.6rem/1.15 var(--serif); margin: 14px 0 8px; }
 .tags { display: flex; flex-wrap: wrap; gap: 6px; }
 .tag { border: 1.5px solid var(--ink); border-radius: 999px; padding: 1px 11px; font-size: 0.82rem; font-weight: 700; }
@@ -150,14 +150,21 @@ dd, .v, .hb .n { overflow-wrap: break-word; }
 .lista h1 { font: 800 clamp(1.8rem, 4vw, 2.6rem) / 1.1 var(--serif); margin: 0 0 8px; }
 .lista > p { color: var(--ink2); max-width: 62ch; }
 /* Todos os cartões têm a mesma altura: as linhas da grade ficam do tamanho do maior, e o nome longo quebra em até duas linhas. */
-.grade { list-style: none; margin: 22px 0 0; padding: 0; display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); grid-auto-rows: 1fr; }
+.grade { list-style: none; margin: 22px 0 0; padding: 0; display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); grid-auto-rows: 1fr; }
 .grade li { display: flex; }
-.grade a { flex: 1; min-height: 92px; display: flex; gap: 12px; align-items: center; background: var(--card); border: 1.5px solid var(--ink); border-radius: 16px; padding: 12px 14px; text-decoration: none; color: inherit; min-width: 0; }
-.grade a:hover { background: var(--limesoft); }
-.grade .ini { flex: none; width: 56px; height: 56px; border-radius: 50%; overflow: hidden; background: var(--limesoft); border: 1.5px solid var(--ink); display: grid; place-items: center; font: 800 1.1rem var(--serif); }
+.grade a { flex: 1; min-height: 128px; display: flex; gap: 14px; align-items: center; background: var(--card); border: 1.5px solid var(--ink); border-radius: 16px; padding: 12px 14px; text-decoration: none; color: inherit; min-width: 0; }
+.grade a { transition: transform 0.15s, box-shadow 0.15s, background 0.15s; }
+@media (hover: hover) { .grade a:hover { background: var(--limesoft); transform: translateY(-2px); box-shadow: 0 10px 22px -14px #14110d88; } }
+@media (prefers-reduced-motion: reduce) { .grade a { transition: none; } .grade a:hover { transform: none; } }
+.grade .ini { flex: none; width: 84px; aspect-ratio: 4 / 5; border-radius: 14px; overflow: hidden; background: var(--limesoft); border: 1.5px solid var(--ink); display: grid; place-items: center; font: 800 1.6rem var(--serif); }
 .grade .ini img, .av img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
 .grade b { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; font: 700 1.02rem/1.2 var(--serif); }
-.grade small { color: var(--muted); font-size: 0.82rem; }
+.grade .info { display: flex; flex-direction: column; gap: 9px; min-width: 0; }
+.selos { display: flex; flex-wrap: wrap; gap: 6px; }
+.selo { display: inline-block; font: 800 0.7rem/1 var(--sans); letter-spacing: 0.07em; text-transform: uppercase; border: 1.5px solid var(--ink); border-radius: 999px; padding: 5px 10px 4px; white-space: nowrap; }
+.selo.partido { background: var(--lime); border-color: var(--lime); color: var(--ink); }
+.selo.uf { background: var(--ink); color: #fff; }
+.selo.sup { background: transparent; border-style: dashed; border-color: var(--muted); color: var(--ink2); }
 
 /* ===== home ===== */
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
@@ -203,8 +210,8 @@ dd, .v, .hb .n { overflow-wrap: break-word; }
 /* ===== telas estreitas ===== */
 @media (max-width: 860px) {
   .lay { grid-template-columns: 1fr; gap: 18px; padding-top: 16px; }
-  aside { position: static; display: grid; grid-template-columns: 90px 1fr; gap: 6px 16px; align-items: center; }
-  aside .av { grid-row: 1 / 3; width: 90px; font-size: 1.8rem; }
+  aside { position: static; display: grid; grid-template-columns: 112px 1fr; gap: 6px 16px; align-items: center; }
+  aside .av { grid-row: 1 / 3; width: 112px; font-size: 2rem; }
   aside h1 { margin: 0 0 6px; font-size: 1.3rem; }
   aside dl, aside .help { grid-column: 1 / -1; }
   aside dl { margin: 6px 0 0; }
