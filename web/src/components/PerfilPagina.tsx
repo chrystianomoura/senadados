@@ -2,7 +2,8 @@ import { AbreCartao } from "./AbreCartao";
 import { FotoSenador } from "./FotoSenador";
 import { Barras, GraficoMensal, Linha, Origem, Pergunta } from "./perguntas";
 import {
-  dataBr, nomeEstado, nomeMes, periodo, reais, reaisMil, telefone, tituloNome, usoTexto,
+  dataBr, mesAno, nomeEstado, nomeMes, nomePartido, periodo, periodoAno, reais, reaisMil, telefone,
+  tituloNome, usoCurto, usoTexto,
 } from "@/lib/formato";
 import type { Perfil } from "@/lib/types";
 
@@ -53,7 +54,20 @@ export function PerfilPagina({ perfil, dataReferencia }: { perfil: Perfil; dataR
   const cota = perfil.cota?.anos.at(-1) ?? null;
   const mesesCota = cota?.meses.map((m) => m.mes) ?? [];
   const periodoCota = periodo(mesesCota);
-  const mediaMensal = cota ? Math.round(cota.total_centavos / Math.max(cota.meses.length, 1)) : 0;
+  // Com um mês só, "o maior mês" não diz nada: o destaque e o aviso só aparecem com 2 meses ou mais.
+  const variosMeses = (cota?.meses.length ?? 0) > 1;
+  // A média usa todos os meses do período (do primeiro ao último com nota), inclusive os que não têm
+  // nenhuma: assim ela combina com o texto "de janeiro a julho" e não fica inflada por meses vazios.
+  const ultimoMesCota = mesesCota.length ? Math.max(...mesesCota) : 0;
+  const mesesDoPeriodo = mesesCota.length ? ultimoMesCota - Math.min(...mesesCota) + 1 : 1;
+  const mediaMensal = cota ? Math.round(cota.total_centavos / mesesDoPeriodo) : 0;
+  // O Senado só publicou notas até um mês bem anterior ao da última atualização: vale avisar.
+  const mesReferencia = Number(dataReferencia.slice(5, 7));
+  const semNotasRecentes =
+    cota !== null &&
+    cota.ano === Number(dataReferencia.slice(0, 4)) &&
+    ultimoMesCota > 0 &&
+    ultimoMesCota < mesReferencia - 1;
   const forn =
     perfil.fornecedores?.anos.find((a) => a.ano === cota?.ano) ??
     perfil.fornecedores?.anos.at(-1) ??
@@ -84,48 +98,49 @@ export function PerfilPagina({ perfil, dataReferencia }: { perfil: Perfil; dataR
   return (
     <div className="lay">
       <aside>
-        <div className={perfil.quem_e?.foto ? "av com-foto" : "av"}>
-          <FotoSenador
-            url={perfil.quem_e?.foto?.url}
-            nome={perfil.nome}
-            rotulo={`Foto oficial de ${nome}`}
-          />
-        </div>
-        <div>
-          <h1>{nome}</h1>
-          <div className="tags">
-            <span className="tag fill">{perfil.partido}</span>
-            <span className="tag">
-              {perfil.uf} · {nomeEstado(perfil.uf)}
-            </span>
+        <div className="ficha">
+          <div
+            className="av"
+            title={perfil.quem_e?.foto ? `${perfil.quem_e.foto.credito}.` : undefined}
+          >
+            <FotoSenador
+              url={perfil.quem_e?.foto?.url}
+              nome={perfil.nome}
+              rotulo={`Foto oficial de ${nome}`}
+            />
           </div>
+          <div className="quem">
+            <h1>{nome}</h1>
+            <div className="tags">
+              <span className="tag fill">{nomePartido(perfil.partido)}</span>
+              <span className="tag">
+                {perfil.uf} · {nomeEstado(perfil.uf)}
+              </span>
+            </div>
+          </div>
+          <dl>
+            <dt>Cargo</dt>
+            <dd>{perfil.tipo}</dd>
+            {salario ? (
+              <>
+                <dt>Salário</dt>
+                <dd>{reais(salario.basica_centavos)}</dd>
+              </>
+            ) : null}
+            {cota ? (
+              <>
+                <dt>Verba {cota.ano}</dt>
+                <dd>{reaisMil(cota.total_centavos)}</dd>
+              </>
+            ) : null}
+            {equipe ? (
+              <>
+                <dt>Gabinete</dt>
+                <dd>{pessoas(equipe.pessoas)}</dd>
+              </>
+            ) : null}
+          </dl>
         </div>
-        <dl>
-          <dt>Cargo</dt>
-          <dd>{perfil.tipo}</dd>
-          {salario ? (
-            <>
-              <dt>Salário</dt>
-              <dd>{reais(salario.basica_centavos)}</dd>
-            </>
-          ) : null}
-          {cota ? (
-            <>
-              <dt>Verba {cota.ano}</dt>
-              <dd>{reaisMil(cota.total_centavos)}</dd>
-            </>
-          ) : null}
-          {equipe ? (
-            <>
-              <dt>Gabinete</dt>
-              <dd>{pessoas(equipe.pessoas)}</dd>
-            </>
-          ) : null}
-        </dl>
-        <p className="help">
-          {perfil.quem_e?.foto ? `${perfil.quem_e.foto.credito}. ` : "Fonte: Senado Federal. "}Dados de{" "}
-          {atualizado}.
-        </p>
       </aside>
 
       <main id="conteudo">
@@ -137,46 +152,46 @@ export function PerfilPagina({ perfil, dataReferencia }: { perfil: Perfil; dataR
           <>
             <div className="sumhead">
               <h2>Resumo de {anoResumo}</h2>
-              <span>
-                {periodoCota ? `${maiuscula(periodoCota.replace(/^de /, ""))} · ` : ""}toque num
-                cartão para entender
-              </span>
             </div>
             <div className="sum">
               {salario ? (
                 <AbreCartao alvo="q1">
-                  <span className="lb">Salário</span>
+                  <span className="lb">Salário por mês</span>
                   <span className="n">{reais(salario.basica_centavos)}</span>
-                  <span className="s">remuneração básica do mês.</span>
-                  <span className="s">Líquido: {reais(salario.liquida_centavos)}</span>
+                  <span className="s">salário-base de {nomeMes(salario.mes)}.</span>
+                  <span className="s">Depois dos descontos: {reais(salario.liquida_centavos)}</span>
                   <span className="go">Entender →</span>
                 </AbreCartao>
               ) : null}
               {cota ? (
                 <>
                   <AbreCartao alvo="q2">
-                    <span className="lb">Verba do mandato usada (cota)</span>
+                    <span className="lb">Verba do mandato usada</span>
                     <span className="n">{reaisMil(cota.total_centavos)}</span>
                     <span className="s">
-                      Em média {reaisMil(mediaMensal)} por mês{periodoCota ? `, ${periodoCota}` : ""}.
+                      {variosMeses
+                        ? `Média de ${reaisMil(mediaMensal)} por mês${periodoCota ? `, ${periodoCota}` : ""}.`
+                        : `Valor registrado ${periodoCota}.`}
                     </span>
                     <span className="go">Entender →</span>
                   </AbreCartao>
-                  <AbreCartao alvo="q2">
-                    <span className="lb">Maior mês da verba</span>
-                    <span className="n">{maiuscula(nomeMes(cota.maior_mes.mes))}</span>
-                    <span className="s">
-                      {reaisMil(cota.maior_mes.total_centavos)}, o valor mais alto {periodoCota}.
-                    </span>
-                    <span className="go">Ver no gráfico →</span>
-                  </AbreCartao>
+                  {variosMeses ? (
+                    <AbreCartao alvo="q2">
+                      <span className="lb">Mês de maior uso da verba</span>
+                      <span className="n">{maiuscula(nomeMes(cota.maior_mes.mes))}</span>
+                      <span className="s">
+                        {reaisMil(cota.maior_mes.total_centavos)}: o maior valor {periodoCota}.
+                      </span>
+                      <span className="go">Ver no gráfico →</span>
+                    </AbreCartao>
+                  ) : null}
                 </>
               ) : null}
               {equipe ? (
                 <AbreCartao alvo="q5">
-                  <span className="lb">Quem trabalha no gabinete</span>
+                  <span className="lb">Equipe do gabinete</span>
                   <span className="n">{pessoas(equipe.pessoas)}</span>
-                  <span className="s">no gabinete do Senado Federal.</span>
+                  <span className="s">trabalham no gabinete, segundo o Senado.</span>
                   <span className="go">Entender →</span>
                 </AbreCartao>
               ) : null}
@@ -184,9 +199,25 @@ export function PerfilPagina({ perfil, dataReferencia }: { perfil: Perfil; dataR
                 <AbreCartao alvo="q7">
                   <span className="lb">Moradia</span>
                   <div className="chips">
-                    <Chip usou={imovel > 0} texto={`Imóvel funcional: ${imovel > 0 ? usoTexto(imovel, mesesMoradia).toLowerCase().replace("usou em ", "") : "não usou"}`} />
-                    <Chip usou={auxilio > 0} texto={`Auxílio-moradia: ${auxilio > 0 ? usoTexto(auxilio, mesesMoradia).toLowerCase().replace("usou em ", "") : "não usou"}`} />
+                    <Chip usou={imovel > 0} texto={`Imóvel funcional: ${usoCurto(imovel, mesesMoradia)}`} />
+                    <Chip usou={auxilio > 0} texto={`Auxílio-moradia: ${usoCurto(auxilio, mesesMoradia)}`} />
                   </div>
+                  <span className="go">Entender →</span>
+                </AbreCartao>
+              ) : null}
+              {forn ? (
+                <AbreCartao alvo="q4">
+                  <span className="lb">Quem vendeu ou prestou serviço</span>
+                  <span className="n">
+                    {forn.total_empresas === 0
+                      ? "Nenhuma empresa"
+                      : `${forn.total_empresas} ${forn.total_empresas === 1 ? "empresa" : "empresas"}`}
+                  </span>
+                  <span className="s">
+                    {forn.total_empresas === 0
+                      ? `teve nota reembolsada em ${forn.ano}.`
+                      : `${forn.total_empresas === 1 ? "teve" : "tiveram"} notas reembolsadas em ${forn.ano}.`}
+                  </span>
                   <span className="go">Entender →</span>
                 </AbreCartao>
               ) : null}
@@ -197,21 +228,23 @@ export function PerfilPagina({ perfil, dataReferencia }: { perfil: Perfil; dataR
         {salario ? (
           <Pergunta id="q1" titulo="Quanto ganha?" resposta={reais(salario.basica_centavos)}>
             <Linha titulo="O que é">
-              O pagamento mensal do senador pelo mandato, como aparece na folha de pagamento do
-              Senado. É diferente da verba, que reembolsa despesas.
+              O que o Senado paga ao senador todo mês pelo trabalho no mandato, como aparece na folha
+              de pagamento do Senado. Não é a verba para despesas, que é outra coisa e aparece mais
+              abaixo.
             </Linha>
             <Linha titulo="Quanto" destaque>
-              <mark>{reais(salario.basica_centavos)}</mark> de remuneração básica e{" "}
-              <b>{reais(salario.liquida_centavos)}</b> líquidos em {nomeMes(salario.mes)} de{" "}
-              {salario.ano}, depois dos descontos.
+              <mark>{reais(salario.basica_centavos)}</mark> de salário-base e{" "}
+              <b>{reais(salario.liquida_centavos)}</b> depois dos descontos, em {mesAno(salario.mes, salario.ano)}.
               <p className="src">
-                A remuneração básica não é o total antes dos descontos: a folha do Senado tem outros
-                componentes.
+                O salário-base (que o Senado chama de remuneração básica) é o valor do salário no mês,
+                antes dos descontos. Os descontos que aparecem na folha são a previdência e o imposto
+                de renda. Em alguns meses a folha traz também outros valores, como auxílios e
+                gratificação natalina (13º), que entram na conta do valor depois dos descontos.
               </p>
             </Linha>
             <Origem
               onde="Na folha de pagamento mensal que o Senado publica no portal de transparência."
-              como="Ligamos a folha ao senador pela página de identificação que o próprio portal mostra para o código dele. Só mostramos o valor quando há uma única matrícula e uma única folha normal no mês."
+              como="A folha traz nomes, e não o código do senador. Ligamos os dois pela página de identificação do próprio portal do Senado e só mostramos o valor quando a ligação é segura: um único cadastro (matrícula) com esse nome e uma única folha normal no mês."
               atualizado={atualizado}
               href={portal}
               textoLink="Ver a página do senador no portal do Senado"
@@ -220,25 +253,52 @@ export function PerfilPagina({ perfil, dataReferencia }: { perfil: Perfil; dataR
         ) : null}
 
         {cota ? (
-          <Pergunta id="q2" titulo="Quanto usou da verba?" resposta={reaisMil(cota.total_centavos)} aberta>
+          <Pergunta id="q2" titulo="Quanto usou da verba do mandato?" resposta={reaisMil(cota.total_centavos)}>
             <Linha titulo="O que é">
-              Dinheiro que o Senado <b>reembolsa</b> ao senador por despesas ligadas ao mandato, como
-              passagens, escritório e divulgação. O Senado chama de{" "}
+              Dinheiro que o Senado <b>devolve</b> (reembolsa) ao senador por despesas do trabalho no
+              mandato, como passagens, aluguel de escritório e divulgação. Não é salário. O nome
+              oficial é{" "}
               <b>Cota para o Exercício da Atividade Parlamentar dos Senadores</b> (CEAPS).
             </Linha>
             <Linha titulo="Quanto" destaque>
               <mark>
-                {reaisMil(cota.total_centavos)} {periodoCota} de {cota.ano}
+                {reaisMil(cota.total_centavos)} {periodoAno(periodoCota, cota.ano)}
               </mark>
-              , em média {reaisMil(mediaMensal)} por mês.
-              <GraficoMensal meses={cota.meses} maiorMes={cota.maior_mes.mes} ano={cota.ano} />
+              {variosMeses ? `, uma média de ${reaisMil(mediaMensal)} por mês.` : "."}
+              <GraficoMensal
+                meses={cota.meses}
+                maiorMes={variosMeses ? cota.maior_mes.mes : 0}
+                ano={cota.ano}
+              />
               {cota.parcial ? (
-                <p className="src">Os dados de {cota.ano} estão incompletos, porque o ano ainda está em andamento.</p>
+                <p className="src">
+                  {cota.ano} ainda não terminou: os números mudam conforme o Senado publica novas
+                  despesas.
+                </p>
+              ) : null}
+              {semNotasRecentes ? (
+                <p className="src">
+                  Nos dados do Senado não há nota reembolsada depois de {nomeMes(ultimoMesCota)}. Por
+                  isso o período termina em {nomeMes(ultimoMesCota)}.
+                </p>
+              ) : null}
+              {variosMeses ? (
+                <div className="note alert">
+                  <Info />
+                  <div>
+                    <b>
+                      Mês de maior uso: {mesAno(cota.maior_mes.mes, cota.ano)},{" "}
+                      {reaisMil(cota.maior_mes.total_centavos)}.
+                    </b>{" "}
+                    É o maior valor {periodoCota}. Mostramos só o número; cada pessoa tira a sua
+                    conclusão.
+                  </div>
+                </div>
               ) : null}
             </Linha>
             <Origem
               onde="Na página do senador, no portal de transparência do Senado, em “Recursos utilizados”, e nas planilhas de despesas que o Senado publica."
-              como={`Somamos o valor de cada nota reembolsada ao senador ${periodoCota} de ${cota.ano} e conferimos o resultado com o resumo que o próprio Senado publica.`}
+              como={`Somamos o valor de cada nota reembolsada ao senador ${periodoAno(periodoCota, cota.ano)} e conferimos o resultado com o resumo que o próprio Senado publica.`}
               atualizado={atualizado}
               href={portal}
               textoLink="Ver a página do senador no portal do Senado"
@@ -253,12 +313,13 @@ export function PerfilPagina({ perfil, dataReferencia }: { perfil: Perfil; dataR
             resposta={`${cota.categorias[0].nome}: ${Math.round((Math.max(cota.categorias[0].total_centavos, 0) / Math.max(cota.total_centavos, 1)) * 100)}%`}
           >
             <Linha titulo="O que é">
-              O Senado classifica cada nota reembolsada em um grupo, chamado de categoria. Notas sem
-              grupo aparecem como “Sem categoria”.
+              O Senado coloca cada nota reembolsada em um tipo de despesa, como passagens ou escritório.
+              Esse tipo se chama categoria. Notas que o Senado não classificou aparecem como “Sem
+              categoria”.
             </Linha>
             <Linha titulo="Quanto" destaque>
-              Como os <mark>{reaisMil(cota.total_centavos)}</mark> usados {periodoCota} de {cota.ano} se
-              dividem:
+              Os <mark>{reaisMil(cota.total_centavos)}</mark> usados {periodoAno(periodoCota, cota.ano)} se
+              dividem assim:
               <Barras
                 itens={cota.categorias.map((c) => ({ nome: c.nome, valor: c.total_centavos }))}
                 total={cota.total_centavos}
@@ -266,7 +327,7 @@ export function PerfilPagina({ perfil, dataReferencia }: { perfil: Perfil; dataR
             </Linha>
             <Origem
               onde="Na página do senador, no portal de transparência do Senado, e nas planilhas de despesas. Cada nota reembolsada informa a sua categoria."
-              como="Somamos o valor das notas de cada categoria. Notas sem categoria entram em “Sem categoria”. Usamos nomes mais curtos para as categorias; o nome completo de cada uma está na página do senador, no Senado."
+              como="Somamos o valor das notas de cada categoria. Notas sem categoria entram em “Sem categoria”. Usamos nomes mais curtos para as categorias; o nome completo de cada uma está na página do senador no portal do Senado."
               atualizado={atualizado}
               href={portal}
               textoLink="Ver a página do senador no portal do Senado"
@@ -275,16 +336,18 @@ export function PerfilPagina({ perfil, dataReferencia }: { perfil: Perfil; dataR
         ) : null}
 
         {forn ? (
-          <Pergunta id="q4" titulo="Quem recebeu o dinheiro?" resposta="Empresas e pessoas">
+          <Pergunta id="q4" titulo="Quem vendeu ou prestou serviço?" resposta="Empresas e pessoas">
             <Linha titulo="O que é">
-              As empresas e as pessoas que receberam os reembolsos. Só aparece quem foi reembolsado.
+              As empresas e as pessoas que venderam algo ou prestaram um serviço ao senador, e cujas
+              notas o Senado reembolsou. O reembolso vai para o senador; a nota mostra quem recebeu
+              dele.
             </Linha>
             <Linha titulo="Quanto" destaque>
               {forn.empresas.length > 0 ? (
                 <>
                   Empresas que mais receberam em {forn.ano}
                   {forn.total_empresas > forn.empresas.length
-                    ? ` (as ${forn.empresas.length} maiores, de ${forn.total_empresas})`
+                    ? ` (as ${forn.empresas.length} com os maiores valores, de ${forn.total_empresas})`
                     : ""}
                   :
                   <Barras
@@ -299,23 +362,24 @@ export function PerfilPagina({ perfil, dataReferencia }: { perfil: Perfil; dataR
                 <div className="note">
                   <b>Pagamentos a pessoas (não a empresas)</b>
                   <br />
-                  Além das empresas, o senador reembolsou{" "}
+                  Além das empresas, houve{" "}
                   <b>{pessoasFisicas.qtd_despesas} pagamentos feitos diretamente a pessoas</b>, que somam{" "}
-                  <b>{reaisMil(pessoasFisicas.total_centavos)}</b>. Aqui mostramos só o total, sem nome e
-                  sem CPF, porque essas pessoas não são políticas. Os nomes estão nas planilhas de
-                  despesas do Senado.
+                  <b>{reaisMil(pessoasFisicas.total_centavos)}</b>. Mostramos só o total, sem nomes nem
+                  CPF, para proteger a privacidade delas. Os nomes estão nas planilhas de despesas do
+                  Senado.
                 </div>
               ) : null}
               {outrosQtd > 0 ? (
                 <p className="src">
-                  Mais {outrosQtd} {outrosQtd === 1 ? "pagamento tem" : "pagamentos têm"} documento fora do
-                  padrão ou não informado pelo Senado, somando {reaisMil(outrosTotal)}.
+                  {outrosQtd === 1 ? "Outro pagamento não traz" : `Outros ${outrosQtd} pagamentos não trazem`}{" "}
+                  um CNPJ ou CPF que possamos usar (o Senado não informou ou informou fora do
+                  padrão), somando {reaisMil(outrosTotal)}. Por isso não entram na lista de empresas.
                 </p>
               ) : null}
             </Linha>
             <Origem
-              onde="Nas planilhas de despesas que o Senado publica: cada nota informa quem recebeu o dinheiro, uma empresa ou uma pessoa."
-              como="Somamos o valor recebido por cada empresa, identificada pelo CNPJ. Os pagamentos a pessoas ficam todos juntos, sem nome nem CPF."
+              onde="Nas planilhas de despesas que o Senado publica: cada nota informa quem vendeu o produto ou prestou o serviço, uma empresa ou uma pessoa."
+              como="Somamos o valor das notas de cada empresa, identificada pelo CNPJ (o número de registro da empresa). Os pagamentos a pessoas ficam todos juntos, sem nome nem CPF."
               atualizado={atualizado}
               href={portal}
               textoLink="Ver a página do senador no portal do Senado"
@@ -326,16 +390,16 @@ export function PerfilPagina({ perfil, dataReferencia }: { perfil: Perfil; dataR
         {temContato || equipe ? (
           <Pergunta
             id="q5"
-            titulo="Gabinete: onde fica, contato e equipe"
+            titulo="Gabinete: endereço, contato e equipe"
             resposta={equipe ? pessoas(equipe.pessoas) : "Contato"}
           >
             <Linha titulo="O que é">
-              O <b>gabinete</b> é o espaço do senador dentro do Senado Federal. Aqui estão o endereço, o
-              contato oficial e a quantidade de pessoas que o Senado informa que trabalham nele.
+              O <b>gabinete</b> é o escritório do senador dentro do Senado Federal. Aqui estão o
+              endereço, os contatos oficiais e quantas pessoas, segundo o Senado, trabalham nele.
             </Linha>
             {contato?.endereco ? <Linha titulo="Onde fica">{contato.endereco}</Linha> : null}
             {contato && (contato.telefones.length > 0 || contato.email) ? (
-              <Linha titulo="Como falar">
+              <Linha titulo="Contato">
                 {contato.telefones.map((t) => (
                   <div key={t}>{telefone(t)}</div>
                 ))}
@@ -356,7 +420,7 @@ export function PerfilPagina({ perfil, dataReferencia }: { perfil: Perfil; dataR
             ) : null}
             <Origem
               onde="Na página do senador, no portal de transparência do Senado: endereço, telefone e e-mail em “Dados pessoais”, e o número de pessoas em “Recursos utilizados”."
-              como="Copiamos o endereço, o telefone e o e-mail como o Senado publica. Quando o Senado escreve vários telefones de forma abreviada (por exemplo, “3303-6187 / 6188”), mostramos cada número completo. Do gabinete, mostramos só a quantidade de pessoas, nunca nomes."
+              como="Copiamos o endereço, o telefone e o e-mail como o Senado publica. Quando o Senado abrevia vários telefones (por exemplo, “3303-6187 / 6188”), mostramos cada número completo. Da equipe, mostramos só quantas pessoas são, nunca nomes."
               atualizado={atualizado}
               href={portal}
               textoLink="Ver a página do senador no portal do Senado"
@@ -367,9 +431,9 @@ export function PerfilPagina({ perfil, dataReferencia }: { perfil: Perfil; dataR
         {moradia ? (
           <Pergunta id="q7" titulo="Usa moradia do Senado?" resposta={respostaMoradia}>
             <Linha titulo="O que é">
-              O <b>imóvel funcional</b> é um imóvel residencial de propriedade da União cedido ao
-              senador. O <b>auxílio-moradia</b> é um valor pago ao senador que não ocupa apartamento
-              funcional, para cobrir aluguel ou diária de hotel.
+              O <b>imóvel funcional</b> é uma moradia que pertence à União (o governo federal) e é cedida
+              ao senador. O <b>auxílio-moradia</b> é um valor em dinheiro pago ao senador que não
+              ocupa imóvel funcional, para ajudar com aluguel ou hotel.
             </Linha>
             <Linha titulo="Quanto" destaque>
               <div className="ben2">
@@ -384,7 +448,7 @@ export function PerfilPagina({ perfil, dataReferencia }: { perfil: Perfil; dataR
               </div>
               <p className="src">
                 {mesesMoradia > 0
-                  ? `Período analisado: ${periodo(moradia.meses.map((m) => Number(m.mes.slice(5))))} de ${moradia.ano}.`
+                  ? `Período analisado: ${periodoAno(periodo(moradia.meses.map((m) => Number(m.mes.slice(5)))), moradia.ano)}.`
                   : `O Senado não registra uso de nenhum dos dois em ${moradia.ano}.`}
               </p>
             </Linha>
@@ -396,19 +460,6 @@ export function PerfilPagina({ perfil, dataReferencia }: { perfil: Perfil; dataR
               textoLink="Ver a página do senador no portal do Senado"
             />
           </Pergunta>
-        ) : null}
-
-        {cota ? (
-          <div className="note alert">
-            <Info />
-            <div>
-              <b>
-                Maior mês: {nomeMes(cota.maior_mes.mes)} de {cota.ano}, {reaisMil(cota.maior_mes.total_centavos)}.
-              </b>{" "}
-              É o valor mais alto {periodoCota}. Mostramos só o fato; o que ele significa, cada pessoa
-              avalia.
-            </div>
-          </div>
         ) : null}
 
         <div className="more">
