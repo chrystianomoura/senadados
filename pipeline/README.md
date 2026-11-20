@@ -155,7 +155,7 @@ Levam os dados provados para o banco na nuvem ([D042](../docs/decisoes.md#d042-b
 |---|---|---|
 | `DATABASE_URL` | `papeis`, `migrar` | Dono do banco (cria papéis, esquemas e tabelas) |
 | `DATABASE_URL_CARGA` | `carga` | `sd_carga` (só escreve dados; não cria tabelas). Gravada pelo `papeis` |
-| `DATABASE_URL_LEITURA` | a API (etapa 5) | `sd_leitura` (só lê o `publico`). Gravada pelo `papeis` |
+| `DATABASE_URL_LEITURA` | o exportador do site e, depois, a API | `sd_leitura` (só lê o `publico`). Gravada pelo `papeis` |
 
 Na primeira vez, crie os papéis (as senhas vão direto para o `.env`, sem aparecer na tela):
 

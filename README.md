@@ -2,7 +2,7 @@
 
 > Os valores que o Senado publica sobre os senadores em exercício, explicados para qualquer pessoa.
 
-**Status (19/11/2026):** escopo e protótipo da página fechados, fontes conferidas; **a coleta, a limpeza e as verificações da cota, da equipe, da moradia, do contato e do salário existem** (18/11/2026), e **o banco na Neon já tem os dados provados** (19/11/2026). Ainda faltam a API, o site e a atualização diária automática. Este documento descreve o que o projeto **vai ser** e **vai mudar** conforme aprendermos mais. Cada mudança relevante é registrada com o motivo (veja [Como este projeto é documentado](#como-este-projeto-é-documentado)).
+**Status (19/11/2026):** escopo e protótipo da página fechados, fontes conferidas; **a coleta, a limpeza e as verificações da cota, da equipe, da moradia, do contato e do salário existem** (18/11/2026), e **o banco na Neon já tem os dados provados** (19/11/2026). Ainda faltam o site, a atualização diária automática e a API (nessa ordem, [D044](docs/decisoes.md#d044-site-antes-da-api-com-dados-em-arquivos-json-gerados-do-esquema-público)). Este documento descreve o que o projeto **vai ser** e **vai mudar** conforme aprendermos mais. Cada mudança relevante é registrada com o motivo (veja [Como este projeto é documentado](#como-este-projeto-é-documentado)).
 
 ---
 

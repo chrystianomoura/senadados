@@ -43,6 +43,8 @@ CEAPS é a *Cota para o Exercício da Atividade Parlamentar dos Senadores*: a ve
 
 Os dois usam o **mesmo código de parlamentar**, que é a chave para ligar tudo. As listas cobrem os senadores **em exercício**. 
 
+**Foto e mandato (medido em 19/11/2026, [D045](decisoes.md#d045-foto-e-mandato-do-senador-com-o-endereço-oficial-do-senado-e-verificação-entre-duas-listas)):** a API legislativa traz, para os 81, o endereço da foto e as datas do mandato. O endereço da foto é `http://` e redireciona para `https://legis.senado.leg.br/senadores/fotos-oficiais/{código}`; nos 81 a resposta final é 200 com `image/jpeg`, com arquivos de 78 KB a 1,4 MB (média de 280 KB). As duas listas concordam em UF, partido e anos do mandato nos 81 e em nome em 80 ("Nelsinho Trad" contra "NELSINHO TRAD FILHO"). Nenhuma imagem foi baixada, só cabeçalhos.
+
 ### 3. Resumo de recursos, benefícios, folha e servidores
 
 Todos na base `https://adm.senado.gov.br/adm-dadosabertos/api/v1`. Respondem sem chave; o que foi medido de cada um está em [verificacoes.md](verificacoes.md).

@@ -6,7 +6,7 @@ Resumo do que existe, do que foi provado e do que vem a seguir. É o documento p
 
 ## Em uma frase
 
-O pipeline que coleta, limpa e **prova** os dados do Senado está pronto e roda do zero em cerca de 6 minutos, e os dados provados já estão no banco da Neon (19/11/2026). Ainda não há API, site nem atualização diária automática: o próximo passo é a API.
+O pipeline que coleta, limpa e **prova** os dados do Senado está pronto e roda do zero em cerca de 6 minutos, e os dados provados já estão no banco da Neon (19/11/2026). Ainda não há site, API nem atualização diária automática: o próximo passo é o contrato dos dados e o site ([D044](decisoes.md#d044-site-antes-da-api-com-dados-em-arquivos-json-gerados-do-esquema-público)).
 
 ## O que existe hoje
 
@@ -67,6 +67,8 @@ Os números da cota são os de 2026 contra o resumo do Senado **do mesmo dia**. 
 | [D041](decisoes.md#d041-verificação-automática-do-salário-pela-identidade-do-senador) | Salário ligado pela identidade do senador, em cinco provas |
 | [D042](decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível) | Banco no Neon: só dados agregados, esquemas `publico` e `interno`, três papéis de menor privilégio (19/11) |
 | [D043](decisoes.md#d043-migrações-em-sql-puro-driver-psycopg-e-carga-que-ensaia-antes-de-gravar) | Migrações em SQL puro, driver psycopg e carga que ensaia antes de gravar (19/11) |
+| [D044](decisoes.md#d044-site-antes-da-api-com-dados-em-arquivos-json-gerados-do-esquema-público) | Site antes da API, com dados em arquivos JSON gerados do esquema `publico` (19/11) |
+| [D045](decisoes.md#d045-foto-e-mandato-do-senador-com-o-endereço-oficial-do-senado-e-verificação-entre-duas-listas) | Foto e mandato do senador: endereço oficial do Senado, com crédito, e verificação entre duas listas (19/11) |
 
 ## O que aprendemos
 
@@ -80,6 +82,7 @@ Os números da cota são os de 2026 contra o resumo do Senado **do mesmo dia**. 
 
 ## Pendências conhecidas
 
+- **Foto e mandato do senador:** o pipeline ainda não coleta nem verifica (verificação "perfil", [D045](decisoes.md#d045-foto-e-mandato-do-senador-com-o-endereço-oficial-do-senado-e-verificação-entre-duas-listas)). A primeira fatia do site sai sem eles.
 - **Equipe:** 1 gabinete com 1 efetivo a mais no resumo do que na lista de servidores. Sem explicação.
 - **Moradia:** 4 casos pendentes, por defasagem entre períodos. Se resolvem quando a página mensal incluir novembro.
 - **Salário:** 2 suplentes que assumiram em outubro. Se resolvem com a folha de novembro, que ainda não saiu.
@@ -93,14 +96,16 @@ Os números da cota são os de 2026 contra o resumo do Senado **do mesmo dia**. 
 
 Etapa 3 da ordem de construção, concluída: o projeto `senadados` na Neon (plano gratuito, `aws-us-east-2`, PostgreSQL 18) tem os esquemas `publico` e `interno`, os papéis `sd_carga` (escreve) e `sd_leitura` (só lê o `publico`), as migrações 001 e 002 e os dados provados de 18/11/2026. As decisões estão na [D042](decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível) e na [D043](decisoes.md#d043-migrações-em-sql-puro-driver-psycopg-e-carga-que-ensaia-antes-de-gravar); o que foi conferido na produção (permissões, soma das despesas igual à do SQLite, 20 MB) está na D043.
 
-## Próximo passo: a API (etapa 5)
+## Próximo passo: contrato dos dados e site (etapas 4 e 5)
 
-O que preparar:
+O site vem antes da API ([D044](decisoes.md#d044-site-antes-da-api-com-dados-em-arquivos-json-gerados-do-esquema-público)). A ordem:
 
-1. **Onde publicar.** A D004 escolheu a Render (plano gratuito, região Ohio, perto do banco), com os limites lidos na página oficial em 19/11/2026: 750 horas de instância por mês por workspace, dorme após 15 minutos parado, e a página diz que o plano grátis não é para aplicações em produção. **A decisão final de hospedagem é do mantenedor.**
-2. **A API lê só o `publico`**, com o papel `sd_leitura` (`DATABASE_URL_LEITURA`), que fica como variável de ambiente no serviço, nunca no repositório.
-3. **Os endpoints** estão em [escopo.md](escopo.md) §7 (senadores, despesas, fornecedores, ranking, verificações e metadados). Cada um devolve só o que está no `publico`, e a ausência de um dado significa "não verificado".
-4. **A atualização diária** (etapa 8) é uma rotina do GitHub Actions que repete coleta, limpeza, verificações e carga. As URLs do papel `sd_carga` e as demais viram segredos do repositório.
+1. **Contrato dos dados e exportador** (Python, com testes): arquivos JSON gerados do esquema `publico` com o papel `sd_leitura`, um por senador, mais a lista, as verificações e os metadados. O contrato está em rascunho em [contrato-dos-dados.md](contrato-dos-dados.md). O exportador começa pela lista e por **um** perfil real. Os JSON não vão para o git.
+2. **Esqueleto do site** em `web/` (Next.js, TypeScript, exportação estática, identidade da D029), com um `README.md` curto, como toda pasta nova.
+3. **Primeira página real:** o perfil de um senador, lendo o JSON do passo 1.
+4. **Depois, em fatias:** o bloco "Quem é" (foto e mandato, [D045](decisoes.md#d045-foto-e-mandato-do-senador-com-o-endereço-oficial-do-senado-e-verificação-entre-duas-listas)), a home com busca, a página "Verificações" (com a seção de divergências já escrita), o ranking e a comparação.
+
+**A atualização diária** (etapa 7) é uma rotina do GitHub Actions que repete coleta, limpeza, verificações, carga e exportação; as URLs de `sd_carga` e `sd_leitura` viram segredos do repositório. Antes de publicar, reconfirmar os limites do Cloudflare Pages e do GitHub Actions. A API fica depois do site, e a hospedagem dela só precisa ser decidida então (a D004 escolheu a Render, com os limites lidos em 19/11/2026).
 
 ## Registro dos commits de 18/11/2026
 
@@ -133,3 +138,10 @@ A branch `feat/banco-neon`, a partir da `main`:
 | `feat(pipeline): cria os papéis do banco e ensaia tudo numa branch da Neon` | Papéis e ensaio ponta a ponta |
 | `docs: registra a aplicação do banco na produção do Neon` | Banco aplicado na produção |
 | `docs: atualiza os documentos depois do banco no ar` | Revisão geral dos documentos |
+
+Na branch `docs/site-primeiro`, a partir da `main` depois do PR #2:
+
+| Título do commit | O quê |
+|---|---|
+| `docs: registra que o site vem antes da API (D044)` | Nova ordem de construção |
+| `docs: define o contrato dos dados do site e a foto do senador (D045)` | Contrato em rascunho e decisão da foto e do mandato |
