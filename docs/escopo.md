@@ -45,13 +45,13 @@ Só os **senadores em exercício**, definidos todo dia pela lista oficial do Sen
 ## 4. Telas do MVP
 
 ### 4.1 Início
-- Busca por nome, com filtro por estado e partido.
-- Uma frase sobre o que são os dados e de onde vêm.
-- Destaques simples, sempre com a referência "entre os senadores em exercício".
-- Links para "Sobre os dados" e "Verificações".
+- **Abertura:** o nome "senadados", uma frase sobre o que são os dados ("O que o Senado publica sobre cada senador, de forma simples"), seis pílulas que espelham as guias do perfil e um mosaico de 12 retratos oficiais sorteados a cada visita. Feita em 20/11/2026.
+- **Como funciona:** três cartões (dados oficiais, só o comprovado, sem julgamento).
+- **Busca** por nome (homem ou mulher, sem exigir acento), com filtro por estado e partido, e o selo "N senadores em exercício".
+- **Ainda não existem:** destaques que comparam senadores (seguem o "tudo ou nada" da D037) e os links para "Sobre os dados" e "Verificações", que dependem de as páginas existirem.
 
 ### 4.2 Perfil do senador (a tela principal)
-Cada senador tem endereço próprio (por exemplo, `/senador/nome`). A página **abre com um resumo de seis cartões** (salário, verba, posição entre os senadores, maior mês, equipe e moradia) e depois traz perguntas que se abrem.
+Cada senador tem endereço próprio (por exemplo, `/senador/nome`). A página tem, à esquerda e **fixa**, um cartão com a foto, o nome, o partido, a UF e os quatro dados principais. À direita, **abre com o resumo do ano em seis cartões** (salário, verba, mês de maior uso, equipe do gabinete, moradia e quem vendeu ou prestou serviço) e depois traz seis guias que se abrem, **todas fechadas** ao entrar. A "posição entre os senadores" ainda não existe (depende do ranking, 4.3).
 
 **Molde de cada pergunta** (igual em todas, tudo recolhido por padrão):
 
@@ -68,12 +68,12 @@ Não há selos como "comprovado" ou "fonte única" na tela. As palavras técnica
 | Bloco | Mostra | Estado hoje |
 |---|---|---|
 | **Quem é** | Foto oficial com crédito, partido, estado, mandato, titular ou suplente. | Partido, estado e tipo prontos. **Foto e mandato dependem de uma verificação nova** ([D045](decisoes.md#d045-foto-e-mandato-do-senador-com-o-endereço-oficial-do-senado-e-verificação-entre-duas-listas)), depois da primeira fatia do site |
-| **Salário** | Remuneração do último mês da folha | Provado para 79 de 81 ([D041](decisoes.md#d041-verificação-automática-do-salário-pela-identidade-do-senador)); 2 suplentes ficam sem salário |
+| **Salário** | Salário-base do último mês da folha e o valor depois dos descontos (o Senado chama o primeiro de "remuneração básica") | Provado para 79 de 81 ([D041](decisoes.md#d041-verificação-automática-do-salário-pela-identidade-do-senador)); 2 suplentes ficam sem salário |
 | **Verba (a cota)** | Total do ano e do mês, mês a mês, por categoria, e a posição entre os outros senadores em três faixas | Provado de 2010 a 2026 (em 2026: 73 idênticos, 7 explicados); 2008 e 2009 não se provam e não aparecem |
-| **Para onde vai** | Maiores fornecedores (empresas) e "pessoas físicas" agrupadas ([D008](decisoes.md#d008-pessoas-físicas-agrupadas-e-cpf-nunca-exibido)) | A partir de 2009 |
+| **Quem vendeu ou prestou serviço** | Maiores fornecedores (empresas) e "pessoas físicas" agrupadas ([D008](decisoes.md#d008-pessoas-físicas-agrupadas-e-cpf-nunca-exibido)) | A partir de 2009 |
 | **Gabinete: onde fica, contato e equipe** | **Onde fica** (endereço), **como falar** (telefones completos, um por linha, e e-mail, só para quem tem) e o número de pessoas, do resumo oficial. **Sem custo estimado** ([D031](decisoes.md#d031-onde-fica-o-gabinete-endereço-entra-telefone-e-mail-e-escritório-de-apoio-ficam-fora)) | Endereço, telefones e e-mail provados ([D040](decisoes.md#d040-verificação-automática-do-contato-do-gabinete)); equipe provada em 80 de 81 gabinetes ([D036](decisoes.md#d036-verificação-automática-da-equipe-do-gabinete-por-vínculo)) |
 | **Moradia** | Uso de imóvel funcional e de auxílio-moradia **mês a mês** | 76 de 81 idênticos, 1 explicado, 4 pendentes ([D039](decisoes.md#d039-verificação-automática-da-moradia-mês-a-mês)); aparece para 77 |
-| **Maior mês** | O mês de maior valor da verba, destacado no gráfico mês a mês. Só o fato, sem julgamento ([D030](decisoes.md#d030-destaque-do-maior-mês-no-lugar-do-alerta-fora-do-padrão)) | Sai da mesma conta do gráfico |
+| **Mês de maior uso** | O mês de maior valor da verba, destacado no gráfico mês a mês, em um cartão do resumo e em um aviso dentro da guia da verba. **Só aparece com dois meses ou mais.** Só o fato, sem julgamento ([D030](decisoes.md#d030-destaque-do-maior-mês-no-lugar-do-alerta-fora-do-padrão)) | Sai da mesma conta do gráfico |
 
 **O que aparece e o que não aparece:**
 
@@ -116,7 +116,7 @@ Não há selos como "comprovado" ou "fonte única" na tela. As palavras técnica
 ## 6. Regras de exibição
 
 1. **Ano em andamento:** 2026 mostra "dados parciais, até [mês]".
-2. **Anos sem fornecedor:** o bloco "Para onde vai" começa em **2009**. Em 2008 o site explica que o dado não existe.
+2. **Anos sem fornecedor:** o bloco "Quem vendeu ou prestou serviço" começa em **2009**. Em 2008 o site explica que o dado não existe.
 3. **Pessoas físicas:** nunca com nome nem CPF; sempre agrupadas ([D008](decisoes.md#d008-pessoas-físicas-agrupadas-e-cpf-nunca-exibido)).
 4. **Equipe:** só números, nunca nomes ([D007](decisoes.md#d007-equipe-do-gabinete-só-em-números)).
 5. **Linhas sem categoria:** aparecem como "Sem categoria". O total da verba inclui essas linhas, e o site explica que o resumo do Senado não as conta (59 linhas, R$ 162.260,84 em 2026, entre os senadores em exercício).
@@ -142,7 +142,7 @@ Mesma base de dados do site, aberta para quem quiser consumir. Documentação au
 
 ## 8. Destaque do maior mês
 
-- **O que faz:** no gráfico mês a mês da verba, destaca o mês de maior valor: "Maior mês: março, R$ 43 mil".
+- **O que faz:** no gráfico mês a mês da verba, destaca o mês de maior valor: "Mês de maior uso: março de 2026, R$ 43 mil".
 - **O que não faz:** não compara com limite, não calcula "padrão", não tem alerta. É só um fato que se confere no próprio gráfico ([D030](decisoes.md#d030-destaque-do-maior-mês-no-lugar-do-alerta-fora-do-padrão)).
 - **Modelo de anomalias:** fica para a versão 2, opcional. Se voltar, só entra com o critério de aprovação da [D023](decisoes.md#d023-critério-para-aprovar-o-modelo).
 
@@ -213,8 +213,8 @@ Metas a medir, não resultados já obtidos:
 | 2 | **Camada de verificação** (cruzamentos, relatório, falha fechada) | **Feito** para cota, equipe, moradia, contato e salário ([D035](decisoes.md#d035-verificação-automática-da-cota-por-categoria-na-mesma-foto-dos-dados) a [D041](decisoes.md#d041-verificação-automática-do-salário-pela-identidade-do-senador)) |
 | 3 | Banco e carga completa dos senadores em exercício | **Feito em 19/11/2026** (banco no ar com os dados provados de 18/11; a atualização diária automática ainda falta; [D042](decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível)) |
 | 4 | **Contrato dos dados e exportador** (arquivos JSON gerados do esquema `publico`; [contrato](contrato-dos-dados.md); [D044](decisoes.md#d044-site-antes-da-api-com-dados-em-arquivos-json-gerados-do-esquema-público)) | **Feito em 19/11/2026**, rodando contra a produção |
-| 5 | Site: perfil (salário quando provado, equipe e moradia), depois início, ranking, comparação, "Sobre os dados" e "Verificações" | **Próximo** |
-| 6 | Destaque do maior mês | A fazer |
+| 5 | Site: perfil (salário quando provado, equipe e moradia), depois início, ranking, comparação, "Sobre os dados" e "Verificações" | **Em andamento:** a home (abertura, "Como funciona" e busca) e o perfil estão feitos (20/11/2026, [D046](decisoes.md#d046-site-em-nextjs-16-com-exportação-estática-fontes-hospedadas-e-testes-com-vitest)); faltam ranking, comparação, "Sobre os dados" e "Verificações" |
+| 6 | Destaque do mês de maior uso | **Feito em 20/11/2026** (cartão, gráfico e aviso no perfil) |
 | 7 | Automação diária e publicação | A fazer |
 | 8 | API (depois do site; [D044](decisoes.md#d044-site-antes-da-api-com-dados-em-arquivos-json-gerados-do-esquema-público)) | A fazer |
 | 9 | Revisão final da documentação | A fazer |

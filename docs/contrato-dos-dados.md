@@ -2,7 +2,7 @@
 
 Quais arquivos JSON o site lê e o que cada um traz. É o elo entre o banco e as telas: o pipeline **gera** esses arquivos a partir do esquema `publico` do Neon, e o site só os **lê**. Decisão em [D044](decisoes.md#d044-site-antes-da-api-com-dados-em-arquivos-json-gerados-do-esquema-público).
 
-**Status:** rascunho de 19/11/2026, **implementado pelo exportador** (`python -m senadados_pipeline.exportar`) e ensaiado com os dados reais numa branch da Neon. Define a **primeira fatia** do site (o perfil sem foto e sem mandato). Será confirmado de vez pela primeira tela do site; mudança que quebra o site sobe a `versao_contrato`.
+**Status:** versão 1 (rascunho de 19/11/2026), **implementada pelo exportador** (`python -m senadados_pipeline.exportar`) e ensaiado com os dados reais numa branch da Neon. Define a **primeira fatia** do site (o perfil sem foto e sem mandato). Será confirmado de vez pela primeira tela do site; mudança que quebra o site sobe a `versao_contrato`.
 
 ## Regras gerais
 
@@ -46,6 +46,7 @@ Uma lista, um item por senador, ordenada por `codigo`.
 | `nome` | Nome parlamentar | `publico.senadores.nome` |
 | `uf`, `partido` | Estado e partido | `publico.senadores` |
 | `tipo` | `Titular` ou `1º Suplente` | `publico.senadores.tipo` |
+| `foto_url` | **Opcional, a decidir ([D045](decisoes.md#d045-foto-e-mandato-do-senador-com-o-endereço-oficial-do-senado-e-verificação-entre-duas-listas)):** o endereço da foto, só se provado, para a lista mostrar a foto em vez das iniciais. Hoje não existe nos dados reais | `publico.perfil`, que ainda não existe |
 
 Se dois nomes gerarem o mesmo `slug`, o exportador **para com erro** (falha fechada), em vez de escolher um.
 

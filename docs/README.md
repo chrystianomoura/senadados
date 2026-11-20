@@ -9,7 +9,7 @@ Leia nesta ordem se for a primeira vez no projeto.
 | [decisoes.md](decisoes.md) | Cada decisão com o seu porquê, com índice e situação atual |
 | [fontes-de-dados.md](fontes-de-dados.md) | De onde vêm os dados, formato, qualidade e termos de uso |
 | [andamento.md](andamento.md) | Em que pé o projeto está: o que existe, o que foi provado, as decisões recentes, as pendências e o próximo passo |
-| [contrato-dos-dados.md](contrato-dos-dados.md) | Quais arquivos JSON o site lê e o que cada um traz (rascunho) |
+| [contrato-dos-dados.md](contrato-dos-dados.md) | Quais arquivos JSON o site lê e o que cada um traz (versão 1, em uso pelo site) |
 | [verificacoes.md](verificacoes.md) | Resultado de cada conferência entre bases do Senado e o que ainda falta provar |
 | [divergencias-nos-dados-do-senado.md](divergencias-nos-dados-do-senado.md) | Onde os dados do Senado não batem entre si, explicado para qualquer pessoa e provado com prints |
 | [../AGENTS.md](../AGENTS.md) | Regras de trabalho para qualquer pessoa ou agente (commits, dados, comportamento) |

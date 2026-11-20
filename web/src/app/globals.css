@@ -1,0 +1,246 @@
+/* Identidade visual do Senadados (D029). Portado do protótipo design/perfil-do-senador.html. */
+:root {
+  --bg: #faf7f2;
+  --card: #ffffff;
+  --ink: #14110d;
+  --ink2: #4b443d;
+  --muted: #716859;
+  --line: #e2dacb;
+  --track: #e9e2d6;
+  --cab: 63px; /* altura do cabeçalho fixo: 62 px + 1 px de linha */
+  --lime: #c8f53a;
+  --limesoft: #eef8c2;
+  --serif: "Fraunces Variable", Georgia, serif;
+  --sans: "Hanken Grotesk Variable", system-ui, sans-serif;
+  --marca: "Bricolage Grotesque Variable", sans-serif;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: calc(var(--cab) + 13px); }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.55 var(--sans); }
+:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; border-radius: 4px; }
+svg.ic { width: 1em; height: 1em; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; vertical-align: -0.15em; }
+
+.pular { position: absolute; left: -999px; top: 8px; background: var(--lime); color: var(--ink); padding: 8px 14px; border-radius: 8px; font-weight: 700; z-index: 10; }
+.pular:focus { left: 8px; }
+
+/* ===== cabeçalho ===== */
+header.top { cursor: pointer; position: sticky; top: 0; z-index: 50; background: var(--bg); border-bottom: 1px solid rgba(20, 17, 13, 0.3); }
+header.top .in { max-width: 1140px; margin: 0 auto; height: 62px; box-sizing: border-box; padding: 0 22px; display: flex; align-items: center; justify-content: center; gap: 18px; flex-wrap: wrap; }
+.wm { font: 800 34px/1 var(--marca); letter-spacing: -0.05em; color: var(--ink); text-decoration: none; white-space: nowrap; }
+.wm .o, .ab-nome .o { display: inline-block; width: 0.64em; height: 0.64em; vertical-align: -0.045em; margin: 0 0.005em; }
+
+/* ===== perfil: lateral fixa e conteúdo ===== */
+.lay { max-width: 1140px; margin: 0 auto; padding: 26px 22px 0; display: grid; grid-template-columns: 290px 1fr; gap: 38px; }
+/* O espaço do fim da página fica dentro da coluna da direita, e não no padding da grade: assim a coluna
+   da esquerda (fixa) nunca é empurrada para cima quando a página termina. */
+.lay > main { padding-bottom: 70px; }
+aside { position: sticky; top: calc(var(--cab) + 26px); align-self: start; }
+.av { width: 100%; max-height: calc(100vh - 420px); min-height: 200px; aspect-ratio: 4/5; background: var(--limesoft); border-bottom: 1.5px solid var(--ink); overflow: hidden; display: grid; place-items: center; font: 800 3.2rem/1 var(--serif); color: var(--ink); }
+.ficha { width: 100%; padding-bottom: 4px; overflow: hidden; background: var(--card); border: 1.5px solid var(--ink); border-radius: 18px; }
+.ficha .quem { padding: 16px 18px 0; }
+.ficha dl { margin: 14px 18px 0; }
+aside h1 { font: 700 1.6rem/1.15 var(--serif); margin: 0 0 10px; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag { border: 1.5px solid var(--ink); border-radius: 999px; padding: 1px 11px; font-size: 0.82rem; font-weight: 700; }
+.tag.fill { background: var(--lime); border-color: var(--lime); }
+aside dl { display: grid; grid-template-columns: auto 1fr; align-items: center; padding: 0; }
+aside dt { font: 800 0.74rem var(--sans); letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink2); padding: 13px 18px 13px 0; border-top: 1px dashed rgba(20, 17, 13, 0.25); }
+aside dd { margin: 0; padding: 11px 0; font: 800 1.12rem/1.2 var(--serif); letter-spacing: -0.01em; text-align: right; color: var(--ink); border-top: 1px dashed rgba(20, 17, 13, 0.25); }
+
+/* ===== resumo ===== */
+.sumhead { display: flex; align-items: center; gap: 10px 14px; flex-wrap: wrap; margin: 0 0 14px; }
+.sumhead h2 { font: 800 clamp(1.6rem, 3.4vw, 2rem) / 1.1 var(--serif); letter-spacing: -0.02em; margin: 0; padding: 0.06em 0.3em 0.1em; background: var(--lime); border-radius: 10px; }
+.sum { display: grid; gap: 12px; grid-template-columns: repeat(2, 1fr); margin-bottom: 26px; }
+.sc { background: var(--card); border: 1.5px solid var(--ink); border-radius: 18px; padding: 16px 18px; display: flex; flex-direction: column; gap: 4px; text-decoration: none; color: inherit; }
+.sc:hover { background: var(--limesoft); }
+.sc .lb { font: 800 0.74rem var(--sans); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.sc .n { font: 800 clamp(1.8rem, 3.6vw, 2.4rem) / 1.05 var(--serif); letter-spacing: -0.02em; }
+.sc .s { font-size: 0.9rem; color: var(--ink2); }
+.sc .go { margin-top: auto; font-weight: 800; font-size: 0.84rem; padding-top: 6px; text-decoration: underline; text-underline-offset: 3px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.chip { display: inline-flex; gap: 6px; align-items: center; border-radius: 999px; padding: 3px 12px; font-weight: 800; font-size: 0.85rem; border: 1.5px solid var(--ink); }
+.chip.on { background: var(--lime); }
+.chip.off { background: #fff; color: var(--muted); border-color: #c9bfae; }
+@media (max-width: 560px) { .sum { grid-template-columns: 1fr; } }
+
+/* ===== perguntas ===== */
+details.q { background: var(--card); border: 1px solid var(--line); border-radius: 18px; margin-bottom: 10px; scroll-margin-top: 14px; }
+details.q[open] { box-shadow: 0 14px 34px -22px #14110d55; border-color: #cfc5b2; }
+details.q > summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: 1fr auto 22px; gap: 12px; align-items: center; padding: 16px 20px; }
+details.q > summary::-webkit-details-marker { display: none; }
+.qt { font: 700 1.15rem/1.2 var(--serif); }
+.ans { background: var(--limesoft); border-radius: 999px; padding: 3px 13px; font-weight: 800; font-size: 0.9rem; white-space: nowrap; }
+.chev { transition: transform 0.2s; color: var(--muted); font-size: 1.2rem; }
+details.q[open] > summary .chev { transform: rotate(90deg); }
+.body { padding: 0 22px 22px; }
+
+/* molde fixo de cada pergunta: o que é · quanto · de onde vem este número */
+.tpl { display: grid; gap: 0; border-top: 1px solid var(--line); margin: 0; }
+.row { display: grid; grid-template-columns: 130px 1fr; gap: 14px; padding: 13px 0; border-bottom: 1px solid var(--line); }
+.row dt { font: 800 0.74rem var(--sans); letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); padding-top: 3px; }
+.row dd { margin: 0; }
+.row dd b { font-weight: 800; }
+.row.use { background: linear-gradient(90deg, var(--limesoft), transparent 70%); margin: 0 -22px; padding: 13px 22px; }
+.row.use dt { color: var(--ink); }
+mark { background: var(--limesoft); color: inherit; padding: 0 0.14em; border-radius: 3px; box-shadow: inset 0 -0.55em 0 #c8f53a66; }
+.law { margin-top: 12px; }
+.law > summary { cursor: pointer; font-weight: 800; font-size: 0.9rem; color: var(--ink); text-decoration: underline; text-underline-offset: 3px; list-style: none; }
+.law > summary::-webkit-details-marker { display: none; }
+.law > summary::before { content: ""; display: inline-block; width: 1.2em; height: 1.2em; margin-right: 0.45em; vertical-align: -0.24em; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z'/%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/svg%3E") center/contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z'/%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/svg%3E") center/contain no-repeat; }
+.law .box { border-left: 4px solid var(--ink); background: #f6f1e7; border-radius: 0 10px 10px 0; padding: 10px 14px; margin-top: 8px; font-size: 0.9rem; }
+.law .box p { margin: 0 0 9px; }
+.law .box p b { display: inline-block; margin-bottom: 1px; }
+.law .box .meta { color: var(--muted); font-size: 0.84rem; margin: 0; }
+.law .box a { color: var(--ink); font-weight: 700; }
+.cap { font-size: 0.84rem; color: var(--ink2); margin: 10px 0 0; }
+.src { font-size: 0.78rem; color: var(--muted); margin: 10px 0 0; }
+@media (max-width: 620px) {
+  .row { grid-template-columns: 1fr; gap: 3px; }
+  .row.use { margin: 0 -16px; padding: 13px 16px; }
+  .body { padding: 0 16px 18px; }
+}
+
+/* gráfico mensal */
+.mc { position: relative; height: 250px; margin-top: 6px; }
+.mc .bars { position: absolute; left: 0; right: 0; bottom: 24px; top: 0; display: flex; align-items: flex-end; gap: 6px; border-bottom: 1.5px solid var(--ink); }
+.mc .b { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; min-width: 0; height: 100%; }
+.mc .b i { display: block; width: min(26px, 76%); background: var(--ink); border-radius: 3px 3px 0 0; }
+.mc .b em { line-height: 1.15; text-align: center; font-style: normal; font-size: 0.68rem; margin-bottom: 3px; color: var(--ink2); }
+.mc .b em small { display: block; font-size: 0.9em; font-weight: 500; color: var(--muted); }
+.mc .b.top i { background: var(--lime); outline: 2px solid var(--ink); outline-offset: -2px; }
+.mc .b.top em { font-weight: 800; color: var(--ink); }
+.mc .xl { position: absolute; left: 0; right: 0; bottom: 0; display: flex; gap: 6px; }
+.mc .xl span { flex: 1; text-align: center; font-size: 0.7rem; color: var(--muted); }
+
+/* barras com percentual */
+.hb .r { display: grid; grid-template-columns: minmax(130px, 38%) 1fr auto; gap: 12px; align-items: center; padding: 7px 0; }
+.hb .n { font-size: 0.93rem; line-height: 1.25; }
+.hb .t { height: 22px; background: var(--track); }
+.hb .t i { display: block; height: 100%; background: var(--ink); }
+.hb .v { text-align: right; font-weight: 800; font-size: 0.95rem; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.hb .v small { display: block; font-weight: 500; color: var(--muted); font-size: 0.78rem; }
+@media (max-width: 620px) {
+  .hb .r { grid-template-columns: 1fr auto; }
+  .hb .t { grid-column: 1 / -1; order: 3; height: 16px; }
+}
+
+/* moradia, equipe, avisos */
+.ben2 { display: grid; gap: 8px; margin-top: 4px; }
+.bn { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; border: 1.5px solid var(--ink); border-radius: 14px; padding: 11px 14px; background: #fff; }
+.bn b { font: 800 1rem var(--serif); }
+.two { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(230px, 320px)); justify-content: start; margin-top: 6px; }
+.place { background: var(--card); border: 1.5px solid var(--ink); border-radius: 16px; padding: 14px 16px; }
+.place h4 { font: 800 1.05rem var(--serif); margin: 0 0 2px; }
+.place .big { font: 800 2rem/1 var(--serif); margin: 6px 0 0; }
+.place p { margin: 4px 0; font-size: 0.92rem; }
+.note { background: var(--limesoft); border-radius: 12px; padding: 11px 14px; font-size: 0.92rem; margin-top: 14px; }
+.note.alert { display: flex; gap: 12px; align-items: flex-start; margin-top: 16px; }
+.q .note { background: var(--card); border: 1.5px solid var(--ink); padding: 12px 14px; }
+.note.alert .ic { width: 22px; height: 22px; flex: none; margin-top: 1px; fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: round; }
+.more { margin-top: 18px; border: 1.5px solid var(--ink); border-radius: 16px; padding: 14px 18px; background: var(--card); }
+.more h3 { font: 800 1.05rem var(--serif); margin: 0 0 6px; }
+.more p { margin: 0 0 6px; font-size: 0.93rem; }
+.more a { color: var(--ink); font-weight: 700; }
+
+/* quebra de linha: uma regra geral, sem exceções por elemento */
+p, dd, .s, .src, .note, .box, .ans { text-wrap: pretty; }
+h1, h2, h3, h4, .qt, .lb, .tag, .sum .s { text-wrap: balance; }
+dd, .v, .hb .n { overflow-wrap: break-word; }
+
+/* ===== página de erro (404) ===== */
+.erro { max-width: 1140px; margin: 0 auto; padding: 26px 22px 70px; }
+.erro h1 { font: 800 clamp(1.8rem, 4vw, 2.6rem) / 1.1 var(--serif); margin: 0 0 8px; }
+.erro > p { color: var(--ink2); max-width: 62ch; }
+.erro a { color: var(--ink); font-weight: 700; }
+
+/* ===== lista de senadores ===== */
+/* Todos os cartões têm a mesma altura: as linhas da grade ficam do tamanho do maior, e o nome longo quebra em até duas linhas. */
+.grade { list-style: none; margin: 22px 0 0; padding: 0; display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); grid-auto-rows: 1fr; }
+.grade li { display: flex; }
+.grade a { flex: 1; min-height: 128px; display: flex; gap: 14px; align-items: center; background: var(--card); border: 1.5px solid var(--ink); border-radius: 16px; padding: 12px 14px; text-decoration: none; color: inherit; min-width: 0; transition: transform 0.15s, box-shadow 0.15s, background 0.15s; }
+@media (hover: hover) { .grade a:hover { background: var(--limesoft); transform: translateY(-2px); box-shadow: 0 10px 22px -14px #14110d88; } }
+@media (prefers-reduced-motion: reduce) { .grade a { transition: none; } .grade a:hover { transform: none; } }
+.grade .ini { flex: none; width: 84px; aspect-ratio: 4 / 5; border-radius: 14px; overflow: hidden; background: var(--limesoft); border: 1.5px solid var(--ink); display: grid; place-items: center; font: 800 1.6rem var(--serif); }
+.grade .ini img, .av img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+.grade b { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; font: 700 1.02rem/1.2 var(--serif); }
+.grade .info { display: flex; flex-direction: column; gap: 9px; min-width: 0; }
+.selos { display: flex; flex-wrap: wrap; gap: 6px; }
+.selo { display: inline-block; font: 800 0.7rem/1 var(--sans); letter-spacing: 0.07em; text-transform: uppercase; border: 1.5px solid var(--ink); border-radius: 999px; padding: 5px 10px 4px; white-space: nowrap; }
+.selo.partido { background: var(--lime); border-color: var(--lime); color: var(--ink); }
+.selo.uf { background: var(--ink); color: #fff; }
+.selo.sup { background: transparent; border-style: dashed; border-color: var(--muted); color: var(--ink2); }
+
+/* ===== home ===== */
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.home { max-width: 1140px; margin: 0 auto; padding: 22px 22px 70px; }
+.secao-titulo { display: table; margin: 48px auto 20px; padding: 0.06em 0.3em 0.1em; font: 800 clamp(1.8rem, 4.4vw, 2.6rem) / 1.1 var(--serif); letter-spacing: -0.02em; text-align: center; background: var(--lime); border-radius: 10px; }
+
+.busca { display: grid; gap: 12px; grid-template-columns: 2fr 1fr 1fr auto; align-items: end; margin-top: 16px; }
+.campo { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.campo > span { font: 800 0.85rem var(--sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink); }
+.campo input, .campo select { font: 500 1rem var(--sans); color: var(--ink); background: var(--card); border: 1.5px solid var(--ink); border-radius: 12px; padding: 11px 14px; width: 100%; min-height: 46px; }
+.campo select { appearance: none; -webkit-appearance: none; cursor: pointer; padding: 11px 56px 11px 18px; background: var(--card) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3E%3Ccircle cx='15' cy='15' r='13.25' fill='%23c8f53a' stroke='%2314110d' stroke-width='1.5'/%3E%3Cpath d='M10 12.5l5 5 5-5' fill='none' stroke='%2314110d' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 12px center / 30px 30px; }
+.campo input { padding-left: 18px; }
+.campo input::placeholder { color: #9a8f7e; }
+.limpar { font: 700 0.9rem var(--sans); color: var(--ink); background: none; border: 0; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; padding: 12px 4px; min-height: 46px; }
+.contagem { display: flex; align-items: center; justify-content: center; gap: 12px; width: fit-content; margin: 22px auto 4px; padding: 7px 22px 7px 8px; background: var(--card); border: 1.5px solid var(--ink); border-radius: 999px; box-shadow: 4px 4px 0 var(--ink); font: 700 1.05rem/1.2 var(--sans); color: var(--ink); }
+.contagem .n { display: grid; place-items: center; min-width: 52px; height: 52px; padding: 0 10px; border-radius: 999px; background: var(--lime); border: 1.5px solid var(--ink); font: 800 1.7rem/1 var(--serif); letter-spacing: -0.02em; }
+.vazio { background: var(--card); border: 1.5px dashed var(--muted); border-radius: 14px; padding: 18px; margin-top: 14px; }
+
+.como { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; grid-template-columns: repeat(3, 1fr); }
+.como li { background: var(--card); border: 1.5px solid var(--ink); border-radius: 18px; padding: 22px 24px; }
+.como h3 { font: 800 1.4rem/1.15 var(--serif); margin: 0 0 8px; }
+.como p { margin: 0; font-size: 1.1rem; line-height: 1.5; color: var(--ink2); }
+
+@media (max-width: 860px) {
+  .como { grid-template-columns: 1fr; }
+  .busca { grid-template-columns: 1fr 1fr; }
+  .campo.grande { grid-column: 1 / -1; }
+  .limpar { grid-column: 1 / -1; justify-self: start; padding-top: 0; }
+}
+@media (max-width: 480px) { .busca { grid-template-columns: 1fr; } }
+
+/* ===== telas estreitas ===== */
+@media (max-width: 860px) {
+  .lay { grid-template-columns: 1fr; gap: 18px; padding-top: 16px; }
+  .sumhead { justify-content: center; }
+  /* O cartão do senador é o mesmo do desktop (foto no topo e dados embaixo); só deixa de ser fixo. */
+  aside { position: static; max-width: 420px; width: 100%; margin: 0 auto; }
+  .av { max-height: none; min-height: 0; }
+  .ficha .quem { padding: 14px 16px 0; }
+  .ficha dl { margin: 12px 16px 0; }
+  aside h1 { font-size: 1.45rem; }
+  details.q > summary { grid-template-columns: 1fr 20px; padding: 14px 16px; }
+  .ans { grid-column: 1; justify-self: start; margin-top: -4px; }
+  .chev { grid-row: 1; grid-column: 2; }
+}
+
+/* Abertura da home: nome, o que é e mosaico de retratos sorteados (componentes/abertura/Mosaico.tsx) */
+.ab { position: relative; background: var(--card); border: 1.5px solid var(--ink); border-radius: 26px; padding: clamp(20px, 3.6vw, 40px); overflow: hidden; }
+.ab-grid2 { display: grid; gap: clamp(20px, 4vw, 44px); grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: center; }
+
+.ab-nome { font: 800 clamp(2.8rem, 6.2vw, 4.6rem) / 0.95 var(--marca); letter-spacing: -0.05em; margin: 0 0 16px; white-space: nowrap; }
+
+.ab-lead { font: 700 clamp(1.35rem, 2.3vw, 1.75rem) / 1.2 var(--serif); letter-spacing: -0.01em; color: var(--ink); margin: 0 0 18px; max-width: 24ch; text-wrap: balance; }
+.ab-lead mark.ab-m, .ab-b mark.ab-m { white-space: nowrap; background: var(--lime); color: var(--ink); padding: 0 0.15em; border-radius: 6px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.ab-itens { list-style: none; margin: 0 0 14px; padding: 0; display: grid; grid-template-columns: max-content; max-width: 100%; justify-content: start; gap: 8px; }
+.ab-itens li { background: var(--card); border: 1.5px solid var(--ink); border-radius: 999px; padding: 7px 14px 7px 12px; font: 700 0.92rem/1.2 var(--sans); color: var(--ink); display: inline-flex; align-items: center; gap: 8px; }
+.ab-itens li::before { content: ""; width: 12px; height: 12px; border-radius: 50%; border: 4px solid var(--lime); outline: 1.5px solid var(--ink); outline-offset: -1.5px; box-sizing: border-box; flex: none; }
+.ab-sub { font: 800 0.9rem/1.4 var(--sans); color: #fff; margin: 0; width: fit-content; max-width: 100%; padding: 9px 16px; background: var(--ink); border-radius: 12px; }
+.ab-sub span, .ab-sub b { display: block; }
+.ab-sub b { color: var(--lime); font-weight: 800; }
+.ab-b .mosaico { display: grid; gap: 10px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.ab-b .m { aspect-ratio: 4 / 5; border-radius: 14px; overflow: hidden; border: 1.5px solid var(--ink); background: var(--limesoft); display: grid; place-items: center; font: 800 1.4rem var(--serif); }
+.ab-b .m img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+
+@media (max-width: 900px) {
+  .ab-grid2 { grid-template-columns: 1fr; }
+  .ab-b > div:first-child { text-align: center; }
+  .ab-lead { margin-left: auto; margin-right: auto; }
+  .ab-itens { justify-content: center; }
+  .ab-sub { text-align: center; margin: 0 auto; padding: 9px 14px; font-size: 0.88rem; }
+}
+@media (max-width: 560px) {
+  .ab { border-radius: 20px; }
+}

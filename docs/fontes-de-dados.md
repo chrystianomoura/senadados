@@ -153,7 +153,7 @@ Lido em 11/11/2026 nas páginas de dados abertos, na política de uso do portal 
 
 Do Plano de Dados Abertos (33 páginas), busquei palavras-chave de licença e citação; **não li o documento inteiro**.
 
-**Como o projeto cumpre:** cita a fonte e a data de atualização em cada página e no rodapé (veja [D009](decisoes.md#d009-citação-da-fonte-em-toda-página)).
+**Como o projeto cumpre:** cita a fonte e a data de atualização em cada número, na caixa "De onde vem este número" de cada guia do perfil (veja [D009](decisoes.md#d009-citação-da-fonte-em-toda-página); o rodapé que repetia isso foi removido em 20/11/2026).
 
 ## Nomes das categorias de despesa
 O site usa nomes curtos, derivados do nome oficial, para o cidadão ler sem esforço. O nome completo fica na página do senador no Senado, e "De onde vem este número" avisa isso. **Se o Senado criar uma categoria nova, o site mostra o nome oficial até existir um nome curto.**
