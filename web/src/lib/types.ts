@@ -17,7 +17,7 @@ export interface ItemLista {
   tipo: string; // "Titular" ou "1º Suplente"
   uf: string;
   partido: string;
-  /** Endereço da foto oficial, só quando provado (D045). Ainda não existe nos dados reais. */
+  /** Endereço da foto oficial, só quando provado (D045). Sem ele, a lista mostra as iniciais. */
   foto_url?: string | null;
 }
 
@@ -93,11 +93,12 @@ export interface Moradia {
 
 export interface QuemE {
   foto: { url: string; credito: string } | null;
-  mandato: { inicio: number; fim: number } | null;
+  /** Anos do mandato (o que o site mostra) e as datas completas, `AAAA-MM-DD`. */
+  mandato: { inicio: number; fim: number; inicio_data: string; fim_data: string } | null;
 }
 
 export interface Perfil extends ItemLista {
-  quem_e: QuemE | null; // foto e mandato: D045, ainda sem dados reais
+  quem_e: QuemE | null; // foto e mandato, cada parte nula se não foi provada (D045)
   salario: Salario | null;
   cota: { anos: CotaAno[] } | null;
   fornecedores: { anos: FornecedoresAno[] } | null;

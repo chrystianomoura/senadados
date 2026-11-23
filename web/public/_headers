@@ -1,0 +1,10 @@
+# Cabeçalhos do Cloudflare Pages (D003). Este arquivo é copiado para out/ no build.
+# Política de conteúdo (D045, item 6): o site só carrega coisas do próprio endereço, com uma exceção, a foto
+# oficial do senador, que vem do endereço do Senado. 'unsafe-inline' é necessário porque o Next.js escreve o
+# script que inicia a página e os estilos dentro do próprio HTML; não há nenhum script nem estilo de terceiros.
+# As cópias das fotos (D047) só mudam quando o Senado troca uma foto: uma semana de cache no navegador.
+/fotos/*
+  Cache-Control: public, max-age=604800
+
+/*
+  Content-Security-Policy: default-src 'self'; img-src 'self' data: https://legis.senado.leg.br; font-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'

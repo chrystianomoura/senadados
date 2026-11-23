@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 
+import { FotoSenador } from "../FotoSenador";
 import { NomeMarca } from "../NomeMarca";
-import { iniciais } from "@/lib/formato";
 import type { ItemLista } from "@/lib/types";
 
 const QTD = 12;
@@ -56,11 +56,8 @@ export function AberturaMosaico({ senadores }: { senadores: ItemLista[] }) {
       <div className="mosaico" aria-hidden="true">
         {Array.from({ length: QTD }, (_, i) => amostra[i]).map((s, i) => (
           <div key={s?.slug ?? i} className="m">
-            {s?.foto_url ? (
-              // eslint-disable-next-line @next/next/no-img-element -- site estático
-              <img src={s.foto_url} alt="" decoding="sync" referrerPolicy="no-referrer" />
-            ) : s ? (
-              iniciais(s.nome)
+            {s ? (
+              <FotoSenador codigo={s.codigo} url={s.foto_url} nome={s.nome} rotulo="" urgente />
             ) : null}
           </div>
         ))}
