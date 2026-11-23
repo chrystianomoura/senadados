@@ -24,7 +24,7 @@ from pathlib import Path
 from senadados_pipeline.banco import BancoError, conectar, host_de, url_do_ambiente
 from senadados_pipeline.config import ROOT
 
-VERSAO_CONTRATO = 1
+VERSAO_CONTRATO = 2  # 2: `moradia` passou a ter `anos` (D049)
 FONTE = "Senado Federal, dados abertos"
 SAIDA_PADRAO = ROOT / "web" / "dados"
 MAX_EMPRESAS = 10
@@ -232,18 +232,25 @@ def bloco_contato(linha: tuple | None) -> dict | None:
 
 
 def bloco_moradia(verificada: list[tuple], meses: list[tuple]) -> dict | None:
-    """`null` se a moradia não foi provada. Provada e sem nenhum mês de uso: `meses` vazio."""
+    """Moradia por ano. `null` se nenhum ano foi provado.
+
+    Um ano provado e sem nenhum mês de uso traz `meses` vazio (o senador não usou nenhum benefício).
+    """
     if not verificada:
         return None
-    ano = max(linha[1] for linha in verificada)
-    return {
-        "ano": ano,
-        "meses": [
-            {"mes": mes, "auxilio_moradia": auxilio, "imovel_funcional": imovel}
-            for _cod, a, mes, auxilio, imovel in sorted(meses, key=lambda linha: linha[2])
-            if a == ano
-        ],
-    }
+    anos = []
+    for ano in sorted({linha[1] for linha in verificada}):
+        anos.append(
+            {
+                "ano": ano,
+                "meses": [
+                    {"mes": mes, "auxilio_moradia": auxilio, "imovel_funcional": imovel}
+                    for _cod, a, mes, auxilio, imovel in sorted(meses, key=lambda linha: linha[2])
+                    if a == ano
+                ],
+            }
+        )
+    return {"anos": anos}
 
 
 # ---------------------------------------------------------------------------

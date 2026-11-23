@@ -361,12 +361,17 @@ def write_manifest(raw_dir, senadores="2026-11-18T10:00:00-03:00"):
     )
 
 
+def run_atual(raw_dir, database, client):
+    """O `run` só com o ano atual (quatro fontes); o ano anterior tem testes próprios."""
+    return m.run(raw_dir, database, client, TODAY, clock=lambda: NOW, com_ano_anterior=False)
+
+
 def test_run_coleta_verifica_e_grava_as_tabelas(tmp_path):
     database = tmp_path / "db.sqlite"
     make_database(database)
     write_manifest(tmp_path / "raw")
 
-    results = m.run(tmp_path / "raw", database, make_client({1: GOOD}), TODAY, clock=lambda: NOW)
+    results = run_atual(tmp_path / "raw", database, make_client({1: GOOD}))
 
     assert [r.resultado for r in results] == [v.IDENTICAL] and results[0].exibir
     with closing(sqlite3.connect(database)) as connection:
@@ -388,8 +393,8 @@ def test_run_nao_apaga_o_resumo_das_outras_verificacoes(tmp_path):
     with closing(sqlite3.connect(database)) as connection, connection:
         v.ensure_verificacoes_table(connection)
         connection.execute("INSERT INTO verificacoes VALUES ('cota', 2026, 1, 0, 0, 'x')")
-    m.run(tmp_path / "raw", database, make_client({1: GOOD}), TODAY, clock=lambda: NOW)
-    m.run(tmp_path / "raw", database, make_client({1: GOOD}), TODAY, clock=lambda: NOW)
+    run_atual(tmp_path / "raw", database, make_client({1: GOOD}))
+    run_atual(tmp_path / "raw", database, make_client({1: GOOD}))
     with closing(sqlite3.connect(database)) as connection:
         assert [
             r[0] for r in connection.execute("SELECT nome FROM verificacoes ORDER BY nome")
@@ -402,7 +407,7 @@ def test_run_recusa_dados_de_outro_dia(tmp_path):
     make_database(database)
     write_manifest(tmp_path / "raw", senadores="2026-11-10T10:00:00-03:00")
     with pytest.raises(v.VerificacaoError, match="mesma foto"):
-        m.run(tmp_path / "raw", database, make_client({}), TODAY, clock=lambda: NOW)
+        run_atual(tmp_path / "raw", database, make_client({}))
     assert not (tmp_path / "raw" / "moradia").exists()
 
 
@@ -415,3 +420,94 @@ def test_linha_de_comando_avisa_quando_falta_o_banco(tmp_path, capsys):
     code = m.main(["--raw", str(tmp_path), "--banco", str(tmp_path / "nao-existe.sqlite")])
     assert code == 1
     assert "limpeza" in capsys.readouterr().err
+
+
+# --- o ano anterior, com três fontes (D049) ----------------------------------
+GOOD_2025 = {
+    "portal": portal_html(),
+    "mensal": mensal_html([("01/2025", False, True), ("02/2025", False, True)]),
+}
+
+
+def test_ano_que_passou_vale_com_as_tres_fontes_e_sem_a_lista_do_mes():
+    rec = record(months=[["01/2025", False, True], ["02/2025", False, True]])
+    result = m.compare_moradia(1, 2025, rec, None, usar_lista=False)
+    assert result.resultado == v.IDENTICAL
+
+
+def test_ano_que_passou_com_renuncia_e_explicado():
+    rec = record(
+        aux="Não utilizou",
+        imo="Não utilizou",
+        portal_aux=(m.RENOUNCED, 0),
+        portal_imo=(m.NOT_USED, 0),
+        months=[],
+    )
+    assert m.compare_moradia(1, 2025, rec, None, usar_lista=False).resultado == v.EXPLAINED
+
+
+def test_ano_que_passou_continua_exigindo_que_as_tres_fontes_concordem():
+    rec = record(aux="Utilizou")  # a API diz que usou auxílio; a tela e a página mensal, que não
+    assert m.compare_moradia(1, 2025, rec, None, usar_lista=False).resultado == v.UNEXPLAINED
+    other_year = record(months=[["01/2026", False, True], ["02/2026", False, True]])
+    assert m.compare_moradia(1, 2025, other_year, None, usar_lista=False).resultado == v.UNEXPLAINED
+
+
+def make_client_por_ano(pages: dict) -> httpx.Client:
+    """`pages`: ano -> dict com portal e mensal. O resumo da API é o mesmo nos dois anos."""
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        path = request.url.path
+        if path.endswith("/auxilio-moradia-imoveis-funcionais"):
+            return httpx.Response(200, json={"data": [{"nomeParlamentar": "FULANO", **LISTED_NOW}]})
+        year = int(request.url.params["ano"]) if "ano" in request.url.params else 2026
+        if "recursos-utilizados" in path:
+            benefits = [
+                {"beneficio": "Auxílio-Moradia", "utilizacao": "Não utilizou"},
+                {"beneficio": "Imóvel Funcional", "utilizacao": "Utilizou"},
+            ]
+            return httpx.Response(200, json={"data": [{"beneficios": benefits}]})
+        key = "mensal" if "/beneficios/" in path else "portal"
+        return httpx.Response(200, text=pages[year][key])
+
+    return httpx.Client(
+        base_url="https://example.test/api/v1", transport=httpx.MockTransport(handler)
+    )
+
+
+def test_run_confere_tambem_o_ano_anterior_e_grava_os_dois_anos(tmp_path):
+    database = tmp_path / "db.sqlite"
+    make_database(database)
+    write_manifest(tmp_path / "raw")
+    client = make_client_por_ano({2026: GOOD, 2025: GOOD_2025})
+
+    results = m.run(tmp_path / "raw", database, client, TODAY, clock=lambda: NOW)
+
+    assert [(r.ano, r.resultado) for r in results] == [(2026, v.IDENTICAL), (2025, v.IDENTICAL)]
+    with closing(sqlite3.connect(database)) as connection:
+        assert connection.execute(
+            "SELECT ano, resultado, exibir FROM verificacao_moradia ORDER BY ano"
+        ).fetchall() == [(2025, v.IDENTICAL, 1), (2026, v.IDENTICAL, 1)]
+        assert connection.execute(
+            "SELECT ano, mes FROM moradia_meses ORDER BY ano, mes"
+        ).fetchall() == [(2025, "2025-01"), (2025, "2025-02"), (2026, "2026-01"), (2026, "2026-02")]
+        assert connection.execute(
+            "SELECT nome, ano, identicos FROM verificacoes ORDER BY ano"
+        ).fetchall() == [("moradia", 2025, 1), ("moradia", 2026, 1)]
+    raw_2025 = tmp_path / "raw" / "moradia" / "uso_2025.json"
+    assert raw_2025.exists() and "lista" not in raw_2025.read_text(encoding="utf-8")
+
+
+def test_ano_anterior_com_falha_nao_derruba_a_moradia_do_ano_atual(tmp_path):
+    database = tmp_path / "db.sqlite"
+    make_database(database)
+    write_manifest(tmp_path / "raw")
+    ruim = {"portal": "<html>mudou</html>", "mensal": ""}
+    client = make_client_por_ano({2026: GOOD, 2025: ruim})
+
+    results = m.run(tmp_path / "raw", database, client, TODAY, clock=lambda: NOW)
+
+    assert [(r.ano, r.resultado, r.exibir) for r in results] == [
+        (2026, v.IDENTICAL, True),
+        (2025, v.UNEXPLAINED, False),
+    ]
