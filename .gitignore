@@ -33,3 +33,6 @@ web/.next/
 web/out/
 web/next-env.d.ts
 web/tsconfig.tsbuildinfo
+
+# Cópias reduzidas das fotos oficiais, geradas pelo pipeline (D047); nascem do banco a cada build
+web/public/fotos/
