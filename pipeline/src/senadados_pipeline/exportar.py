@@ -66,6 +66,7 @@ LEITURAS = {
         "cod_senador, ano, tipo",
     ),
     "contato": ("cod_senador, endereco, telefones, email", "cod_senador"),
+    "perfil": ("cod_senador, foto_url, mandato_inicio, mandato_fim", "cod_senador"),
     "equipe": ("cod_senador, ano, pessoas", "cod_senador, ano"),
     "moradia_verificada": ("cod_senador, ano", "cod_senador, ano"),
     "moradia_meses": (
@@ -110,6 +111,32 @@ def _por_senador(linhas: list[tuple]) -> dict[int, list[tuple]]:
 # ---------------------------------------------------------------------------
 # Blocos do perfil
 # ---------------------------------------------------------------------------
+CREDITO_FOTO = "Foto oficial publicada pelo Senado Federal"
+
+
+def _iso_data(valor) -> str:
+    """A data como `AAAA-MM-DD`, venha do banco como `date` ou já como texto."""
+    return valor.isoformat() if hasattr(valor, "isoformat") else str(valor)
+
+
+def bloco_quem_e(linha: tuple | None) -> dict | None:
+    """Foto e mandato, cada parte `null` se não foi provada. Sem nenhuma das duas, `null`.
+
+    `inicio` e `fim` são os anos (o que o site mostra); as datas completas vão junto (D045).
+    """
+    if linha is None:
+        return None
+    _cod, foto, inicio, fim = linha
+    foto_bloco = {"url": foto, "credito": CREDITO_FOTO} if foto else None
+    mandato = None
+    if inicio and fim:
+        a, b = _iso_data(inicio), _iso_data(fim)
+        mandato = {"inicio": int(a[:4]), "fim": int(b[:4]), "inicio_data": a, "fim_data": b}
+    if foto_bloco is None and mandato is None:
+        return None
+    return {"foto": foto_bloco, "mandato": mandato}
+
+
 def bloco_salario(linhas: list[tuple]) -> dict | None:
     if not linhas:
         return None
@@ -240,6 +267,7 @@ def montar(dados: dict[str, list[tuple]]) -> dict:
     empresas = _por_senador(dados["fornecedores_anuais"])
     agrupados = _por_senador(dados["fornecedores_agrupados_anuais"])
     contatos = {linha[0]: linha for linha in dados["contato"]}
+    perfis_quem_e = {linha[0]: linha for linha in dados["perfil"]}
     equipes = _por_senador(dados["equipe"])
     moradia_ok = _por_senador(dados["moradia_verificada"])
     moradia = _por_senador(dados["moradia_meses"])
@@ -250,10 +278,13 @@ def montar(dados: dict[str, list[tuple]]) -> dict:
         endereco = slug(nome)
         base = {"codigo": cod, "slug": endereco, "nome": nome, "tipo": tipo, "uf": uf,
                 "partido": partido}
-        lista.append(base)
+        quem_e = bloco_quem_e(perfis_quem_e.get(cod))
+        # A lista da home mostra a foto (decidido em 23/11/2026); o endereço só vai se foi provado.
+        com_foto = bool(quem_e and quem_e["foto"])
+        lista.append({**base, "foto_url": quem_e["foto"]["url"]} if com_foto else base)
         perfis[endereco] = {
             **base,
-            "quem_e": None,  # foto e mandato: D045, depois da primeira fatia
+            "quem_e": quem_e,
             "salario": bloco_salario(salarios.get(cod, [])),
             "cota": bloco_cota(cota.get(cod, []), ano_parcial),
             "fornecedores": bloco_fornecedores(empresas.get(cod, []), agrupados.get(cod, [])),
