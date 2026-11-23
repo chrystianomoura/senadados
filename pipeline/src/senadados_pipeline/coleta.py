@@ -20,7 +20,7 @@ from pathlib import Path
 
 import httpx
 
-from senadados_pipeline.config import BASE_URL, FIRST_YEAR, RAW_DIR
+from senadados_pipeline.config import BASE_URL, FIRST_YEAR, RAW_DIR, anos_do_projeto
 
 MANIFEST = "coleta.json"
 
@@ -186,7 +186,7 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Coleta os dados abertos do Senado.")
     parser.add_argument(
         "--anos",
-        default=f"{FIRST_YEAR}-{date.today().year}",
+        default="{}-{}".format(*anos_do_projeto()),
         help="anos das despesas, por exemplo 2026, 2023-2026 ou 2008,2010-2012",
     )
     parser.add_argument("--saida", type=Path, default=RAW_DIR, help="pasta de saída")
