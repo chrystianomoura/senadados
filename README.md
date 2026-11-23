@@ -2,7 +2,7 @@
 
 > Os valores que o Senado publica sobre os senadores em exercício, explicados para qualquer pessoa.
 
-**Status (19/11/2026):** escopo e protótipo da página fechados, fontes conferidas; **a coleta, a limpeza e as verificações da cota, da equipe, da moradia, do contato e do salário existem** (18/11/2026), e **o banco na Neon já tem os dados provados** (19/11/2026). Ainda faltam o site, a atualização diária automática e a API (nessa ordem, [D044](docs/decisoes.md#d044-site-antes-da-api-com-dados-em-arquivos-json-gerados-do-esquema-público)). Este documento descreve o que o projeto **vai ser** e **vai mudar** conforme aprendermos mais. Cada mudança relevante é registrada com o motivo (veja [Como este projeto é documentado](#como-este-projeto-é-documentado)).
+**Status (23/11/2026):** escopo e protótipo da página fechados, fontes conferidas; **a coleta, a limpeza e as verificações da cota, da equipe, da moradia, do contato, do salário e do perfil (foto e mandato) existem**, e **o banco na Neon já tem os dados provados** (carga de 23/11/2026). **O site já tem a home e o perfil do senador, com a foto oficial.** Ainda faltam as outras telas do site, a atualização diária automática e a API (nessa ordem, [D044](docs/decisoes.md#d044-site-antes-da-api-com-dados-em-arquivos-json-gerados-do-esquema-público)). Este documento descreve o que o projeto **vai ser** e **vai mudar** conforme aprendermos mais. Cada mudança relevante é registrada com o motivo (veja [Como este projeto é documentado](#como-este-projeto-é-documentado)).
 
 ---
 
@@ -52,7 +52,7 @@ Para responder, em segundos, perguntas simples sobre cada senador:
 
 ## Quem aparece no site
 
-Só os **senadores em exercício**, conforme a lista oficial do Senado (hoje, 81: 70 titulares e 11 suplentes). Quem deixa o mandato sai do site, e quem assume entra sozinho. Nenhum total ou comparação é apresentado como "do Senado": sempre diz "entre os senadores em exercício".
+Só os **senadores em exercício**, conforme a lista oficial do Senado (em 23/11/2026, 81: 71 titulares e 10 suplentes). Quem deixa o mandato sai do site, e quem assume entra sozinho. Nenhum total ou comparação é apresentado como "do Senado": sempre diz "entre os senadores em exercício".
 
 ## Só o comprovado (a prova real)
 

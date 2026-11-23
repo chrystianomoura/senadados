@@ -162,3 +162,18 @@ Comparei endereço do gabinete, telefones e e-mail da API (`senadores`) com a se
 ## Fora do MVP (registrado para não se perder)
 
 **Gastos fora da cota** (resumo do Senado, 2026): seis itens (passagens aéreas por contrato, Correios, diárias de viagens oficiais, outros materiais, impulsionamento em mídias sociais, ressarcimento de passagens) somam cerca de **R$ 8,5 milhões** contra R$ 25,5 milhões dentro da cota no mesmo resumo. Cada item tem página mensal no portal do senador, sem nota fiscal nem fornecedor. Os dados **não dizem** se o dinheiro é reembolsado ao senador ou pago direto pelo Senado. Por isso o bloco saiu do MVP ([D028](decisoes.md#d028-gastos-fora-da-cota-e-moradia-entram-só-provados)).
+
+## Recarga de 23/11/2026
+
+Coleta, limpeza e verificações refeitas do zero em 23/11/2026, cinco dias depois da primeira medição. Os números mudaram, e cada mudança foi investigada. **Nenhuma veio de erro do pipeline**: rodei a equipe de novo e os mesmos quatro casos se repetiram.
+
+- **Quem mudou na lista:** Wellington Dias (código 5016) voltou ao exercício em **19/11/2026** (a lista legislativa registra o início do exercício nessa data), um dia depois da coleta anterior. O suplente dele saiu da lista e, pela D026, do site e do banco. Por isso são **71 titulares e 10 suplentes** (eram 70 e 11) e a cota de 2026 passou de 80 para 79 senadores com valores (72 idênticos e 7 explicados); Wellington Dias não tem despesa em 2026.
+- **Equipe: 77 idênticos e 4 sem explicação** (eram 80 e 1). Camilo Santana segue como em 18/11 (1 efetivo a mais no resumo). Os outros três:
+  - **Wellington Dias:** "gabinete não encontrado". O resumo oficial dá 19 pessoas, mas nenhuma lista de servidores traz um gabinete com o nome dele (testei a lista de ativos, a completa, a de efetivos, a de comissionados e a de inativos). **Causa provável, não provada:** o exercício começou há dias e a lotação ainda não foi publicada.
+  - **Esperidião Amin e Nelsinho Trad Filho:** o resumo traz **1 comissionado a mais** que a lista de servidores (14 contra 13, e 52 contra 51). A **tela do portal confere com o resumo** (14 comissionados e 1 efetivo, e 52 e 2), e a lista de servidores é que difere. Todas as listas de servidores concordam entre si (13 e 51), e ninguém desses gabinetes consta como inativo. Só o Senado pode explicar.
+  - **4 de 81 é 4,9%.** O freio de segurança da D037 esconde a equipe de todos acima de 5%, ou seja, a partir de **5 gabinetes**. O resultado de hoje está a um caso do limite.
+- **Contato:** o telefone de Wellington Dias não vem (a API traz "-" e a página do portal não traz telefones), pelo mesmo motivo provável. Telefones: 65 idênticos, 15 explicados e 1 sem explicação; endereço, 81; e-mail, 81 (aparece para 79).
+- **Moradia:** 78 aparecem (77 idênticos e 1 explicado) e 3 ficam pendentes (eram 4). Seguem o mesmo padrão: a lista de hoje diz que não usam auxílio-moradia e a página mensal, que vai até 10/2026, diz que usaram.
+- **Salário:** 79 de 81, com os mesmos 2 suplentes sem explicação (folha de outubro).
+- **Cota:** pequenas diferenças entre 18 e 23/11 (por exemplo, 2025 passou de 6 para 5 explicados) acompanham o que o Senado continua publicando e a troca de suplente. 2008 e 2009 seguem com 5 sem explicação cada.
+- **Perfil (novo):** 81 de 81 idênticos na foto e no mandato.
