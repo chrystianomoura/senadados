@@ -4,7 +4,7 @@ Código em Python que coleta, limpa e verifica os dados abertos do Senado. Hoje 
 
 ## Rodar tudo, na ordem
 
-De dentro de `pipeline/`, **no mesmo dia** (a verificação se recusa a rodar com bases de dias diferentes). Uma execução completa leva cerca de 6 minutos e ocupa 68 MB de dados brutos e 34 MB de banco.
+De dentro de `pipeline/`, **no mesmo dia** (a verificação se recusa a rodar com bases de dias diferentes). Uma execução completa com o ano atual e o anterior ([D048](../docs/decisoes.md#d048-só-o-ano-atual-e-o-anterior-com-troca-de-ano-na-página-do-senador)) baixa 2 arquivos de despesas, ocupa uns 15 MB de dados brutos e roda em poucos minutos (a verificação da cota faz uma consulta por senador e ano: 162, e não mais 1.539). Os números de 6 minutos, 68 MB e 34 MB são da medição de 18/11/2026, com 19 anos.
 
 ```bash
 uv run python -m senadados_pipeline.coleta --sobrescrever
@@ -51,7 +51,7 @@ A limpeza recria o banco do zero e **apaga as tabelas de verificação**; por is
 ## O que a coleta faz
 
 - Baixa a **lista dos senadores em exercício** (API administrativa do Senado).
-- Baixa as **despesas da cota (CEAPS)** de cada ano pela API, a fonte principal ([D005](../docs/decisoes.md#d005-api-como-fonte-principal-csv-para-conferência)).
+- Baixa as **despesas da cota (CEAPS)** do ano atual e do anterior ([D048](../docs/decisoes.md#d048-só-o-ano-atual-e-o-anterior-com-troca-de-ano-na-página-do-senador)) pela API, a fonte principal ([D005](../docs/decisoes.md#d005-api-como-fonte-principal-csv-para-conferência)).
 - **Grava só as despesas de quem está na lista** ([D026](../docs/decisoes.md#d026-só-senadores-em-exercício)). A API devolve também ex-senadores, e esses dados não ficam no disco.
 - Grava o que o Senado devolve **sem alterar**; a limpeza vem depois.
 - **Não sobrescreve** arquivo que já existe, a menos que se peça.
@@ -71,7 +71,7 @@ uv sync
 uv run python -m senadados_pipeline.coleta --anos 2026
 ```
 
-Opções: `--anos` (por exemplo `2026`, `2023-2026` ou `2008,2010-2012`; o padrão é 2008 até o ano atual), `--saida` (pasta de saída; o padrão é `data/raw/`) e `--sobrescrever`.
+Opções: `--anos` (por exemplo `2026`, `2023-2026` ou `2008,2010-2012`; o padrão é o ano atual e o anterior), `--saida` (pasta de saída; o padrão é `data/raw/`) e `--sobrescrever`.
 
 ## O que a limpeza faz
 
@@ -126,7 +126,8 @@ Baixa, na hora, o uso de auxílio-moradia e de imóvel funcional de cada senador
 uv run python -m senadados_pipeline.moradia
 ```
 
-- Resultados: `identico`, `explicado` (a tela diz "renúncia" onde a API diz "não utilizou"), `pendente` (a lista de hoje difere do último mês da página mensal) e `sem_explicacao`.
+- **Dois anos** ([D049](../docs/decisoes.md#d049-moradia-do-ano-anterior-com-três-fontes)): o atual, com as quatro fontes, e o anterior, com as três que existem para ele (sem a lista do mês, que só vale para hoje).
+- Resultados: `identico`, `explicado` (a tela diz "renúncia" onde a API diz "não utilizou"), `pendente` (a lista de hoje difere do último mês da página mensal; só no ano atual) e `sem_explicacao`.
 - Só `sem_explicacao` conta para o freio de segurança de 5% (D037). O `pendente` esconde só o próprio senador.
 - O resultado vai para `verificacao_moradia`, e o uso mês a mês, para `moradia_meses` (usar só quem tem `exibir = 1`).
 - A página mensal é lida do portal (não há API para isso). Se o Senado mudar o formato, o senador cai em `sem_explicacao`, e não recebe um número errado.

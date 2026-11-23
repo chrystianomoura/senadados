@@ -38,7 +38,7 @@ Só os **senadores em exercício**, definidos todo dia pela lista oficial do Sen
 - **Em 23/11/2026:** 81 (71 titulares e 10 suplentes). Em 19/11 um titular que estava fora voltou ao exercício e o suplente dele saiu da lista; o suplente saiu do site e do banco, como a D026 manda.
 - **Quando entra:** assim que aparece na lista. A página mostra "sem dados ainda" até haver dados.
 - **Quando sai:** deixa o site e a API no dia em que sai da lista. Em fevereiro de 2027, 54 mandatos terminam, então até 54 páginas podem sair de uma vez, dependendo de quem for reeleito.
-- **Histórico:** o de cada senador em exercício vai de 2008 até hoje.
+- **Histórico:** só o ano atual e o anterior, com troca de ano na página do senador ([D048](decisoes.md#d048-só-o-ano-atual-e-o-anterior-com-troca-de-ano-na-página-do-senador)). Antes de 23/11/2026 era de 2008 em diante.
 - **Fora:** ex-senadores, aposentados e pensionistas.
 - **Regra de agregado:** nenhum total, mediana ou ranking é apresentado como "do Senado". Toda comparação diz "entre os senadores em exercício em [data]".
 
@@ -69,10 +69,10 @@ Não há selos como "comprovado" ou "fonte única" na tela. As palavras técnica
 |---|---|---|
 | **Quem é** | Foto oficial com crédito, partido, estado, mandato, titular ou suplente. | Pronto. Foto e mandato são provados pela verificação "perfil" ([D045](decisoes.md#d045-foto-e-mandato-do-senador-com-o-endereço-oficial-do-senado-e-verificação-entre-duas-listas), 23/11/2026); a foto também aparece na lista da home |
 | **Salário** | Salário-base do último mês da folha e o valor depois dos descontos (o Senado chama o primeiro de "remuneração básica") | Provado para 79 de 81 ([D041](decisoes.md#d041-verificação-automática-do-salário-pela-identidade-do-senador)); 2 suplentes ficam sem salário |
-| **Verba (a cota)** | Total do ano e do mês, mês a mês, por categoria, e a posição entre os outros senadores em três faixas | Provado de 2010 a 2026 (em 2026: 73 idênticos, 7 explicados); 2008 e 2009 não se provam e não aparecem |
+| **Verba (a cota)** | Total do ano e do mês, mês a mês, por categoria, e a posição entre os outros senadores em três faixas | Provado para o ano atual e o anterior ([D048](decisoes.md#d048-só-o-ano-atual-e-o-anterior-com-troca-de-ano-na-página-do-senador); em 23/11/2026, 2026: 72 idênticos e 7 explicados, 2025: 67 e 5). Os anos de 2008 a 2024 deixaram de ser processados |
 | **Quem vendeu ou prestou serviço** | Maiores fornecedores (empresas) e "pessoas físicas" agrupadas ([D008](decisoes.md#d008-pessoas-físicas-agrupadas-e-cpf-nunca-exibido)) | A partir de 2009 |
 | **Gabinete: onde fica, contato e equipe** | **Onde fica** (endereço), **como falar** (telefones completos, um por linha, e e-mail, só para quem tem) e o número de pessoas, do resumo oficial. **Sem custo estimado** ([D031](decisoes.md#d031-onde-fica-o-gabinete-endereço-entra-telefone-e-mail-e-escritório-de-apoio-ficam-fora)) | Endereço, telefones e e-mail provados ([D040](decisoes.md#d040-verificação-automática-do-contato-do-gabinete)); equipe provada em 80 de 81 gabinetes ([D036](decisoes.md#d036-verificação-automática-da-equipe-do-gabinete-por-vínculo)) |
-| **Moradia** | Uso de imóvel funcional e de auxílio-moradia **mês a mês** | 76 de 81 idênticos, 1 explicado, 4 pendentes ([D039](decisoes.md#d039-verificação-automática-da-moradia-mês-a-mês)); aparece para 77 |
+| **Moradia** | Uso de imóvel funcional e de auxílio-moradia **mês a mês**, no ano atual e no anterior ([D049](decisoes.md#d049-moradia-do-ano-anterior-com-três-fontes)) | Em 18/11/2026: 76 de 81 idênticos, 1 explicado, 4 pendentes ([D039](decisoes.md#d039-verificação-automática-da-moradia-mês-a-mês)); em 23/11/2026, 2026: 77 + 1 explicado + 3 pendentes e 2025: 80 + 1 explicado |
 | **Mês de maior uso** | O mês de maior valor da verba, destacado no gráfico mês a mês, em um cartão do resumo e em um aviso dentro da guia da verba. **Só aparece com dois meses ou mais.** Só o fato, sem julgamento ([D030](decisoes.md#d030-destaque-do-maior-mês-no-lugar-do-alerta-fora-do-padrão)) | Sai da mesma conta do gráfico |
 
 **O que aparece e o que não aparece:**
@@ -95,6 +95,7 @@ Não há selos como "comprovado" ou "fonte única" na tela. As palavras técnica
 - Como citar o Senadados e a fonte original.
 
 ### 4.5 Verificações (nova)
+- **Estado:** feita em 23/11/2026 (`/verificacoes/`): a tabela por conferência, os motivos de quem ficou de fora, a frase fixa e a seção de divergências com as imagens. Ainda não tem o canal para reportar erro nem o registro de correções.
 - A lista de checagens feitas e o resultado de cada uma, por exemplo "cota de 2026: 73 idênticos, 7 explicados".
 - Uma seção **“Onde os dados do Senado não batem entre si”**, com cada divergência provada por **prints** das telas e dos arquivos do Senado, sem dizer qual número está certo, nem o motivo, nem o que faremos a respeito ([D038](decisoes.md#d038-documento-público-de-divergências-com-prova-em-imagem)). Só entra o que tem print. O texto está em [divergencias-nos-dados-do-senado.md](divergencias-nos-dados-do-senado.md).
 - As divergências encontradas nos dados do Senado, **agregadas**, com a explicação quando existe. Os **nomes dos senadores só aparecem na seção de divergências**, onde o print mostra a tela do Senado, que traz o nome ([D038](decisoes.md#d038-documento-público-de-divergências-com-prova-em-imagem)).
@@ -106,7 +107,7 @@ Não há selos como "comprovado" ou "fonte única" na tela. As palavras técnica
 
 | Informação | Fonte | Verificação |
 |---|---|---|
-| Despesas da cota | API de despesas do Senado (2008 a 2026), com o CSV e a página de cada senador como conferência | Verificada de 2010 a 2026 contra o resumo; 2008 e 2009 não batem e ficam ocultos ([D035](decisoes.md#d035-verificação-automática-da-cota-por-categoria-na-mesma-foto-dos-dados)) |
+| Despesas da cota | API de despesas do Senado (ano atual e anterior), com o CSV e a página de cada senador como conferência | Verificada contra o resumo (em 18/11/2026, 2010 a 2026 batiam e 2008 e 2009 não; hoje só 2025 e 2026 são processados) ([D035](decisoes.md#d035-verificação-automática-da-cota-por-categoria-na-mesma-foto-dos-dados)) |
 | Perfil e foto | APIs administrativa e legislativa | Pronto |
 | Salário | Folha de pagamento mensal; identidade pela página do senador | Fonte única do valor, com cinco provas ([D041](decisoes.md#d041-verificação-automática-do-salário-pela-identidade-do-senador)) |
 | Equipe | Resumo oficial por senador | Provada em 80 de 81 gabinetes; aparece para esses 80, e o gabinete sem explicação fica oculto ([D036](decisoes.md#d036-verificação-automática-da-equipe-do-gabinete-por-vínculo), [D037](decisoes.md#d037-exibição-por-tipo-de-dado-e-freio-de-segurança)) |
@@ -197,7 +198,7 @@ Metas a medir, não resultados já obtidos:
 | Moradia: 4 casos pendentes | A lista é de novembro e a página mensal vai até outubro: períodos diferentes, causa provável, **não provada** | A verificação diária reconfere; quando a página mensal incluir novembro, o caso se resolve sozinho |
 | Salário | 2 suplentes que assumiram em outubro: duas matrículas com o mesmo nome e folha suplementar com valores | Ficam sem salário; a verificação diária reconfere com a folha de novembro |
 | Equipe | **Verificada por gabinete em 18/11/2026**: 80 de 81 idênticos; o gabinete de Camilo Santana tem 1 efetivo a mais no resumo | Perguntar ao Senado; quando explicarem, a equipe desse gabinete aparece sozinha na próxima verificação |
-| Cota de outros anos | **Feito em 18/11/2026** ([D035](decisoes.md#d035-verificação-automática-da-cota-por-categoria-na-mesma-foto-dos-dados)): 2010 a 2026 batem; 2008 e 2009 não (o resumo de 2008 está vazio e o de 2009 é menor que as despesas), então ficam ocultos | Perguntar ao Senado pelo canal oficial; o histórico da cota começa em 2010 |
+| Cota de outros anos | **Feito em 18/11/2026** ([D035](decisoes.md#d035-verificação-automática-da-cota-por-categoria-na-mesma-foto-dos-dados)): 2010 a 2026 batiam e 2008 e 2009 não (o resumo de 2008 estava vazio e o de 2009 era menor que as despesas); **desde 23/11/2026 esses anos não são mais processados** (D048) | Perguntar ao Senado pelo canal oficial; o histórico da cota começa em 2010 |
 | Linhas sem categoria | O Senado não explica por que o resumo as deixa de fora | Perguntar pelo canal oficial; mostrar com a explicação |
 | Internet Archive | Acusa cópia, mas não consegui listar | Testar de novo |
 | Virada de 2027 | Até 54 páginas saem de uma vez | Decidido: apagar os dados de quem sair (banco, arquivos brutos, site e API) |

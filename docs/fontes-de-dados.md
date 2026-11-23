@@ -6,7 +6,7 @@ Registro do que cada fonte entrega, como foi verificado e quais são as limitaç
 
 - Todas as fontes são do **Senado Federal** e são públicas, **sem login, chave ou cadastro**.
 - A **API é a fonte principal**; os CSVs servem para conferência (veja [decisão D005](decisoes.md#d005-api-como-fonte-principal-csv-para-conferência)).
-- Os dados vão de **2008 a 2026**. O ano de 2026 está incompleto.
+- O Senado publica de **2008 a 2026**; o Senadados usa só o **ano atual e o anterior** ([D048](decisoes.md#d048-só-o-ano-atual-e-o-anterior-com-troca-de-ano-na-página-do-senador)). O ano de 2026 está incompleto. As medições deste documento são de 18/11/2026, com todos os anos.
 - **Escopo de pessoas:** só os **senadores em exercício** ([D026](decisoes.md#d026-só-senadores-em-exercício)). Dados de ex-senadores **não entram no site**.
 - **Regra de qualidade:** só se mostra o que passa na prova real ([D025](decisoes.md#d025-só-o-comprovado-a-prova-real)). As conferências feitas estão em [verificacoes.md](verificacoes.md).
 - **Sem camada jurídica** ([D024](decisoes.md#d024-sem-camada-jurídica)): este documento descreve dados, não regras. Limites legais, normas e tabelas de valores por estado foram descartados do escopo.

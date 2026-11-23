@@ -38,7 +38,7 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 | D023 | Critério para aprovar o modelo | Não se aplica ao MVP |
 | D024 | Sem camada jurídica | Vale |
 | D025 | Só o comprovado (a prova real) | Vale |
-| D026 | Só senadores em exercício | Vale |
+| D026 | Só senadores em exercício | Vale (o histórico desde 2008 foi alterado pela D048) |
 | D027 | Como conferir os dados | Vale |
 | D028 | Gastos fora da cota e moradia | Moradia vale; gastos fora da cota saíram do MVP |
 | D029 | Identidade visual | Vale |
@@ -47,7 +47,7 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 | D032 | Organização do repositório e dos documentos | Vale |
 | D033 | Coleta local que só grava quem está em exercício | Vale |
 | D034 | Limpeza com validação, em SQLite local, sem nome nem documento de pessoa física | Vale |
-| D035 | Verificação automática da cota por categoria, na mesma foto dos dados | Vale |
+| D035 | Verificação automática da cota por categoria, na mesma foto dos dados | Vale (hoje só para o ano atual e o anterior, D048) |
 | D036 | Verificação automática da equipe do gabinete, por vínculo | Vale (a consequência foi substituída pela D037) |
 | D037 | Exibição por tipo de dado e freio de segurança | Vale |
 | D038 | Documento público de divergências, com prova em imagem | Vale |
@@ -60,6 +60,8 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 | D045 | Foto e mandato do senador, com o endereço oficial do Senado e verificação entre duas listas | Aceita (implementada em 23/11/2026) |
 | D046 | Site em Next.js 16 com exportação estática, fontes hospedadas e testes com Vitest | Aceita |
 | D047 | Cópias reduzidas das fotos oficiais, com Pillow | Aceita (implementada em 23/11/2026) |
+| D048 | Só o ano atual e o anterior, com troca de ano na página do senador | Aceita (implementada em 23/11/2026; altera a D026) |
+| D049 | Moradia do ano anterior, com três fontes | Aceita (implementada em 23/11/2026; completa a D048 e a D039) |
 
 ---
 
@@ -306,6 +308,7 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 - **Dados de quem sai são apagados** (decidido em 11/11/2026): no dia em que o senador deixa a lista, saem do banco de dados, dos arquivos brutos locais, do site e da API. O repositório nunca guarda dados crus (D014), então não há o que apagar no histórico do git.
 - **Consequência:** a virada de fevereiro de 2027 pode retirar até 54 páginas de uma vez. Os totais e rankings são recalculados só com quem continua em exercício.
 - **Status:** aceita.
+- **Atualização (23/11/2026):** o histórico de cada senador desde 2008 **deixou de ser mantido**: o projeto processa só o ano atual e o anterior ([D048](#d048-só-o-ano-atual-e-o-anterior-com-troca-de-ano-na-página-do-senador)). O resto da decisão (só quem está em exercício, e apagar quem sai) continua valendo.
 
 ## D027: Como conferir os dados
 
@@ -419,6 +422,7 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 - **Por quê:** comparar por categoria é mais forte do que comparar o total (categorias trocadas com o mesmo total seriam percebidas), e o site mostra o valor por categoria. A trava de "mesma foto" impede a falha que cometi no começo da investigação.
 - **Limites:** prova consistência entre bases do mesmo sistema do Senado, não é auditoria (D027). Só cobre a cota; gabinete, salário, moradia e contato ainda não têm verificação automática. O resumo de 2008 e 2009 pode ser limitado do lado do Senado, e isso **não foi confirmado**.
 - **Status:** aceita.
+- **Atualização (23/11/2026):** os resultados de 2010 a 2024 e o caso de 2008 e 2009 são **registro histórico** de 18/11/2026; a verificação roda hoje só para o ano atual e o anterior ([D048](#d048-só-o-ano-atual-e-o-anterior-com-troca-de-ano-na-página-do-senador)).
 
 ## D036: Verificação automática da equipe do gabinete, por vínculo
 
@@ -465,6 +469,7 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
   - O **número "equipe" depende da definição.** O Senadados usa o do resumo (comissionados, efetivos e requisitados) e **deve dizer o que ele inclui**, para o cidadão que comparar com a tela (que soma estagiários e terceirizados) não achar um dos dois errado.
 - **Cuidados:** os prints são fotos de 18/11/2026 e podem deixar de refletir a tela se o Senado atualizar os dados (de fato, a divergência do item 1 foi vista também na API às 16h46, e pode ser corrigida a qualquer momento). Os recortes não mostram foto de senador. A responsabilidade por manter o documento correto é do projeto: se o Senado corrigir um caso, ele deve ser atualizado ou retirado.
 - **Status:** aceita.
+- **Atualização (23/11/2026):** as 11 imagens foram **refeitas** com a captura de 23/11/2026 (telas e exportações do Senado fotografadas num Chrome sem janela, e as tabelas "montagem do Senadados" refeitas dos arquivos oficiais baixados no dia). Os mesmos cinco casos continuam valendo; mudaram só números de Hamilton Mourão (o total na tela passou a R$ 448.186,05 e o do arquivo, a R$ 483.186,05, com a mesma diferença de R$ 35.000,00) e as horas. As **contagens sobre todos os gabinetes** (80 de 81 e 79 de 81) são de 18/11/2026 e **não foram refeitas**; o texto diz isso. A página "Verificações" do site mostra o dia da captura e avisa que, se o Senado atualizar os dados, o que está lá pode deixar de valer. Os prints não se atualizam sozinhos: quando o Senado mudar um caso, as imagens precisam ser refeitas à mão.
 
 ## D039: Verificação automática da moradia, mês a mês
 
@@ -635,7 +640,7 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
   - **Cabeçalho:** só a marca, fixa no topo (62 px, linha suave). Com a página rolada, um clique nele (inclusive na marca) sobe suavemente, em qualquer página. Já no topo, na página do senador, a marca leva à home. Na home o clique na marca **nunca navega** (navegar para "/" estando em "/" refazia a página e sorteava outras fotos). A rolagem suave global saiu: ela deixava a página do senador cortada ao vir da home e fazia a volta passar pelo topo. A suavidade ficou só no clique do cabeçalho e nos "Entender".
   - **Perfil:** foto, nome, partido, UF e os quatro dados formam um cartão só, fixo na coluna da esquerda (não se move em nenhuma posição da rolagem: o espaço do fim da página fica na coluna da direita e o topo do cartão coincide com o ponto em que ele gruda). No celular e no tablet o cartão é o mesmo, sem ser fixo (no tablet, com no máximo 420 pontos de largura). O resumo ganhou o título "Resumo de 2026" num bloco verde (centralizado no celular), sem a pílula do período e sem "toque num cartão". Os avisos e o cartão da equipe dentro das guias são brancos com borda, para não ficarem verdes sobre o verde da linha "Quanto". Todas as guias começam fechadas. Entrou o cartão "Quem vendeu ou prestou serviço" (contagem de empresas do ano, sem nomes), o que completa a grade do resumo. O crédito da foto sai do texto e fica na dica ao passar o mouse.
   - **Textos em linguagem simples**, sem mudar nenhum número: "remuneração básica" virou **"salário-base"** (o texto explica que é a parte principal e que não é o total antes dos descontos, como a [D041](#d041-verificação-automática-do-salário-pela-identidade-do-senador) pede), "líquido" virou "depois dos descontos", "Maior mês" virou "Mês de maior uso", "Quem recebeu o dinheiro?" virou **"Quem vendeu ou prestou serviço?"** (o reembolso vai ao senador; a nota mostra quem recebeu dele), "Gabinete: onde fica, contato e equipe" virou "endereço, contato e equipe". O texto sobre pessoas físicas trocou "porque essas pessoas não são políticas" por "para proteger a privacidade delas" (D008). Datas e meses não se partem no fim da linha. Com **um mês só** de verba, o cartão e o aviso de "maior mês" não aparecem, porque o "maior" de um mês só não diz nada.
-  - **Rodapé removido** da home e do perfil. Ele trazia a fonte, a data e a frase de que a conferência entre bases **não é auditoria** e de que o site não julga a legalidade. Cada guia mantém "De onde vem este número" (fonte e data), mas a frase sobre auditoria e legalidade **deixou de aparecer em qualquer lugar da home e do perfil**, apesar de o `AGENTS.md` pedir que o site a diga. **Pendente:** a página "Sobre os dados" (prevista no escopo) deve recebê-la.
+  - **Rodapé removido** da home e do perfil. Ele trazia a fonte, a data e a frase de que a conferência entre bases **não é auditoria** e de que o site não julga a legalidade. Cada guia mantém "De onde vem este número" (fonte e data), mas a frase sobre auditoria e legalidade **deixou de aparecer em qualquer lugar da home e do perfil**, apesar de o `AGENTS.md` pedir que o site a diga. **Pendente:** a página "Sobre os dados" (prevista no escopo) deve recebê-la. **Atualização (23/11/2026):** a frase da auditoria voltou na página "Verificações" ([escopo §4.5](escopo.md)); a "Sobre os dados" deve repeti-la.
   - **Descartado depois de estudado:** o "senadômetro" (total do que o Senado gasta). A planilha de execução orçamentária mostra um total pago (R$ 5,28 bilhões em 2024), mas cerca de 83% é pessoal e aposentadorias, o salário do ano não está provado mês a mês e a D026 proíbe totais "do Senado"; o mantenedor decidiu não fazer. Também descartado o destaque do "senador que mais usou a verba" no ano e no mês: o do ano é provável (empate técnico de R$ 2.343,69), o do mês tem fonte única.
   - **Salário (corrige o texto da [D041](#d041-verificação-automática-do-salário-pela-identidade-do-senador)):** a folha de outubro foi conferida de novo (baixada só para isso, sem guardar nomes). Em 75 das 80 linhas com R$ 46.366,19 o líquido é o salário-base menos previdência e imposto de renda; 3 linhas trazem "auxílios" e 5 "gratificação natalina", e os outros campos estavam zerados. Por isso o texto deixou de dizer que a remuneração básica "não é o total antes dos descontos" e passou a dizer que o salário-base é o valor antes dos descontos, que os descontos são previdência e imposto de renda e que em alguns meses a folha traz outros valores. O pipeline continua guardando só o salário-base e o valor depois dos descontos.
   - **Média e período da verba:** a média por mês agora divide pelos meses do período (do primeiro ao último com nota), inclusive os vazios; antes dividia só pelos meses com nota e ficava maior para 5 senadores com meses sem nota. Quando as notas terminam bem antes da última atualização (Efraim Filho e Ana Paula Lobato, até julho), a guia diz que não há nota reembolsada depois daquele mês, o que é verdade porque o total do ano bate com o resumo do Senado (D035).
@@ -654,4 +659,29 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 - **Por quê:** é a única opção que resolve o peso sem depender de um serviço de terceiros e sem custo, e a de reserva mantém o site funcionando se a cópia faltar.
 - **Descartado:** só `preconnect` e menos fotos no mosaico (ajuda, mas não reduz o peso de cada foto); redimensionar na hora no Cloudflare (não verificado: permissão e limites do plano gratuito).
 - **Pendente:** rodar este passo faz parte do build do site; ele ainda não está na rotina diária (que não existe).
+- **Status:** aceita.
+
+## D048: Só o ano atual e o anterior, com troca de ano na página do senador
+
+- **Contexto:** o site só mostrava o último ano com dados ("Resumo de 2026"), mas o pipeline coletava, limpava e verificava as despesas de 2008 a 2026 em toda execução: 19 arquivos, 154 mil despesas, 1.539 consultas de resumo por verificação (uns 3 minutos) e 25 mil linhas de despesa mensal no banco. Os anos antigos não apareciam em tela nenhuma.
+- **Decisão (23/11/2026, do mantenedor):**
+  1. **O projeto processa só o ano atual e o anterior** (`anos_do_projeto()`, em `config.py`). A coleta, a limpeza e as verificações usam esses dois anos por padrão (`--anos` continua aceitando outro intervalo). A limpeza ignora arquivos de outros anos, mesmo que existam em `data/raw/`.
+  2. **A página do senador abre num ano e deixa trocar para o outro.** O botão "Ver os dados de 2025 →" muda a página inteira para o ano escolhido. O endereço do ano que abre é o do senador (`/senador/{endereço}/`); o outro ano leva o ano no endereço (`/senador/{endereço}/2025/`), o que permite compartilhar o link de um ano.
+  3. **Qual ano abre (regra de dois anos):** o atual, quando a verba dele já tem **pelo menos dois meses** (com um mês só, o "mês de maior uso" e a média não dizem nada, D030); senão o anterior, se houver. Se o atual for o único, abre o atual. Um ano só é oferecido se a verba dele foi provada (D035), ou se é o ano dos dados e há algo provado "de agora".
+  4. **O que muda com o ano:** a verba (total, mês a mês, categorias, mês de maior uso), os fornecedores e, desde a D049, a moradia. **Salário, equipe e contato valem para um instante** (a folha do último mês, a lista de servidores e a página mensal de hoje) e **só aparecem no ano dos dados**: o Senadados não tem como provar essas coisas para o ano anterior, então, pela D025, elas simplesmente não aparecem quando se escolhe 2025.
+- **Por quê:** o histórico antigo custava tempo e manutenção e não chegava ao cidadão. Dois anos bastam para a regra do início de cada ano: em janeiro, o ano novo ainda não tem despesa, e o perfil continua mostrando o último ano completo. Sai também o problema da cota de 2008 e 2009, que o Senado não explica.
+- **O que se perde:** qualquer gráfico de tendência de vários anos, a "versão 2" do README ("histórico desde 2008") e a frase "de 2010 a 2026 tudo bate", que fica só como registro histórico em [verificacoes.md](verificacoes.md). **É reversível:** o Senado mantém os arquivos antigos, e `--anos` recoleta qualquer intervalo.
+- **Altera:** a D026 (o histórico de cada senador desde 2008 deixa de ser mantido) e o resultado da D035 (2010 a 2026 viram registro histórico).
+- **Fora de escopo nesta decisão:** salário, equipe e moradia do ano anterior. **A moradia foi feita logo depois, na [D049](#d049-moradia-do-ano-anterior-com-três-fontes); salário e equipe seguem de fora.** Teriam de ser provados à parte (a folha de cada mês e, no caso da equipe, uma lista de servidores da época). **Não verificado:** se a API do Senado guarda a lista de servidores de 2025 e se o resumo de 2025 traz a moradia mês a mês; não testei.
+- **Status:** aceita.
+
+## D049: Moradia do ano anterior, com três fontes
+
+- **Contexto:** a D048 deixou de fora, no ano anterior, tudo o que é "foto de hoje". Em 23/11/2026 pesquisei, só em leitura, o que dava para provar de 2025 ([D048](decisoes.md#d048-só-o-ano-atual-e-o-anterior-com-troca-de-ano-na-página-do-senador)). A **moradia** foi a única que passou: o resumo da API, o resumo da tela do portal e a página mensal de benefícios existem por ano. O que não existe para 2025 é a quarta fonte da [D039](#d039-verificação-automática-da-moradia-mês-a-mês), a lista do mês, que só diz quem usa o benefício **hoje**.
+- **Decisão (23/11/2026):** o passo `moradia` confere **dois anos**: o atual, com as quatro fontes (como antes), e o anterior, com as **três** que existem para ele (`compare_moradia(..., usar_lista=False)`). Os resultados são `identico` ou `explicado` (a tela diz "renúncia" onde a API diz "não utilizou") ou `sem_explicacao`; **não há `pendente` no ano anterior**, porque ele nasce da comparação com a lista de hoje. Cada ano tem o seu freio de 5% (D037). A coleta do ano anterior grava `data/raw/moradia/uso_{ano}.json`, sem a lista.
+- **No JSON (contrato, versão 2):** `moradia` deixou de ser `{ano, meses}` e passou a `{ "anos": [{ano, meses}] }`, um bloco por ano provado, do mais antigo ao mais recente. A carga já aceitava vários anos (as tabelas têm a coluna `ano`) e não mudou. **Quebra o site:** `versao_contrato` sobe para 2.
+- **No site:** a moradia aparece na visão de 2025 (cartão, chips e a guia), e o texto "de onde vem este número" diz "três publicações" em 2025 e "quatro" em 2026. Só quem tem a verba de 2025 provada tem a página de 2025 (D048), então quem não era senador naquele ano não aparece como "não usou".
+- **Resultado em 23/11/2026:** 2025: **80 idênticos e 1 explicado, e a moradia aparece para 81**; 72 senadores usaram algum benefício. 2026: 77 idênticos, 1 explicado e 3 pendentes (como antes). Ensaio da carga na produção: `moradia_verificada` 78 → 159 linhas, `moradia_meses` 1.559.
+- **Limite:** com três fontes em vez de quatro, a prova do ano anterior é um pouco mais fraca: não há como saber se a página mensal estava atrasada em relação ao fim do ano. As três fontes vêm do mesmo sistema do Senado (D027). **Não verificado:** se o Senado corrige a página mensal de 2025 depois; o pipeline reconfere todo dia.
+- **Não entram:** o salário de 2025 (em nenhum mês de 2025 as cinco provas da D041 passam: de 8 a 35 senadores por mês têm folha suplementar com valores, contra 2 em outubro de 2026) e a equipe de 2025 (a conferência do resumo contra a tela dá 67 iguais, 6 diferentes e 8 sem dado, e 6 de 73 passa do freio de 5%; também **não verificado** a que data de 2025 o resumo se refere).
 - **Status:** aceita.

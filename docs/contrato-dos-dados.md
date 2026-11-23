@@ -28,7 +28,7 @@ Quais arquivos JSON o site lê e o que cada um traz. É o elo entre o banco e as
 
 | Campo | O que é | Vem de |
 |---|---|---|
-| `versao_contrato` | Número inteiro, começa em 1 | O código do exportador |
+| `versao_contrato` | Número inteiro, começa em 1 (**2** desde 23/11/2026: `moradia` passou a ter `anos`) | O código do exportador |
 | `data_referencia` | Dia da coleta, `AAAA-MM-DD` | `publico.metadados` |
 | `carregado_em` | Quando a carga foi feita | `publico.metadados` |
 | `anos` | Intervalo coletado, por exemplo `2008-2026` | `publico.metadados` |
@@ -86,7 +86,7 @@ Se dois nomes gerarem o mesmo `slug`, o exportador **para com erro** (falha fech
   },
   "equipe": { "ano": 2026, "pessoas": 0 },
   "contato": { "endereco": "…", "telefones": ["(61) 3303-0000"], "email": "…" },
-  "moradia": { "ano": 2026, "meses": [{ "mes": "2026-01", "auxilio_moradia": false, "imovel_funcional": true }] }
+  "moradia": { "anos": [{ "ano": 2026, "meses": [{ "mes": "2026-01", "auxilio_moradia": false, "imovel_funcional": true }] }] }
 }
 ```
 
@@ -96,12 +96,12 @@ Todos os nomes e valores do exemplo são inventados, só mostram o formato. Cada
 |---|---|---|
 | `quem_e` | ([D045](decisoes.md#d045-foto-e-mandato-do-senador-com-o-endereço-oficial-do-senado-e-verificação-entre-duas-listas)) `{ mandato: {inicio, fim, inicio_data, fim_data}, foto: {url, credito} }`, cada parte `null` se não provada, e o bloco todo `null` se nenhuma foi. `inicio` e `fim` são os anos (o que o site mostra) e as datas completas vão junto, em `AAAA-MM-DD`. O `credito` é "Foto oficial publicada pelo Senado Federal" | `publico.perfil` |
 | `salario` | `null` se o senador não passou nas cinco provas ([D041](decisoes.md#d041-verificação-automática-do-salário-pela-identidade-do-senador)). `basica` é o valor do salário no mês, antes dos descontos (conferido na folha de outubro; veja a D046) | `publico.salario` |
-| `cota.anos` | Só os anos em que a cota do senador passou na verificação (de 2010 em diante hoje). `null` se nenhum. `parcial` é verdadeiro no ano da `data_referencia`, para o site dizer "dados parciais, até [mês]". `maior_mes` é o mês de maior valor da série, **só o fato** ([D030](decisoes.md#d030-destaque-do-maior-mês-no-lugar-do-alerta-fora-do-padrão)) | `publico.despesas_mensais` |
+| `cota.anos` | Só os anos em que a cota do senador passou na verificação, entre o ano atual e o anterior ([D048](decisoes.md#d048-só-o-ano-atual-e-o-anterior-com-troca-de-ano-na-página-do-senador)). `null` se nenhum. `parcial` é verdadeiro no ano da `data_referencia`, para o site dizer "dados parciais, até [mês]". `maior_mes` é o mês de maior valor da série, **só o fato** ([D030](decisoes.md#d030-destaque-do-maior-mês-no-lugar-do-alerta-fora-do-padrão)) | `publico.despesas_mensais` |
 | `cota.anos[].categorias` | `nome` é o nome curto da tabela de [fontes-de-dados.md](fontes-de-dados.md#nomes-das-categorias-de-despesa); `nome_oficial` fica junto, para a explicação "de onde vem este número". Categoria nova do Senado usa o nome oficial nos dois campos | `publico.despesas_mensais` |
 | `fornecedores.anos` | Os mesmos anos da cota (a regra de exibição é a mesma). `empresas` traz as **10 maiores** por valor, e `total_empresas` diz quantas existem, porque há em média 50 por senador e ano e no máximo 1.503. `agrupados` traz pessoas físicas, documentos fora do padrão e despesas sem documento, **sem nome e sem documento** ([D008](decisoes.md#d008-pessoas-físicas-agrupadas-e-cpf-nunca-exibido)) | `publico.fornecedores_anuais` e `publico.fornecedores_agrupados_anuais` |
 | `equipe` | `null` se o gabinete não foi provado. Só o número de pessoas | `publico.equipe` |
 | `contato` | `null` se nenhum campo foi provado. Dentro dele, cada campo ausente é `null`. Os telefones vêm um por linha no banco e viram uma lista | `publico.contato` |
-| `moradia` | `null` se não foi provada (inclui os pendentes). Provada e sem nenhum mês de uso: `meses` vazio, e então o senador não usou nenhum benefício. Quem foi provado vem de `publico.moradia_verificada` (migração 003), porque `moradia_meses` não tem linha de quem não usou | `publico.moradia_verificada` e `publico.moradia_meses` |
+| `moradia` | **Versão 2 do contrato ([D049](decisoes.md#d049-moradia-do-ano-anterior-com-três-fontes)):** `{ "anos": [{ano, meses}] }`, um bloco por ano provado, do mais antigo ao mais recente. `null` se nenhum ano foi provado (inclui os pendentes). Ano provado e sem nenhum mês de uso: `meses` vazio, e então o senador não usou nenhum benefício. Quem foi provado vem de `publico.moradia_verificada` (migração 003), porque `moradia_meses` não tem linha de quem não usou | `publico.moradia_verificada` e `publico.moradia_meses` |
 
 ### `verificacoes.json`
 

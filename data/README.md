@@ -6,7 +6,7 @@ Esta pasta guarda os dados baixados do Senado para análise e conferência. **Na
 
 | Caminho | O que é | Origem |
 |---|---|---|
-| `raw/api/ceaps_AAAA.json` | Despesas da cota de 2008 a 2026 (fonte principal) | API `despesas_ceaps/{ano}` |
+| `raw/api/ceaps_AAAA.json` | Despesas da cota do ano atual e do anterior (fonte principal; [D048](../docs/decisoes.md#d048-só-o-ano-atual-e-o-anterior-com-troca-de-ano-na-página-do-senador)) | API `despesas_ceaps/{ano}` |
 | `raw/recursos/{código}.json` | Resumo de recursos de cada um dos 81 senadores em exercício, **baixado à mão em 11/11** (o pipeline não o usa: baixa o resumo na hora) | API `recursos-utilizados` |
 | `raw/senadores_atuais.json` | Lista dos 81 senadores em exercício | API `senadores` |
 | `raw/perfil/` | Lista legislativa atual, auxílio-moradia e escritórios de apoio, **baixados à mão em 11 e 12/11** (o pipeline não os usa) | APIs do Senado |

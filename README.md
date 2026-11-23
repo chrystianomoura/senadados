@@ -65,7 +65,7 @@ Todo número tem origem oficial, uma consulta que o reproduz e uma data. Quando 
 - **Tudo ou nada, para o que compara senadores:** uma informação que compara senadores (ranking, posição) só aparece se todos a tiverem e os dados baterem para todos. Se um só falhar, ninguém a recebe. **Dados descritivos de cada senador** (contato, equipe do gabinete) aparecem para quem foi provado; se falharem em mais de 5% dos senadores, o problema é provavelmente nosso ou da API, e ele some para todos.
 - **Sem selos na tela:** o que não se comprova simplesmente não é mostrado. A lista do que está pendente fica na página de verificações.
 
-O primeiro teste: a cota de 2026, das despesas detalhadas contra o resumo do Senado. **em 2026, 73 de 80 senadores com valores batem no centavo**, e os outros 7 diferem só por linhas sem categoria que o resumo não conta. De 2010 a 2026 todos os anos bateram; 2008 e 2009 não bateram e ficam de fora (conferido em 18/11/2026). Os resultados ficam numa página pública de verificações.
+O primeiro teste: a cota de 2026, das despesas detalhadas contra o resumo do Senado. **em 2026, 73 de 80 senadores com valores batem no centavo**, e os outros 7 diferem só por linhas sem categoria que o resumo não conta. Em 18/11/2026, de 2010 a 2026 todos os anos bateram e 2008 e 2009 não; desde 23/11/2026 o Senadados processa só o ano atual e o anterior ([D048](docs/decisoes.md#d048-só-o-ano-atual-e-o-anterior-com-troca-de-ano-na-página-do-senador)), e os anos antigos ficam só como registro histórico. Os resultados ficam na página pública de verificações.
 
 ---
 
@@ -75,7 +75,7 @@ Todos vêm do **próprio Senado Federal**, são públicos e **não exigem login 
 
 | Fonte | O que traz |
 |---|---|
-| Arquivos de despesas da cota (CEAPS), de 2008 a 2026 | Cada nota fiscal reembolsada: senador, categoria, fornecedor, valor, data |
+| Arquivos de despesas da cota (CEAPS), do ano atual e do anterior (o Senado publica de 2008 em diante) | Cada nota fiscal reembolsada: senador, categoria, fornecedor, valor, data |
 | API de dados abertos administrativos do Senado | Despesas, perfil dos senadores, resumo de recursos por senador, equipe dos gabinetes, escritórios de apoio, moradia, folha de pagamento |
 | Página de transparência de cada senador | Os mesmos valores por ano (2023 a 2026) e o uso de moradia mês a mês, usados para conferir |
 | API de dados abertos legislativos do Senado | Foto, nome completo, partido, votações, projetos, comissões |
@@ -210,7 +210,7 @@ Documentos (índice completo em [docs/README.md](docs/README.md)):
 | **Pipeline e prova real** (feito em 18/11/2026) | Coleta, limpeza e cinco verificações automáticas (cota, equipe, moradia, contato e salário). Resumo em [docs/andamento.md](docs/andamento.md) |
 | **Banco na nuvem** (feito em 19/11/2026) | Esquemas público e interno, papéis de menor privilégio, migrações e carga repetível dos dados provados no Neon ([D042](docs/decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível), [D043](docs/decisoes.md#d043-migrações-em-sql-puro-driver-psycopg-e-carga-que-ensaia-antes-de-gravar)) |
 | **MVP (versão 1)** | Perfil do senador, verba por categoria e mês, principais fornecedores (de 2009 em diante), número de pessoas na equipe, moradia mês a mês, salário (quando comprovado), ranking e comparação entre os senadores em exercício, destaque do maior mês e a página de verificações |
-| **Versão 2** | Atuação parlamentar (votações, projetos, comissões), histórico desde 2008 e, se fizer sentido, um modelo de anomalias |
+| **Versão 2** | Atuação parlamentar (votações, projetos, comissões) e, se fizer sentido, um modelo de anomalias. O histórico desde 2008 saiu do plano em 23/11/2026: o Senadados processa só o ano atual e o anterior ([D048](docs/decisoes.md#d048-só-o-ano-atual-e-o-anterior-com-troca-de-ano-na-página-do-senador)) |
 | **Versão 3 (talvez)** | Dados de outras fontes públicas, como o TSE. Aumenta muito o escopo e a responsabilidade |
 
 Este roadmap é uma intenção, não uma promessa, e será revisado conforme os dados reais mostrarem o que é possível.
