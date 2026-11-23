@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { AbreCartao } from "./AbreCartao";
 import { FotoSenador } from "./FotoSenador";
 import { Barras, GraficoMensal, Linha, Origem, Pergunta } from "./perguntas";
@@ -5,6 +7,7 @@ import {
   dataBr, mandatoTexto, mesAno, nomeEstado, nomeMes, nomePartido, periodo, periodoAno, reais, reaisMil, telefone,
   tituloNome, usoCurto, usoTexto,
 } from "@/lib/formato";
+import { anoPadrao, anosDisponiveis, enderecoDoAno } from "@/lib/anos";
 import type { Perfil } from "@/lib/types";
 
 const maiuscula = (texto: string) => texto.charAt(0).toLocaleUpperCase("pt-BR") + texto.slice(1);
@@ -46,12 +49,24 @@ function Chip({ usou, texto }: { usou: boolean; texto: string }) {
   );
 }
 
-export function PerfilPagina({ perfil, dataReferencia }: { perfil: Perfil; dataReferencia: string }) {
+export function PerfilPagina({
+  perfil, dataReferencia, ano,
+}: {
+  perfil: Perfil;
+  dataReferencia: string;
+  /** O ano que a página mostra (D048). */
+  ano: number;
+}) {
   const nome = tituloNome(perfil.nome);
   const atualizado = dataBr(dataReferencia);
   const portal = `https://www6g.senado.leg.br/transparencia/sen/${perfil.codigo}/`;
 
-  const cota = perfil.cota?.anos.at(-1) ?? null;
+  // O ano mostrado muda a verba e os fornecedores. Salário, equipe, moradia e contato valem para um instante
+  // e só aparecem no ano dos dados: o que não foi provado para o ano escolhido não aparece (D025).
+  const anoDosDados = Number(dataReferencia.slice(0, 4));
+  const anos = anosDisponiveis(perfil, anoDosDados);
+  const padrao = anoPadrao(perfil, anoDosDados);
+  const cota = perfil.cota?.anos.find((a) => a.ano === ano) ?? null;
   const mesesCota = cota?.meses.map((m) => m.mes) ?? [];
   const periodoCota = periodo(mesesCota);
   // Com um mês só, "o maior mês" não diz nada: o destaque e o aviso só aparecem com 2 meses ou mais.
@@ -68,13 +83,13 @@ export function PerfilPagina({ perfil, dataReferencia }: { perfil: Perfil; dataR
     cota.ano === Number(dataReferencia.slice(0, 4)) &&
     ultimoMesCota > 0 &&
     ultimoMesCota < mesReferencia - 1;
-  const forn =
-    perfil.fornecedores?.anos.find((a) => a.ano === cota?.ano) ??
-    perfil.fornecedores?.anos.at(-1) ??
-    null;
+  const forn = perfil.fornecedores?.anos.find((a) => a.ano === ano) ?? null;
 
-  const { salario, equipe, contato, moradia } = perfil;
-  const anoResumo = cota?.ano ?? salario?.ano ?? equipe?.ano ?? moradia?.ano ?? null;
+  const salario = perfil.salario?.ano === ano ? perfil.salario : null;
+  const equipe = perfil.equipe?.ano === ano ? perfil.equipe : null;
+  const moradia = perfil.moradia?.anos.find((a) => a.ano === ano) ?? null;
+  const contato = ano === anoDosDados ? perfil.contato : null;
+  const anoResumo = cota || salario || equipe || moradia ? ano : null;
 
   const imovel = moradia?.meses.filter((m) => m.imovel_funcional).length ?? 0;
   const auxilio = moradia?.meses.filter((m) => m.auxilio_moradia).length ?? 0;
@@ -160,6 +175,17 @@ export function PerfilPagina({ perfil, dataReferencia }: { perfil: Perfil; dataR
           <>
             <div className="sumhead">
               <h2>Resumo de {anoResumo}</h2>
+              {anos.length > 1 ? (
+                <nav className="anos" aria-label="Trocar o ano dos dados">
+                  {anos
+                    .filter((a) => a !== ano)
+                    .map((a) => (
+                      <Link key={a} href={enderecoDoAno(perfil.slug, a, padrao)} className="ver-ano">
+                        Ver os dados de {a} →
+                      </Link>
+                    ))}
+                </nav>
+              ) : null}
             </div>
             <div className="sum">
               {salario ? (
@@ -462,7 +488,7 @@ export function PerfilPagina({ perfil, dataReferencia }: { perfil: Perfil; dataR
             </Linha>
             <Origem
               onde="Na página de benefícios do senador, no portal de transparência do Senado, que informa o uso mês a mês."
-              como="Contamos os meses em que o Senado informa que o senador usou cada benefício, e conferimos quatro publicações do Senado entre si."
+              como={`Contamos os meses em que o Senado informa que o senador usou cada benefício, e conferimos ${ano === anoDosDados ? "quatro" : "três"} publicações do Senado entre si.`}
               atualizado={atualizado}
               href={portal}
               textoLink="Ver a página do senador no portal do Senado"

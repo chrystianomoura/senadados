@@ -5,7 +5,9 @@
   "description": "Site do Senadados: páginas estáticas geradas a partir dos arquivos JSON do pipeline",
   "engines": { "node": ">=22.12" },
   "scripts": {
+    "predev": "node scripts/copiar-evidencias.mjs",
     "dev": "next dev",
+    "prebuild": "node scripts/copiar-evidencias.mjs",
     "build": "next build",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"

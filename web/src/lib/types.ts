@@ -86,15 +86,43 @@ export interface MesMoradia {
   imovel_funcional: boolean;
 }
 
-export interface Moradia {
+export interface MoradiaAno {
   ano: number;
   meses: MesMoradia[];
+}
+
+/** Um bloco por ano provado (D049); o ano que já passou vale com três fontes em vez de quatro. */
+export interface Moradia {
+  anos: MoradiaAno[];
 }
 
 export interface QuemE {
   foto: { url: string; credito: string } | null;
   /** Anos do mandato (o que o site mostra) e as datas completas, `AAAA-MM-DD`. */
   mandato: { inicio: number; fim: number; inicio_data: string; fim_data: string } | null;
+}
+
+export interface ResumoVerificacao {
+  verificacao: string;
+  ano: number;
+  identicos: number;
+  explicados: number;
+  pendentes: number;
+  ocultos: number;
+  verificado_em: string;
+}
+
+export interface MotivoVerificacao {
+  verificacao: string;
+  ano: number;
+  situacao: "pendente" | "oculto";
+  motivo: string;
+  qtd: number;
+}
+
+export interface Verificacoes {
+  resumo: ResumoVerificacao[];
+  motivos: MotivoVerificacao[];
 }
 
 export interface Perfil extends ItemLista {

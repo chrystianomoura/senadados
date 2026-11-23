@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Cabecalho } from "@/components/base";
 import { PerfilPagina } from "@/components/PerfilPagina";
 import { metadados, perfil, slugs } from "@/lib/dados";
+import { anoPadrao } from "@/lib/anos";
 import { tituloNome } from "@/lib/formato";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -27,10 +28,11 @@ export default async function PaginaDoSenador({ params }: Props) {
   const { slug } = await params;
   const dados = perfil(slug);
   const meta = metadados();
+  const ano = anoPadrao(dados, Number(meta.data_referencia.slice(0, 4)));
   return (
     <>
       <Cabecalho />
-      <PerfilPagina perfil={dados} dataReferencia={meta.data_referencia} />
+      <PerfilPagina perfil={dados} dataReferencia={meta.data_referencia} ano={ano} />
     </>
   );
 }
