@@ -185,6 +185,26 @@ def collect_moradia(
     return year, records, listed["data"]
 
 
+def collect_ano_anterior(
+    client: httpx.Client,
+    raw_dir: Path,
+    codes: Iterable[int],
+    year: int,
+    *,
+    workers: int = 8,
+) -> dict:
+    """Moradia de um ano que já passou (D049): as três fontes por senador, sem a lista do mês."""
+    codes = list(codes)
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        fetched = list(pool.map(lambda code: fetch_senator(client, code, year), codes))
+    records = dict(zip(codes, fetched, strict=True))
+    write_json(
+        raw_dir / "moradia" / f"uso_{year}.json",
+        {"ano": year, "senadores": {str(c): r for c, r in records.items()}},
+    )
+    return records
+
+
 # ---------------------------------------------------------------------------
 # Comparação
 # ---------------------------------------------------------------------------
@@ -197,8 +217,14 @@ class Result:
     exibir: bool = False
 
 
-def compare_moradia(cod_senador: int, year: int, record: dict, listed: dict | None) -> Result:
-    """Compara as quatro fontes para um senador."""
+def compare_moradia(
+    cod_senador: int, year: int, record: dict, listed: dict | None, *, usar_lista: bool = True
+) -> Result:
+    """Compara as quatro fontes para um senador.
+
+    A quarta, a lista do mês, só existe para hoje: num ano que já passou (D049), `usar_lista` é
+    falso e valem as três primeiras.
+    """
 
     def result(kind: str, detail: str | None = None) -> Result:
         return Result(cod_senador, year, kind, detail)
@@ -240,6 +266,8 @@ def compare_moradia(cod_senador: int, year: int, record: dict, listed: dict | No
                 )
             renounced = renounced or portal["estado"] == RENOUNCED
 
+    if not usar_lista:
+        return result(EXPLAINED if renounced else IDENTICAL)
     if listed is None:
         return result(UNEXPLAINED, "o senador não consta na lista de moradia do mês")
 
@@ -282,13 +310,22 @@ def build_listed(entries: list[dict]) -> dict[str, dict]:
 
 
 def verify_moradia(
-    senators: dict[int, str], year: int, records: dict, entries: list[dict]
+    senators: dict[int, str],
+    year: int,
+    records: dict,
+    entries: list[dict],
+    *,
+    usar_lista: bool = True,
 ) -> list[Result]:
-    listed = build_listed(entries)
+    listed = build_listed(entries) if usar_lista else {}
     results = []
     for code in sorted(senators):
         record = records.get(code) or records.get(str(code)) or {"erro": "senador sem dados"}
-        results.append(compare_moradia(code, year, record, listed.get(normalize(senators[code]))))
+        results.append(
+            compare_moradia(
+                code, year, record, listed.get(normalize(senators[code])), usar_lista=usar_lista
+            )
+        )
     return apply_release_rule(results)
 
 
@@ -297,11 +334,13 @@ def verify_moradia(
 # ---------------------------------------------------------------------------
 def write_results(
     connection: sqlite3.Connection,
-    results: list[Result],
-    records: dict,
-    year: int,
+    por_ano: dict[int, tuple[list[Result], dict]],
     when: datetime,
 ) -> None:
+    """Grava o resultado e o uso mês a mês de cada ano.
+
+    `por_ano` é ano -> (resultados, registros).
+    """
     connection.execute("DROP TABLE IF EXISTS verificacao_moradia")
     connection.execute("DROP TABLE IF EXISTS moradia_meses")
     connection.execute(
@@ -312,37 +351,42 @@ def write_results(
         "CREATE TABLE moradia_meses (cod_senador INTEGER, ano INTEGER, mes TEXT, "
         "auxilio_moradia INTEGER, imovel_funcional INTEGER, PRIMARY KEY (cod_senador, ano, mes))"
     )
-    connection.executemany(
-        "INSERT INTO verificacao_moradia VALUES (?, ?, ?, ?, ?)",
-        [(r.cod_senador, r.ano, r.resultado, r.detalhe, int(r.exibir)) for r in results],
-    )
-    rows = []
-    for r in results:
-        record = records.get(r.cod_senador) or records.get(str(r.cod_senador)) or {}
-        for month, aux, imo in record.get("mensal", []):
-            mm, yy = month.split("/")
-            rows.append((r.cod_senador, year, f"{yy}-{mm}", int(aux), int(imo)))
-    connection.executemany("INSERT INTO moradia_meses VALUES (?, ?, ?, ?, ?)", rows)
-
     ensure_verificacoes_table(connection)
     connection.execute("DELETE FROM verificacoes WHERE nome = 'moradia'")
-    kinds = Counter(r.resultado for r in results)
-    connection.execute(
-        "INSERT INTO verificacoes VALUES ('moradia', ?, ?, ?, ?, ?)",
-        (
-            year,
-            kinds[IDENTICAL],
-            kinds[EXPLAINED],
-            kinds[UNEXPLAINED],
-            when.isoformat(timespec="seconds"),
-        ),
-    )
+    stamp = when.isoformat(timespec="seconds")
+    for year, (results, records) in sorted(por_ano.items()):
+        connection.executemany(
+            "INSERT INTO verificacao_moradia VALUES (?, ?, ?, ?, ?)",
+            [(r.cod_senador, r.ano, r.resultado, r.detalhe, int(r.exibir)) for r in results],
+        )
+        rows = []
+        for r in results:
+            record = records.get(r.cod_senador) or records.get(str(r.cod_senador)) or {}
+            for month, aux, imo in record.get("mensal", []):
+                mm, yy = month.split("/")
+                rows.append((r.cod_senador, year, f"{yy}-{mm}", int(aux), int(imo)))
+        connection.executemany("INSERT INTO moradia_meses VALUES (?, ?, ?, ?, ?)", rows)
+        kinds = Counter(r.resultado for r in results)
+        connection.execute(
+            "INSERT INTO verificacoes VALUES ('moradia', ?, ?, ?, ?, ?)",
+            (year, kinds[IDENTICAL], kinds[EXPLAINED], kinds[UNEXPLAINED], stamp),
+        )
 
 
 def run(
-    raw_dir: Path, database: Path, client: httpx.Client, today: date, clock=now_local
+    raw_dir: Path,
+    database: Path,
+    client: httpx.Client,
+    today: date,
+    clock=now_local,
+    *,
+    com_ano_anterior: bool = True,
 ) -> list[Result]:
-    """Coleta a moradia agora e verifica contra a lista de senadores do banco limpo."""
+    """Coleta a moradia agora e verifica contra a lista de senadores do banco limpo.
+
+    Além do ano atual (quatro fontes), confere o ano anterior com as três fontes que existem para
+    ele (D049). Devolve os resultados dos dois anos, o atual primeiro.
+    """
     if not database.exists():
         raise VerificacaoError(f"falta {database}; rode a limpeza antes")
     with closing(sqlite3.connect(database)) as connection:
@@ -354,8 +398,17 @@ def run(
         except ColetaError as error:
             raise VerificacaoError(str(error)) from error
         results = verify_moradia(senators, year, records, entries)
+        por_ano = {year: (results, records)}
+        if com_ano_anterior:
+            anterior = year - 1
+            records_anterior = collect_ano_anterior(client, raw_dir, senators, anterior)
+            results_anterior = verify_moradia(
+                senators, anterior, records_anterior, [], usar_lista=False
+            )
+            por_ano[anterior] = (results_anterior, records_anterior)
+            results = results + results_anterior
         with connection:
-            write_results(connection, results, records, year, clock())
+            write_results(connection, por_ano, clock())
     return results
 
 
@@ -373,14 +426,16 @@ def main(argv: list[str] | None = None) -> int:
         print(f"erro: {error}", file=sys.stderr)
         return 1
 
-    kinds = Counter(r.resultado for r in results)
-    print(f"senadores: {len(results)}")
-    for kind in (IDENTICAL, EXPLAINED, PENDING, UNEXPLAINED):
-        print(f"{kind}: {kinds[kind]}")
-    print(f"moradia exibida para: {sum(r.exibir for r in results)}")
-    for result in results:
-        if result.resultado in (PENDING, UNEXPLAINED):
-            print(f"  [{result.resultado}] senador {result.cod_senador}: {result.detalhe}")
+    for year in sorted({r.ano for r in results}, reverse=True):
+        of_year = [r for r in results if r.ano == year]
+        kinds = Counter(r.resultado for r in of_year)
+        print(f"== {year}: {len(of_year)} senadores")
+        for kind in (IDENTICAL, EXPLAINED, PENDING, UNEXPLAINED):
+            print(f"{kind}: {kinds[kind]}")
+        print(f"moradia exibida para: {sum(r.exibir for r in of_year)}")
+        for result in of_year:
+            if result.resultado in (PENDING, UNEXPLAINED):
+                print(f"  [{result.resultado}] senador {result.cod_senador}: {result.detalhe}")
     return 0
 
 

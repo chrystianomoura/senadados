@@ -1,5 +1,6 @@
 """Constantes compartilhadas pelas etapas do pipeline."""
 
+from datetime import date
 from pathlib import Path
 
 BASE_URL = "https://adm.senado.gov.br/adm-dadosabertos/api/v1"
@@ -12,6 +13,14 @@ LEGIS_URL = "https://legis.senado.leg.br/dadosabertos"
 
 # A cota (CEAPS) tem despesas a partir de 2008.
 FIRST_YEAR = 2008
+
+
+
+def anos_do_projeto(hoje: date | None = None) -> list[int]:
+    """Os anos que o Senadados processa: o atual e o anterior (D048)."""
+    ano = (hoje or date.today()).year
+    return [ano - 1, ano]
+
 
 ROOT = Path(__file__).resolve().parents[3]
 RAW_DIR = ROOT / "data" / "raw"

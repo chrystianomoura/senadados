@@ -321,9 +321,14 @@ def test_load_raw_pede_a_coleta_quando_nao_ha_despesas(tmp_path):
 # --- linha de comando -------------------------------------------------------
 def test_linha_de_comando_grava_o_banco(tmp_path, capsys):
     raw = write_raw(tmp_path, [row()])
+    # O projeto processa o ano da referência e o anterior (D048): 2023 e 2024.
+    (raw / "api" / "ceaps_2023.json").write_text("[]", encoding="utf-8")
+    manifest = json.loads((raw / "coleta.json").read_text(encoding="utf-8"))
+    manifest["despesas"]["2023"] = manifest["despesas"]["2024"]
+    (raw / "coleta.json").write_text(json.dumps(manifest), encoding="utf-8")
     output = tmp_path / "db.sqlite"
     code = limpeza.main(
-        ["--raw", str(raw), "--saida", str(output), "--data-referencia", "2026-11-18"]
+        ["--raw", str(raw), "--saida", str(output), "--data-referencia", "2024-11-18"]
     )
     assert code == 0
     assert output.exists()
@@ -363,3 +368,17 @@ def test_load_raw_recusa_dados_sem_registro_de_coleta(tmp_path):
     (raw / "coleta.json").unlink()
     with pytest.raises(limpeza.LimpezaError, match="lista de senadores não tem data"):
         limpeza.load_raw(raw)
+
+
+# --- só os anos do projeto (D048) ---------------------------------------------
+def test_load_raw_le_so_os_anos_pedidos_e_ignora_os_outros(tmp_path):
+    raw = write_raw(tmp_path, [{"ano": 2024}])
+    (raw / "api" / "ceaps_2020.json").write_text(json.dumps([{"ano": 2020}]), encoding="utf-8")
+    _senadores, rows, years = limpeza.load_raw(raw, [2024])
+    assert years == [2024] and rows == [{"ano": 2024}]
+
+
+def test_load_raw_pede_a_coleta_quando_falta_um_dos_anos_pedidos(tmp_path):
+    raw = write_raw(tmp_path, [{"ano": 2024}])
+    with pytest.raises(limpeza.LimpezaError, match="faltam ceaps_2023.json"):
+        limpeza.load_raw(raw, [2023, 2024])

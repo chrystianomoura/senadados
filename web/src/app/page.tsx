@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { BuscaSenadores } from "@/components/BuscaSenadores";
 import { Cabecalho } from "@/components/base";
 import { AberturaMosaico } from "@/components/abertura/Mosaico";
@@ -29,6 +31,9 @@ export default function Inicio() {
             <p>
               Conferimos se as publicações do Senado concordam entre si. O que não bate, ou não dá
               para provar, simplesmente não aparece.
+            </p>
+            <p>
+              <Link href="/verificacoes/">Veja o que foi conferido</Link>
             </p>
           </li>
           <li>

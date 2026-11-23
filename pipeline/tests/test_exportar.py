@@ -80,7 +80,7 @@ def test_a_lista_tem_um_item_por_senador_em_ordem_de_codigo(saida):
 
 def test_metadados(saida):
     assert saida["metadados"] == {
-        "versao_contrato": 1, "data_referencia": "2026-11-18",
+        "versao_contrato": 2, "data_referencia": "2026-11-18",
         "carregado_em": "2026-11-19T12:00:00+00:00", "anos": "2008-2026", "senadores": 3,
         "fonte": "Senado Federal, dados abertos",
     }
@@ -195,13 +195,29 @@ def test_contato_todo_vazio_vira_nulo():
     assert exportar.montar(dados)["perfis"]["alan-rick"]["contato"] is None
 
 
+def test_moradia_traz_um_bloco_por_ano_provado_do_mais_antigo_ao_mais_recente():
+    dados = dados_base()
+    dados["moradia_verificada"] = [(1, 2025), (1, 2026)]
+    dados["moradia_meses"] = [
+        (1, 2026, "2026-01", False, True),
+        (1, 2025, "2025-12", True, False),
+    ]
+    moradia = exportar.montar(dados)["perfis"]["alan-rick"]["moradia"]
+    assert [a["ano"] for a in moradia["anos"]] == [2025, 2026]
+    assert moradia["anos"][0]["meses"] == [
+        {"mes": "2025-12", "auxilio_moradia": True, "imovel_funcional": False}
+    ]
+
+
 def test_moradia_em_ordem_de_mes(saida):
-    meses = saida["perfis"]["alan-rick"]["moradia"]["meses"]
+    meses = saida["perfis"]["alan-rick"]["moradia"]["anos"][-1]["meses"]
     assert [m["mes"] for m in meses] == ["2026-01", "2026-02"]
 
 
 def test_moradia_provada_sem_uso_tem_meses_vazio_e_nao_provada_e_nula(saida):
-    assert saida["perfis"]["nelsinho-trad-filho"]["moradia"] == {"ano": 2026, "meses": []}
+    assert saida["perfis"]["nelsinho-trad-filho"]["moradia"] == {
+        "anos": [{"ano": 2026, "meses": []}]
+    }
     assert saida["perfis"]["ana-paula-lobato"]["moradia"] is None
 
 

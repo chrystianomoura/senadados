@@ -2,7 +2,9 @@
 
 O Senado Federal publica, na internet, quanto cada senador usa da verba do mandato e quantas pessoas trabalham no gabinete. Ao reunir esses dados, o Senadados encontrou lugares em que **duas publicações oficiais do próprio Senado mostram números diferentes para a mesma coisa**.
 
-Este documento mostra cada caso com **imagens (prints) das telas e dos arquivos do Senado**, para que qualquer pessoa confira sozinha. Tudo foi capturado em **18/11/2026, entre 16h49 e 16h53** (horário de Brasília).
+Este documento mostra cada caso com **imagens (prints) das telas e dos arquivos do Senado**, para que qualquer pessoa confira sozinha. Tudo foi capturado de novo em **23/11/2026, entre 17h56 e 18h05** (horário de Brasília). As imagens de 18/11/2026 foram substituídas por estas; o Senado continua mostrando as mesmas diferenças.
+
+> **Atenção:** desde 23/11/2026 o Senadados processa só o ano atual e o anterior ([D048](decisoes.md#d048-só-o-ano-atual-e-o-anterior-com-troca-de-ano-na-página-do-senador)). Os casos **3** (cota de 2008 e 2009) e **5** (datas de 2024) tratam de anos que o site não usa mais e **saíram da página "Verificações"**; ficam neste documento só como registro.
 
 ## Por que isso importa
 
@@ -15,7 +17,7 @@ Por isso o Senadados só mostra um número quando **as publicações do Senado c
 - **Não afirma qual dos números está certo.** Só mostra que eles são diferentes.
 - **Não afirma o motivo.** Pode ser uma data de atualização diferente, um critério de contagem diferente ou outra causa. Não sabemos.
 - **Não afirma que alguém fez algo errado.** Os senadores aparecem porque o Senado publica os dados por senador, e é nessa publicação que a diferença está.
-- **Só entra aqui o que tem print.** O que encontramos e não conseguimos mostrar numa imagem fica de fora. As contagens que cobrem todos os gabinetes ou todos os senadores (por exemplo, “em 80 dos 81”) foram feitas pelo Senadados e podem ser refeitas com o código do projeto; os prints mostram um caso de cada.
+- **Só entra aqui o que tem print.** O que encontramos e não conseguimos mostrar numa imagem fica de fora. As contagens que cobrem todos os gabinetes ou todos os senadores (por exemplo, “em 80 dos 81”) foram feitas pelo Senadados **em 18/11/2026** e não foram refeitas em 23/11/2026; ao contrário dos prints, elas podem ser refeitas com o código do projeto; os prints mostram um caso de cada.
 
 ## Como conferir
 
@@ -31,7 +33,7 @@ Cada caso traz o endereço da tela ou do arquivo e o passo a passo. A tela de ca
 
 ![Tela do portal de transparência: gabinete do senador Camilo Santana com 27 pessoas, todas comissionadas](evidencias/01-portal-camilo-pessoal.png)
 
-**Na exportação da mesma página** (o botão “Exportar HTML”), gerada às 16h49, o gabinete tem **28 pessoas**: 27 comissionadas e **1 efetiva**:
+**Na exportação da mesma página** (o botão “Exportar HTML”), gerada às 17h56, o gabinete tem **28 pessoas**: 27 comissionadas e **1 efetiva**:
 
 ![Relatório exportado pelo Senado: gabinete do senador Camilo Santana com 28 pessoas, sendo 27 comissionadas e 1 efetiva](evidencias/02-exportacao-camilo-pessoal.png)
 
@@ -97,11 +99,11 @@ Mas o **arquivo oficial de despesas de 2008** traz notas fiscais reembolsadas pa
 
 **Onde:** página “Recursos Utilizados em 2026” do senador Hamilton Mourão, bloco “Cotas”, e o arquivo oficial de despesas de 2026.
 
-A **tela** mostra um total de cota de **R$ 445.712,33**, somando as sete categorias:
+A **tela** mostra um total de cota de **R$ 448.186,05**, somando as sete categorias:
 
 ![Tela do portal de transparência: cota de 2026 do senador Hamilton Mourão, com total de R$ 445.712,33](evidencias/09-portal-mourao-2026.png)
 
-O **arquivo oficial de 2026** soma **R$ 480.712,33** para o mesmo senador. A diferença, de **R$ 35.000,00**, é exatamente a soma de **10 linhas em que a categoria da despesa está em branco**:
+O **arquivo oficial de 2026** soma **R$ 483.186,05** para o mesmo senador. A diferença, de **R$ 35.000,00**, é exatamente a soma de **10 linhas em que a categoria da despesa está em branco**:
 
 ![Linhas do arquivo oficial com categoria em branco para o senador Hamilton Mourão e a conta da diferença](evidencias/10-arquivo-mourao-2026.png)
 

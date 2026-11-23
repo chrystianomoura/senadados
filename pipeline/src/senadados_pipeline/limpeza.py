@@ -22,7 +22,7 @@ import pandas as pd
 from pandera.errors import SchemaError, SchemaErrors
 
 from senadados_pipeline.coleta import read_manifest
-from senadados_pipeline.config import CLEAN_DB, FIRST_YEAR, RAW_DIR
+from senadados_pipeline.config import CLEAN_DB, FIRST_YEAR, RAW_DIR, anos_do_projeto
 from senadados_pipeline.esquemas import (
     CLEAN_SENADORES,
     RAW_DESPESAS,
@@ -178,7 +178,9 @@ def check_collection_order(manifest: dict, years: list[int]) -> None:
         )
 
 
-def load_raw(raw_dir: Path) -> tuple[list[dict], list[dict], list[int]]:
+def load_raw(
+    raw_dir: Path, years: list[int] | None = None
+) -> tuple[list[dict], list[dict], list[int]]:
     """Lê a lista de senadores e as despesas de todos os anos coletados."""
     list_path = raw_dir / "senadores_atuais.json"
     if not list_path.exists():
@@ -188,7 +190,14 @@ def load_raw(raw_dir: Path) -> tuple[list[dict], list[dict], list[int]]:
     if not isinstance(senadores, list) or not senadores:
         raise LimpezaError("a lista de senadores está vazia ou em formato inesperado")
 
-    files = sorted((raw_dir / "api").glob("ceaps_*.json"))
+    if years is None:
+        files = sorted((raw_dir / "api").glob("ceaps_*.json"))
+    else:
+        # Só os anos do projeto (D048): arquivos de outros anos, se existirem, são ignorados.
+        files = [raw_dir / "api" / f"ceaps_{year}.json" for year in sorted(years)]
+        faltam = [path.name for path in files if not path.exists()]
+        if faltam:
+            raise LimpezaError(f"faltam {', '.join(faltam)}; rode a coleta antes")
     if not files:
         raise LimpezaError(f"nenhum arquivo de despesas em {raw_dir / 'api'}; rode a coleta antes")
 
@@ -208,9 +217,11 @@ def load_raw(raw_dir: Path) -> tuple[list[dict], list[dict], list[int]]:
     return senadores, rows, years
 
 
-def build(raw_dir: Path, output: Path, reference_date: date) -> dict:
+def build(
+    raw_dir: Path, output: Path, reference_date: date, years: list[int] | None = None
+) -> dict:
     """Valida, limpa e grava o banco local. Devolve um resumo do que foi gravado."""
-    senadores_raw, rows, years = load_raw(raw_dir)
+    senadores_raw, rows, years = load_raw(raw_dir, years)
 
     senadores = clean_senadores(pd.DataFrame(senadores_raw))
     despesas = clean_despesas(pd.DataFrame(rows), set(senadores["cod_senador"]), reference_date)
@@ -260,7 +271,8 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     try:
-        summary = build(args.raw, args.saida, args.data_referencia or date.today())
+        referencia = args.data_referencia or date.today()
+        summary = build(args.raw, args.saida, referencia, anos_do_projeto(referencia))
     except (LimpezaError, SchemaError, SchemaErrors) as error:
         print(f"erro: {error}", file=sys.stderr)
         return 1
