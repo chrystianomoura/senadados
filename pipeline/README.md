@@ -1,6 +1,6 @@
 # Pipeline
 
-Código em Python que coleta, limpa e verifica os dados abertos do Senado. Hoje existem a **coleta**, a **validação e limpeza** e a **verificação da cota**, a **da equipe do gabinete**, a **da moradia**, a **do contato** e a **do salário**; as verificações estão completas, e também as **migrações** e a **carga** para o banco na nuvem ([ordem de construção](../docs/escopo.md#13-ordem-de-construção)).
+Código em Python que coleta, limpa e verifica os dados abertos do Senado. Hoje existem a **coleta**, a **validação e limpeza** e a **verificação da cota**, a **da equipe do gabinete**, a **da moradia**, a **do contato**, a **do salário** e a **do perfil** (foto e mandato); as verificações estão completas, e também as **migrações** e a **carga** para o banco na nuvem ([ordem de construção](../docs/escopo.md#13-ordem-de-construção)).
 
 ## Rodar tudo, na ordem
 
@@ -34,7 +34,17 @@ uv run python -m senadados_pipeline.contato
 uv run python -m senadados_pipeline.salario
 ```
 
-Depois das verificações, para levar os dados provados ao banco na nuvem (precisa do `.env`, veja abaixo): `papeis` (só na primeira vez), `migrar` e `carga`, cada um **primeiro em ensaio** e só então com `--apply`.
+```bash
+uv run python -m senadados_pipeline.perfil
+```
+
+Depois das verificações, para gerar as cópias reduzidas das fotos que o site usa (D047):
+
+```bash
+uv run python -m senadados_pipeline.fotos
+```
+
+E, para levar os dados provados ao banco na nuvem (precisa do `.env`, veja abaixo): `papeis` (só na primeira vez), `migrar` e `carga`, cada um **primeiro em ensaio** e só então com `--apply`.
 
 A limpeza recria o banco do zero e **apaga as tabelas de verificação**; por isso as verificações rodam depois dela. Quem ler o banco (API e site) deve tratar a ausência de uma tabela de verificação como "não verificado" e ocultar o dado.
 
@@ -147,6 +157,29 @@ uv run python -m senadados_pipeline.salario
 - Resultado em `verificacao_salario`, e o valor provado (remuneração básica e líquida do mês) em `salario`, só para quem tem `exibir = 1`.
 - A consulta de remuneração do portal de servidores exige reCAPTCHA, e o pipeline **não tenta contorná-lo**.
 
+## O que a verificação do perfil faz
+
+Confere a foto oficial e o mandato de cada senador comparando duas listas do Senado: a lista de senadores em exercício da API administrativa (a que a coleta grava) e a da API legislativa, que ela baixa na hora ([D045](../docs/decisoes.md#d045-foto-e-mandato-do-senador-com-o-endereço-oficial-do-senado-e-verificação-entre-duas-listas)).
+
+```bash
+uv run python -m senadados_pipeline.perfil
+```
+
+- **Identidade:** mesmo código nas duas listas e mesmo nome (igual, ou um inteiro dentro do outro, palavra por palavra), UF e partido. Sem isso, nem a foto nem o mandato aparecem.
+- **Mandato:** o ano em que começa e o ano em que termina são iguais nas duas listas. O início é o da primeira legislatura e o fim, o da última que a lista traz.
+- **Foto:** o endereço da lista legislativa, com os redirecionamentos resolvidos, termina no código do senador, está em `https://legis.senado.leg.br` e responde com um JPEG de pelo menos 10 mil bytes. **Só os primeiros 1.024 bytes** de cada foto são baixados, e as imagens não são guardadas.
+- Cada campo tem o seu resultado (`identico` ou `sem_explicacao`) e o seu freio de segurança de 5% (D037). Só o valor provado vai para a tabela `perfil`; o resultado fica em `verificacao_perfil`.
+- Mesma regra da cota: só roda com a lista de senadores e o banco limpo do mesmo dia. Um código que só a lista legislativa traz é apenas avisado na saída.
+- O 10 mil bytes é um julgamento, e não um número pesquisado: a menor das 81 fotos medidas em 19/11/2026 tem 78 KB.
+
+## O que o passo das fotos faz
+
+Baixa a foto de cada senador **cuja foto foi provada hoje** pela verificação do perfil e grava duas cópias em WebP, sem metadado, em `web/public/fotos/` ([D047](../docs/decisoes.md#d047-cópias-reduzidas-das-fotos-oficiais-com-pillow)): `{código}-p.webp` (240 por 300, lista e mosaico) e `{código}-g.webp` (480 por 600, perfil).
+
+- Baixa as fotos inteiras (uns 23 MB) e as reduz para uns 3,4 MB. A pasta inteira é refeita a cada execução (a foto de quem saiu da lista some) e o passo **só aceita refazer uma pasta chamada `fotos`**.
+- Uma foto que não baixa ou não abre como JPEG é pulada e avisada; o site continua usando o endereço oficial dela.
+- Precisa do banco limpo e da verificação do perfil, os dois do mesmo dia. Não vai para o banco na nuvem: as cópias são arquivos do site.
+
 ## O que as migrações e a carga fazem
 
 Levam os dados provados para o banco na nuvem ([D042](../docs/decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível), [D043](../docs/decisoes.md#d043-migrações-em-sql-puro-driver-psycopg-e-carga-que-ensaia-antes-de-gravar)). Os dois comandos são **ensaio por padrão**: desfazem tudo no fim e só gravam com `--apply`. A conexão vem de variáveis de ambiente, que ficam num arquivo `.env` na raiz do repositório (o git o ignora) e **nunca** no código:
@@ -172,7 +205,7 @@ uv run --env-file ../.env python -m senadados_pipeline.carga
 ```
 
 - **Migrações:** os arquivos SQL de [migracoes/](migracoes/README.md), em ordem, só os que ainda não foram aplicados. Os papéis `sd_carga` e `sd_leitura` precisam existir antes.
-- **Carga:** lê o banco limpo local **só para leitura**, leva só dados **agregados** e só o que passou nas verificações, e apaga e regrava as tabelas numa transação, conferindo a contagem de cada uma. **Recusa carregar** se faltar alguma das 7 verificações ou se alguma não for do dia da coleta. As despesas linha a linha **não** vão para a nuvem.
+- **Carga:** lê o banco limpo local **só para leitura**, leva só dados **agregados** e só o que passou nas verificações, e apaga e regrava as tabelas numa transação, conferindo a contagem de cada uma. **Recusa carregar** se faltar alguma das 9 verificações ou se alguma não for do dia da coleta. As despesas linha a linha **não** vão para a nuvem.
 - Os registros mostram só o endereço do servidor, **nunca a senha**.
 - **Já foram ensaiados numa branch da Neon** em 19/11/2026, com logins reais (veja a D043). Foram aplicados na produção no mesmo dia, com o OK do mantenedor.
 

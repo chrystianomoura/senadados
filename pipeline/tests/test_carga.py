@@ -1,5 +1,5 @@
 import sqlite3
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 
 import pytest
 
@@ -26,6 +26,9 @@ CREATE TABLE verificacao_moradia (cod_senador INTEGER, ano INTEGER, resultado TE
 CREATE TABLE verificacao_salario (cod_senador INTEGER, ano INTEGER, mes INTEGER,
   resultado TEXT, detalhe TEXT, exibir INTEGER);
 CREATE TABLE verificacao_contato (cod_senador INTEGER, campo TEXT, resultado TEXT,
+  detalhe TEXT, exibir INTEGER);
+CREATE TABLE perfil (cod_senador INTEGER, foto_url TEXT, mandato_inicio TEXT, mandato_fim TEXT);
+CREATE TABLE verificacao_perfil (cod_senador INTEGER, campo TEXT, resultado TEXT,
   detalhe TEXT, exibir INTEGER);
 CREATE TABLE verificacoes (nome TEXT, ano INTEGER, identicos INTEGER, explicados INTEGER,
   sem_explicacao INTEGER, verificado_em TEXT);
@@ -100,11 +103,24 @@ def banco(*, dia_das_verificacoes=DIA, sem=()):
          (2, "email", "identico", None, 0),
          (3, "endereco", "identico", None, 0)],
     )
+    db.executemany(
+        "INSERT INTO perfil VALUES (?,?,?,?)",
+        [(1, "https://legis.senado.leg.br/senadores/fotos-oficiais/1", "2023-02-01", "2031-01-31"),
+         (2, None, "2019-02-01", "2027-01-31")],
+    )
+    db.executemany(
+        "INSERT INTO verificacao_perfil VALUES (?,?,?,?,?)",
+        [(1, "foto", "identico", None, 1), (1, "mandato", "identico", None, 1),
+         (2, "foto", "sem_explicacao", "resposta 404", 0), (2, "mandato", "identico", None, 1),
+         (3, "foto", "sem_explicacao", "resposta 404", 0),
+         (3, "mandato", "sem_explicacao", "os anos do mandato diferem", 0)],
+    )
     resumo = [
         ("cota", 2009, 0, 0, 1), ("cota", 2020, 1, 0, 0),
         ("equipe", 2026, 1, 0, 1), ("moradia", 2026, 1, 0, 0),
         ("salario", 2026, 1, 0, 1), ("contato_endereco", 2026, 2, 0, 0),
         ("contato_telefones", 2026, 1, 0, 1), ("contato_email", 2026, 2, 0, 0),
+        ("perfil_foto", 2026, 1, 0, 2), ("perfil_mandato", 2026, 2, 0, 1),
     ]
     db.executemany(
         "INSERT INTO verificacoes VALUES (?,?,?,?,?,?)",
@@ -153,6 +169,23 @@ def test_contato_so_leva_o_campo_provado(dados):
     # senador 2: telefone sem explicação e e-mail com exibir = 0 ficam vazios
     assert contato[2] == ("Anexo 2", None, None)
     assert 3 not in contato  # nada provado: nem linha existe
+
+
+def test_perfil_leva_so_o_que_foi_provado_com_datas_de_verdade(dados):
+    perfil = {linha[0]: linha[1:] for linha in dados["publico.perfil"]}
+    assert perfil[1] == (
+        "https://legis.senado.leg.br/senadores/fotos-oficiais/1",
+        date(2023, 2, 1),
+        date(2031, 1, 31),
+    )
+    assert perfil[2] == (None, date(2019, 2, 1), date(2027, 1, 31))
+    assert 3 not in perfil
+
+
+def test_motivos_do_perfil_fecham_com_o_resumo(dados):
+    motivos = {(v, a, s): q for v, a, s, _m, q in dados["publico.verificacoes_motivos"]}
+    assert motivos[("perfil_foto", 2026, "oculto")] == 2
+    assert motivos[("perfil_mandato", 2026, "oculto")] == 1
 
 
 def test_equipe_moradia_e_salario_so_de_quem_foi_provado(dados):

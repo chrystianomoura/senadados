@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
-  NBSP, dataBr, iniciais, mesAno, mesCurto, periodoAno, milhares, nomeEstado, nomeMes, nomePartido, percentual, periodo, reais,
+  NBSP, dataBr, iniciais, mandatoTexto, mesAno, mesCurto, periodoAno, milhares, nomeEstado, nomeMes, nomePartido, percentual, periodo, reais,
   reaisMil, telefone, tituloNome, usoCurto, usoTexto,
 } from "./formato";
 
@@ -39,6 +39,12 @@ describe("nomes", () => {
   it("traduz a UF e cai na própria sigla se não conhecer", () => {
     expect(nomeEstado("AC")).toBe("Acre");
     expect(nomeEstado("XX")).toBe("XX");
+  });
+});
+
+describe("mandato", () => {
+  it("mostra o ano em que começa e o ano em que termina, sem quebrar a linha", () => {
+    expect(mandatoTexto(2023, 2031)).toBe(`2023${NBSP}a${NBSP}2031`);
   });
 });
 

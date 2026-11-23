@@ -95,7 +95,7 @@ export function BuscaSenadores({ senadores }: { senadores: ItemLista[] }) {
             <li key={s.slug}>
               <Link href={`/senador/${s.slug}/`}>
                 <span className="ini">
-                  <FotoSenador url={s.foto_url} nome={s.nome} rotulo={`Foto oficial de ${tituloNome(s.nome)}`} />
+                  <FotoSenador codigo={s.codigo} url={s.foto_url} nome={s.nome} rotulo={`Foto oficial de ${tituloNome(s.nome)}`} />
                 </span>
                 <span className="info">
                   <b>{tituloNome(s.nome)}</b>

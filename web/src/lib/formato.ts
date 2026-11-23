@@ -104,6 +104,11 @@ export function periodo(meses: number[]): string {
     : `de ${nomeMes(primeiro)} a ${nomeMes(ultimo)}`;
 }
 
+/** "2023 a 2031": o ano em que o mandato começa e o ano em que termina, sem quebra de linha. */
+export function mandatoTexto(inicio: number, fim: number): string {
+  return `${inicio}${NBSP}a${NBSP}${fim}`;
+}
+
 /** "Usou em todos os 10 meses", "Usou em 3 de 10 meses" ou "Não usou em nenhum mês". */
 export function usoTexto(usados: number, total: number): string {
   if (usados === 0) return "Não usou em nenhum mês";

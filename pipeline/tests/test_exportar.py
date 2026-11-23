@@ -1,5 +1,5 @@
 import json
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 
 import pytest
 
@@ -35,6 +35,11 @@ def dados_base():
             (1, "Anexo 1", "(61) 3303-0001\n(61) 3303-0002\n", "sen.alan@senado.leg.br"),
             (2, None, None, "sen.ana@senado.leg.br"),
         ],
+        "perfil": [
+            (1, "https://legis.senado.leg.br/senadores/fotos-oficiais/1", date(2023, 2, 1),
+             date(2031, 1, 31)),
+            (2, None, date(2019, 2, 1), date(2027, 1, 31)),
+        ],
         "equipe": [(1, 2025, 10), (1, 2026, 15)],
         "moradia_verificada": [(1, 2026), (3, 2026)],
         "moradia_meses": [
@@ -69,6 +74,7 @@ def test_a_lista_tem_um_item_por_senador_em_ordem_de_codigo(saida):
     assert saida["senadores"][0] == {
         "codigo": 1, "slug": "alan-rick", "nome": "ALAN RICK", "tipo": "Titular", "uf": "AC",
         "partido": "REPUBLICANOS",
+        "foto_url": "https://legis.senado.leg.br/senadores/fotos-oficiais/1",
     }
 
 
@@ -80,8 +86,31 @@ def test_metadados(saida):
     }
 
 
-def test_quem_e_fica_vazio_na_primeira_fatia(saida):
-    assert all(p["quem_e"] is None for p in saida["perfis"].values())
+def test_quem_e_leva_a_foto_com_credito_e_o_mandato_com_anos_e_datas(saida):
+    assert saida["perfis"]["alan-rick"]["quem_e"] == {
+        "foto": {
+            "url": "https://legis.senado.leg.br/senadores/fotos-oficiais/1",
+            "credito": "Foto oficial publicada pelo Senado Federal",
+        },
+        "mandato": {
+            "inicio": 2023, "fim": 2031, "inicio_data": "2023-02-01", "fim_data": "2031-01-31",
+        },
+    }
+
+
+def test_quem_e_mantem_so_a_parte_provada_e_vira_nulo_sem_nenhuma(saida):
+    assert saida["perfis"]["ana-paula-lobato"]["quem_e"]["foto"] is None
+    assert saida["perfis"]["ana-paula-lobato"]["quem_e"]["mandato"]["fim"] == 2027
+    assert saida["perfis"]["nelsinho-trad-filho"]["quem_e"] is None
+    dados = dados_base()
+    dados["perfil"] = [(1, None, None, None)]
+    assert exportar.montar(dados)["perfis"]["alan-rick"]["quem_e"] is None
+
+
+def test_a_lista_so_traz_foto_url_de_quem_tem_foto_provada(saida):
+    por_codigo = {item["codigo"]: item for item in saida["senadores"]}
+    assert por_codigo[1]["foto_url"] == "https://legis.senado.leg.br/senadores/fotos-oficiais/1"
+    assert "foto_url" not in por_codigo[2] and "foto_url" not in por_codigo[3]
 
 
 def test_salario_vale_o_mes_mais_recente(saida):
@@ -226,7 +255,7 @@ def test_gravar_cria_todos_os_arquivos_do_contrato(tmp_path, saida):
     nomes = sorted(p.name for p in pasta.iterdir())
     assert nomes == ["metadados.json", "senadores", "senadores.json", "verificacoes.json"]
     perfil = json.loads((pasta / "senadores" / "alan-rick.json").read_text(encoding="utf-8"))
-    assert perfil["nome"] == "ALAN RICK" and perfil["quem_e"] is None
+    assert perfil["nome"] == "ALAN RICK" and perfil["quem_e"]["mandato"]["inicio"] == 2023
     assert not (tmp_path / "dados.tmp").exists()
 
 

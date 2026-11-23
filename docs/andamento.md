@@ -2,7 +2,7 @@
 
 Resumo do que existe, do que foi provado e do que vem a seguir. É o documento para quem chega agora e quer saber **em que pé o projeto está**. Os detalhes de cada decisão estão em [decisoes.md](decisoes.md), e os de cada conferência, em [verificacoes.md](verificacoes.md).
 
-**Última atualização:** 20/11/2026 (site com a home e o perfil do senador refeitos, textos revisados em linguagem simples e varredura de código sem uso).
+**Última atualização:** 23/11/2026 (foto e mandato do senador provados e no ar, com a foto também na lista da home; dados do banco recarregados em 23/11).
 
 ## Em uma frase
 
@@ -20,13 +20,14 @@ O pipeline que coleta, limpa e **prova** os dados do Senado está pronto e roda 
 | Verificação da **moradia** | Pronta |
 | Verificação do **contato** (endereço, telefones, e-mail) | Pronta |
 | Verificação do **salário** | Pronta |
+| Verificação do **perfil** (foto e mandato) | **Pronta (23/11/2026, D045):** 81 de 81 idênticos nos dois campos |
 | Documento público de divergências nos dados do Senado | Pronto |
-| Banco no Neon | **No ar com os dados provados de 18/11/2026** (20 MB, 18 tabelas, permissões testadas). A migração 003 (`moradia_verificada`) foi aplicada na produção em 19/11/2026 ([D042](decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível), [D043](decisoes.md#d043-migrações-em-sql-puro-driver-psycopg-e-carga-que-ensaia-antes-de-gravar)). Atualização diária ainda manual |
+| Banco no Neon | **No ar, recarregado com os dados provados de 23/11/2026 (migração 004 aplicada em 23/11)**. Antes: dados de 18/11/2026 (20 MB, 18 tabelas, permissões testadas). A migração 003 (`moradia_verificada`) foi aplicada na produção em 19/11/2026 ([D042](decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível), [D043](decisoes.md#d043-migrações-em-sql-puro-driver-psycopg-e-carga-que-ensaia-antes-de-gravar)). Atualização diária ainda manual |
 | Exportador dos JSON do site | **Pronto e rodando contra a produção** (84 arquivos, 1,6 MB; [contrato](contrato-dos-dados.md)). A saída da produção é igual à do ensaio, exceto pela hora da carga |
-| Site (`web/`) | **Home (abertura, "Como funciona" e busca com filtros) e perfil do senador (resumo do ano e seis guias) prontos**, com os dados reais ([D046](decisoes.md#d046-site-em-nextjs-16-com-exportação-estática-fontes-hospedadas-e-testes-com-vitest)). A foto já aparece quando o JSON a traz, mas a verificação que a fornece ainda não existe. Faltam ranking, comparação, "Sobre os dados", "Verificações" e mandato |
+| Site (`web/`) | **Home (abertura, "Como funciona" e busca com filtros) e perfil do senador (resumo do ano e seis guias) prontos**, com os dados reais ([D046](decisoes.md#d046-site-em-nextjs-16-com-exportação-estática-fontes-hospedadas-e-testes-com-vitest)). A foto aparece na lista e no perfil, e o mandato no cartão do perfil, vindos da verificação "perfil". Faltam ranking, comparação, "Sobre os dados" e "Verificações" |
 | API, automação diária | **Não começaram** |
 
-O código está em [pipeline/](../pipeline/README.md), com 340 testes de Python (270 em 18/11 e 70 novos da carga, das migrações, dos papéis e do exportador) e 21 de TypeScript no site e 95% de cobertura nos módulos de verificação (a cobertura é de 18/11 e não foi medida de novo). Os dados ficam em `data/` e **não vão para o git**.
+O código está em [pipeline/](../pipeline/README.md), com 375 testes de Python (270 em 18/11, 70 da carga, das migrações, dos papéis e do exportador, e 35 da verificação do perfil e da carga e do exportador estendidos) e 22 de TypeScript no site e 95% de cobertura nos módulos de verificação (a cobertura é de 18/11 e não foi medida de novo). Os dados ficam em `data/` e **não vão para o git**.
 
 ## Como rodar tudo, do zero
 
@@ -51,6 +52,7 @@ Uma execução completa, feita em 18/11/2026 numa pasta vazia, **reproduziu todo
 | Telefones | 66 idênticos e 15 explicados | 81 |
 | E-mail | 81 idênticos (2 senadores sem e-mail nas duas fontes) | 79 |
 | Salário | 79 de 81 passam em cinco provas; 2 sem explicação | 79 |
+| Perfil (foto e mandato), 23/11 | 81 idênticos em cada campo | 81 |
 
 Os números da cota são os de 2026 contra o resumo do Senado **do mesmo dia**. Os dados totais: 81 senadores em exercício, 154.298 despesas de 2008 a 2026, R$ 213 milhões.
 
@@ -88,7 +90,9 @@ Os números da cota são os de 2026 contra o resumo do Senado **do mesmo dia**. 
 
 ## Pendências conhecidas
 
-- **Foto e mandato do senador:** o pipeline ainda não coleta nem verifica (verificação "perfil", [D045](decisoes.md#d045-foto-e-mandato-do-senador-com-o-endereço-oficial-do-senado-e-verificação-entre-duas-listas)). A primeira fatia do site sai sem eles.
+- **Recarga de 23/11/2026, investigada** (detalhes em [verificacoes.md](verificacoes.md#recarga-de-23112026)): a equipe aparece para 77 gabinetes, com 4 sem explicação (4,9%). **Um quinto caso esconderia a equipe de todos**, pelo freio de 5% da D037, e a rotina diária pode cruzar esse limite sem que nada esteja errado no código; o limite é uma decisão do mantenedor. Os números das tabelas acima são os de 18/11, exceto onde está escrito 23/11.
+- **Gabinetes com 1 comissionado a menos na lista de servidores** (Esperidião Amin e Nelsinho Trad Filho, novos em 23/11): a tela do portal confere com o resumo, e a lista de servidores, não. Sem explicação, só o Senado pode dar.
+- **Cópias das fotos:** feitas em 23/11/2026 ([D047](decisoes.md#d047-cópias-reduzidas-das-fotos-oficiais-com-pillow)): 3,4 MB no lugar de 23 MB. **Não está verificado** que o Senado permite redistribuir uma cópia reduzida (decisão do mantenedor, com o crédito). Faltam rodar o passo na rotina diária e no build de publicação.
 - **Frase sobre a prova real:** o site deve dizer que a conferência entre bases não é uma auditoria e que não julga a legalidade; o rodapé que a trazia foi removido (20/11/2026) e a página "Sobre os dados" ainda não existe.
 - **Salário:** o pipeline guarda só o salário-base e o valor depois dos descontos. Auxílios e gratificação natalina (3 e 5 senadores na folha de outubro) existem na folha, mas não são guardados nem mostrados.
 - **Foto:** o crédito aparece só ao passar o mouse (não em telas de toque). O piscar das fotos ao rolar não teve a causa confirmada (a decodificação passou a ser síncrona).
@@ -114,7 +118,8 @@ O site vem antes da API ([D044](decisoes.md#d044-site-antes-da-api-com-dados-em-
 2. **Esqueleto do site** em `web/` (**feito em 19/11/2026**: Next.js, TypeScript, exportação estática, identidade da D029, com um `README.md` curto).
 3. **Primeira página real** (**feita em 19/11/2026**): o perfil do senador, lendo o JSON do passo 1.
 4. **Home** (**feita em 20/11/2026**): abertura, "Como funciona", busca e filtros, e a lista com foto e selos. Perfil e home foram refeitos em 20/11 com textos em linguagem simples.
-5. **Depois, em fatias:** o bloco "Quem é" com foto verificada e mandato ([D045](decisoes.md#d045-foto-e-mandato-do-senador-com-o-endereço-oficial-do-senado-e-verificação-entre-duas-listas)), as páginas "Sobre os dados" (com a frase da prova real) e "Verificações" (com a seção de divergências já escrita), o ranking e a comparação.
+5. **Foto e mandato** (**feito em 23/11/2026**, [D045](decisoes.md#d045-foto-e-mandato-do-senador-com-o-endereço-oficial-do-senado-e-verificação-entre-duas-listas)): verificação "perfil", migração 004, carga, exportador e o site (foto na lista e no perfil, mandato no cartão).
+6. **Depois, em fatias:** a página "Verificações" (com a seção de divergências já escrita), o ranking e a comparação, e, por último, "Sobre os dados" (com a frase da prova real).
 
 **A atualização diária** (etapa 7) é uma rotina do GitHub Actions que repete coleta, limpeza, verificações, carga e exportação; as URLs de `sd_carga` e `sd_leitura` viram segredos do repositório. Antes de publicar, reconfirmar os limites do Cloudflare Pages e do GitHub Actions. A API fica depois do site, e a hospedagem dela só precisa ser decidida então (a D004 escolheu a Render, com os limites lidos em 19/11/2026).
 

@@ -2,11 +2,11 @@
 
 O site do Senadados: páginas estáticas em Next.js (TypeScript), geradas a partir dos arquivos JSON do pipeline ([D044](../docs/decisoes.md#d044-site-antes-da-api-com-dados-em-arquivos-json-gerados-do-esquema-público), [D046](../docs/decisoes.md#d046-site-em-nextjs-16-com-exportação-estática-fontes-hospedadas-e-testes-com-vitest)). O site **não** consulta o banco nem a API: só lê arquivos, na hora do build.
 
-**Hoje existem:** a home (`/`), com a abertura (nome, o que é e retratos sorteados a cada visita), "Como funciona", a busca por nome com filtros por estado e partido, e o perfil do senador (`/senador/{endereço}/`), com o resumo do ano e as guias que se abrem. O site mostra a foto quando o JSON a traz (o crédito aparece ao passar o mouse) e as iniciais quando não. O cabeçalho é fixo e não tem menu. Mandato, posição entre os senadores, ranking, comparação e as páginas "Verificações" e "Sobre os dados" ainda não existem.
+**Hoje existem:** a home (`/`), com a abertura (nome, o que é e retratos sorteados a cada visita), "Como funciona", a busca por nome com filtros por estado e partido, e o perfil do senador (`/senador/{endereço}/`), com o resumo do ano e as guias que se abrem. O site mostra a foto na lista e no perfil quando o JSON a traz (o crédito aparece ao passar o mouse) e as iniciais quando não, e o mandato (ano de início e de fim) no cartão do perfil. O cabeçalho é fixo e não tem menu. Posição entre os senadores, ranking, comparação e as páginas "Verificações" e "Sobre os dados" ainda não existem.
 
 ## Como rodar
 
-Precisa de Node 22.12 ou mais novo. Primeiro, gere os arquivos de dados (de dentro de `pipeline/`, com o `.env` na raiz; veja [pipeline/README.md](../pipeline/README.md)):
+Precisa de Node 22.12 ou mais novo. Primeiro, gere os arquivos de dados e as cópias das fotos (de dentro de `pipeline/`, com o `.env` na raiz; veja [pipeline/README.md](../pipeline/README.md)). As fotos pedem a coleta e as verificações do mesmo dia; sem elas o site funciona, com as fotos vindas do Senado:
 
 ```bash
 uv run --env-file ../.env python -m senadados_pipeline.exportar
@@ -28,7 +28,7 @@ Abra `http://localhost:3000`. Para gerar as páginas prontas em `out/`:
 npm run build
 ```
 
-Conferências: `npm run typecheck` (tipos) e `npm test` (21 testes das funções de formatação e de busca, com Vitest).
+Conferências: `npm run typecheck` (tipos) e `npm test` (22 testes das funções de formatação e de busca, com Vitest).
 
 ## Como é organizado
 
@@ -41,6 +41,8 @@ Conferências: `npm run typecheck` (tipos) e `npm test` (21 testes das funções
 | `src/lib/busca.ts` | Busca por nome e filtros da home, com testes |
 | `src/components/` | O perfil e as peças dele (guia que se abre, barras, gráfico mensal, "de onde vem este número"), o cabeçalho fixo (`CabecalhoTopo`) e a busca |
 | `src/components/abertura/` | A abertura da home: nome, o que é e o mosaico de retratos sorteados no navegador |
+| `public/fotos/` | As cópias reduzidas das fotos, geradas por `python -m senadados_pipeline.fotos` ([D047](../docs/decisoes.md#d047-cópias-reduzidas-das-fotos-oficiais-com-pillow)). **Fora do git.** Sem elas o site usa o endereço oficial da foto |
+| `public/_headers` | Cabeçalhos do Cloudflare Pages, com a política de conteúdo (CSP). Vai para `out/` no build ([D045](../docs/decisoes.md#d045-foto-e-mandato-do-senador-com-o-endereço-oficial-do-senado-e-verificação-entre-duas-listas)) |
 | `src/app/` | As rotas e o CSS (a identidade da [D029](../docs/decisoes.md#d029-identidade-visual), portada do protótipo em `design/`) |
 
 ## Regras

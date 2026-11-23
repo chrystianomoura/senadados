@@ -2,7 +2,7 @@ import { AbreCartao } from "./AbreCartao";
 import { FotoSenador } from "./FotoSenador";
 import { Barras, GraficoMensal, Linha, Origem, Pergunta } from "./perguntas";
 import {
-  dataBr, mesAno, nomeEstado, nomeMes, nomePartido, periodo, periodoAno, reais, reaisMil, telefone,
+  dataBr, mandatoTexto, mesAno, nomeEstado, nomeMes, nomePartido, periodo, periodoAno, reais, reaisMil, telefone,
   tituloNome, usoCurto, usoTexto,
 } from "@/lib/formato";
 import type { Perfil } from "@/lib/types";
@@ -104,6 +104,8 @@ export function PerfilPagina({ perfil, dataReferencia }: { perfil: Perfil; dataR
             title={perfil.quem_e?.foto ? `${perfil.quem_e.foto.credito}.` : undefined}
           >
             <FotoSenador
+              codigo={perfil.codigo}
+              grande
               url={perfil.quem_e?.foto?.url}
               nome={perfil.nome}
               rotulo={`Foto oficial de ${nome}`}
@@ -121,6 +123,12 @@ export function PerfilPagina({ perfil, dataReferencia }: { perfil: Perfil; dataR
           <dl>
             <dt>Cargo</dt>
             <dd>{perfil.tipo}</dd>
+            {perfil.quem_e?.mandato ? (
+              <>
+                <dt>Mandato</dt>
+                <dd>{mandatoTexto(perfil.quem_e.mandato.inicio, perfil.quem_e.mandato.fim)}</dd>
+              </>
+            ) : null}
             {salario ? (
               <>
                 <dt>Salário</dt>

@@ -18,7 +18,7 @@ import argparse
 import sqlite3
 import sys
 from contextlib import closing
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from pathlib import Path
 
 from senadados_pipeline.banco import BancoError, conectar, host_de, url_do_ambiente
@@ -33,6 +33,8 @@ VERIFICACOES = (
     "contato_endereco",
     "contato_telefones",
     "contato_email",
+    "perfil_foto",
+    "perfil_mandato",
 )
 
 # Motivos de uma lista fechada, em palavras simples e sem culpar ninguém. Só descrevem o fato
@@ -46,6 +48,8 @@ MOTIVOS = {
     ("contato_endereco", "oculto"): "a API e a página do Senado trazem endereços diferentes",
     ("contato_telefones", "oculto"): "a API e a página do Senado trazem telefones diferentes",
     ("contato_email", "oculto"): "a API e a página do Senado trazem e-mails diferentes",
+    ("perfil_foto", "oculto"): "as listas do Senado ou o endereço da foto não confirmam a foto",
+    ("perfil_mandato", "oculto"): "as listas do Senado trazem mandatos diferentes",
 }
 
 # Tabelas, na ordem em que são gravadas: nome no banco e colunas.
@@ -61,6 +65,7 @@ TABELAS = {
         "cod_senador", "ano", "tipo", "qtd_despesas", "total_centavos", "maior_centavos",
     ),
     "publico.contato": ("cod_senador", "endereco", "telefones", "email"),
+    "publico.perfil": ("cod_senador", "foto_url", "mandato_inicio", "mandato_fim"),
     "publico.equipe": ("cod_senador", "ano", "pessoas"),
     "publico.moradia_verificada": ("cod_senador", "ano"),
     "publico.moradia_meses": (
@@ -87,6 +92,7 @@ TABELAS = {
         "cod_senador", "ano", "mes", "resultado", "detalhe", "exibir",
     ),
     "interno.verificacao_contato": ("cod_senador", "campo", "resultado", "detalhe", "exibir"),
+    "interno.verificacao_perfil": ("cod_senador", "campo", "resultado", "detalhe", "exibir"),
     "interno.verificacoes": (
         "nome", "ano", "identicos", "explicados", "sem_explicacao", "verificado_em",
     ),
@@ -116,6 +122,10 @@ def _como_bool(linhas: list[tuple], posicoes: tuple[int, ...]) -> list[tuple]:
 
 def _quando(texto: str) -> datetime:
     return datetime.fromisoformat(texto)
+
+
+def _data(texto: str | None) -> date | None:
+    return date.fromisoformat(texto) if texto else None
 
 
 def conferir_foto(db: sqlite3.Connection) -> str:
@@ -207,6 +217,14 @@ def selecionar(db: sqlite3.Connection, agora: datetime) -> dict[str, list[tuple]
         linha for linha in contato if any(v is not None for v in linha[1:])
     ]
 
+    # Perfil: a tabela local já só tem o que foi provado (foto e mandato, cada um com o seu freio).
+    dados["publico.perfil"] = [
+        (cod, foto, _data(inicio), _data(fim))
+        for cod, foto, inicio, fim in _tudo(
+            db, "SELECT cod_senador, foto_url, mandato_inicio, mandato_fim FROM perfil ORDER BY 1"
+        )
+    ]
+
     dados["publico.equipe"] = _tudo(
         db,
         """SELECT cod_senador, ano, equipe_resumo FROM verificacao_equipe
@@ -275,6 +293,7 @@ def selecionar(db: sqlite3.Connection, agora: datetime) -> dict[str, list[tuple]
         ("verificacao_moradia", "SELECT {c} FROM verificacao_moradia ORDER BY 1, 2", (4,)),
         ("verificacao_salario", "SELECT {c} FROM verificacao_salario ORDER BY 1, 2", (5,)),
         ("verificacao_contato", "SELECT {c} FROM verificacao_contato ORDER BY 1, 2", (4,)),
+        ("verificacao_perfil", "SELECT {c} FROM verificacao_perfil ORDER BY 1, 2", (4,)),
     ):
         colunas = ", ".join(TABELAS[f"interno.{nome}"])
         dados[f"interno.{nome}"] = _como_bool(_tudo(db, sql.format(c=colunas)), bools)
@@ -301,12 +320,16 @@ def _motivos(db: sqlite3.Connection) -> list[tuple]:
         "salario": "SELECT ano, resultado, COUNT(*) FROM verificacao_salario "
         "WHERE resultado = 'sem_explicacao' GROUP BY ano, resultado",
     }
-    for campo in ("endereco", "telefones", "email"):
-        consultas[f"contato_{campo}"] = (
-            f"SELECT (SELECT ano FROM verificacoes WHERE nome = 'contato_{campo}'), resultado, "
-            f"COUNT(*) FROM verificacao_contato WHERE campo = '{campo}' "
-            "AND resultado = 'sem_explicacao' GROUP BY resultado"
-        )
+    for prefixo, tabela, campos in (
+        ("contato", "verificacao_contato", ("endereco", "telefones", "email")),
+        ("perfil", "verificacao_perfil", ("foto", "mandato")),
+    ):
+        for campo in campos:
+            consultas[f"{prefixo}_{campo}"] = (
+                f"SELECT (SELECT ano FROM verificacoes WHERE nome = '{prefixo}_{campo}'), "
+                f"resultado, COUNT(*) FROM {tabela} WHERE campo = '{campo}' "
+                "AND resultado = 'sem_explicacao' GROUP BY resultado"
+            )
     linhas = []
     for nome, sql in consultas.items():
         for ano, resultado, qtd in _tudo(db, sql):

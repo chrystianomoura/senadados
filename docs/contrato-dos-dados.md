@@ -2,7 +2,7 @@
 
 Quais arquivos JSON o site lê e o que cada um traz. É o elo entre o banco e as telas: o pipeline **gera** esses arquivos a partir do esquema `publico` do Neon, e o site só os **lê**. Decisão em [D044](decisoes.md#d044-site-antes-da-api-com-dados-em-arquivos-json-gerados-do-esquema-público).
 
-**Status:** versão 1 (rascunho de 19/11/2026), **implementada pelo exportador** (`python -m senadados_pipeline.exportar`) e ensaiado com os dados reais numa branch da Neon. Define a **primeira fatia** do site (o perfil sem foto e sem mandato). Será confirmado de vez pela primeira tela do site; mudança que quebra o site sobe a `versao_contrato`.
+**Status:** versão 1 (rascunho de 19/11/2026), **implementada pelo exportador** (`python -m senadados_pipeline.exportar`) e ensaiado com os dados reais numa branch da Neon. Define a primeira fatia do site e, desde 23/11/2026, também a foto e o mandato (`quem_e`). Será confirmado de vez pela primeira tela do site; mudança que quebra o site sobe a `versao_contrato`.
 
 ## Regras gerais
 
@@ -46,7 +46,7 @@ Uma lista, um item por senador, ordenada por `codigo`.
 | `nome` | Nome parlamentar | `publico.senadores.nome` |
 | `uf`, `partido` | Estado e partido | `publico.senadores` |
 | `tipo` | `Titular` ou `1º Suplente` | `publico.senadores.tipo` |
-| `foto_url` | **Opcional, a decidir ([D045](decisoes.md#d045-foto-e-mandato-do-senador-com-o-endereço-oficial-do-senado-e-verificação-entre-duas-listas)):** o endereço da foto, só se provado, para a lista mostrar a foto em vez das iniciais. Hoje não existe nos dados reais | `publico.perfil`, que ainda não existe |
+| `foto_url` | **Opcional ([D045](decisoes.md#d045-foto-e-mandato-do-senador-com-o-endereço-oficial-do-senado-e-verificação-entre-duas-listas)):** o endereço da foto, só se provado. A lista da home mostra a foto quando ele existe e as iniciais quando não | `publico.perfil` |
 
 Se dois nomes gerarem o mesmo `slug`, o exportador **para com erro** (falha fechada), em vez de escolher um.
 
@@ -94,7 +94,7 @@ Todos os nomes e valores do exemplo são inventados, só mostram o formato. Cada
 
 | Bloco | Regra | Vem de |
 |---|---|---|
-| `quem_e` | **Depois** ([D045](decisoes.md#d045-foto-e-mandato-do-senador-com-o-endereço-oficial-do-senado-e-verificação-entre-duas-listas)): `{ mandato: {inicio, fim}, foto: {url, credito} }`, cada parte `null` se não provada; o `credito` é "Foto oficial publicada pelo Senado Federal". Na primeira fatia é sempre `null` | `publico.perfil`, que ainda não existe |
+| `quem_e` | ([D045](decisoes.md#d045-foto-e-mandato-do-senador-com-o-endereço-oficial-do-senado-e-verificação-entre-duas-listas)) `{ mandato: {inicio, fim, inicio_data, fim_data}, foto: {url, credito} }`, cada parte `null` se não provada, e o bloco todo `null` se nenhuma foi. `inicio` e `fim` são os anos (o que o site mostra) e as datas completas vão junto, em `AAAA-MM-DD`. O `credito` é "Foto oficial publicada pelo Senado Federal" | `publico.perfil` |
 | `salario` | `null` se o senador não passou nas cinco provas ([D041](decisoes.md#d041-verificação-automática-do-salário-pela-identidade-do-senador)). `basica` é o valor do salário no mês, antes dos descontos (conferido na folha de outubro; veja a D046) | `publico.salario` |
 | `cota.anos` | Só os anos em que a cota do senador passou na verificação (de 2010 em diante hoje). `null` se nenhum. `parcial` é verdadeiro no ano da `data_referencia`, para o site dizer "dados parciais, até [mês]". `maior_mes` é o mês de maior valor da série, **só o fato** ([D030](decisoes.md#d030-destaque-do-maior-mês-no-lugar-do-alerta-fora-do-padrão)) | `publico.despesas_mensais` |
 | `cota.anos[].categorias` | `nome` é o nome curto da tabela de [fontes-de-dados.md](fontes-de-dados.md#nomes-das-categorias-de-despesa); `nome_oficial` fica junto, para a explicação "de onde vem este número". Categoria nova do Senado usa o nome oficial nos dois campos | `publico.despesas_mensais` |
@@ -123,7 +123,6 @@ Falha fechada: se qualquer conferência quebrar, **nenhum arquivo é gravado**.
 
 ## O que ainda não está neste contrato
 
-- **Foto e mandato** (`quem_e`): [D045](decisoes.md#d045-foto-e-mandato-do-senador-com-o-endereço-oficial-do-senado-e-verificação-entre-duas-listas), depois da primeira fatia.
 - **Posição entre os senadores, ranking e comparação:** comparam senadores, então seguem o "tudo ou nada" da [D037](decisoes.md#d037-exibição-por-tipo-de-dado-e-freio-de-segurança). Falta definir quem entra no grupo (um senador, sem despesa em 2026, não tem valor para comparar). Ficam para uma fatia própria.
 - **Como o Next.js lê os arquivos:** definido na implementação do site. O exportador grava por padrão em `web/dados/`, que o git ignora, e troca a pasta inteira a cada execução (o arquivo de quem saiu da lista não fica para trás, [D026](decisoes.md#d026-só-senadores-em-exercício)).
 - **Tamanho (medido em 19/11/2026, na branch de ensaio):** 84 arquivos, 1,6 MB no total. Cada perfil tem 20 KB em média e 49 KB no máximo. O maior número de empresas num ano é 418, e o perfil leva só as 10 maiores.
