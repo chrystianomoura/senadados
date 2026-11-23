@@ -107,7 +107,7 @@ export function periodo(meses: number[]): string {
 /** "Usou em todos os 10 meses", "Usou em 3 de 10 meses" ou "Não usou em nenhum mês". */
 export function usoTexto(usados: number, total: number): string {
   if (usados === 0) return "Não usou em nenhum mês";
-  if (usados === total) return `Usou em todos os ${total} meses`;
+  if (usados === total) return total === 1 ? "Usou no mês" : `Usou em todos os ${total} meses`;
   return `Usou em ${usados} de ${total} meses`;
 }
 

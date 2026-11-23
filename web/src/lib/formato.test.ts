@@ -58,6 +58,7 @@ describe("meses e períodos", () => {
     expect(usoTexto(0, 10)).toBe("Não usou em nenhum mês");
     expect(usoTexto(10, 10)).toBe("Usou em todos os 10 meses");
     expect(usoTexto(3, 10)).toBe("Usou em 3 de 10 meses");
+    expect(usoTexto(1, 1)).toBe("Usou no mês");
   });
 });
 
