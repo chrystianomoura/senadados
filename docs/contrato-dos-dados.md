@@ -2,7 +2,7 @@
 
 Quais arquivos JSON o site lê e o que cada um traz. É o elo entre o banco e as telas: o pipeline **gera** esses arquivos a partir do esquema `publico` do Neon, e o site só os **lê**. Decisão em [D044](decisoes.md#d044-site-antes-da-api-com-dados-em-arquivos-json-gerados-do-esquema-público).
 
-**Status:** versão 1 (rascunho de 19/11/2026), **implementada pelo exportador** (`python -m senadados_pipeline.exportar`) e ensaiado com os dados reais numa branch da Neon. Define a primeira fatia do site e, desde 23/11/2026, também a foto e o mandato (`quem_e`). Será confirmado de vez pela primeira tela do site; mudança que quebra o site sobe a `versao_contrato`.
+**Status:** **versão 2** (23/11/2026), **implementada pelo exportador** (`python -m senadados_pipeline.exportar`) e em uso pelo site, com os dados reais da produção. A versão 1 (19/11/2026) definiu o perfil; a 2 acrescentou a foto e o mandato (`quem_e`) e passou a moradia para `anos` ([D049](decisoes.md#d049-moradia-do-ano-anterior-com-três-fontes)). Mudança que quebra o site sobe a `versao_contrato`.
 
 ## Regras gerais
 
@@ -125,4 +125,4 @@ Falha fechada: se qualquer conferência quebrar, **nenhum arquivo é gravado**.
 
 - **Posição entre os senadores, ranking e comparação:** comparam senadores, então seguem o "tudo ou nada" da [D037](decisoes.md#d037-exibição-por-tipo-de-dado-e-freio-de-segurança). Falta definir quem entra no grupo (um senador, sem despesa em 2026, não tem valor para comparar). Ficam para uma fatia própria.
 - **Como o Next.js lê os arquivos:** definido na implementação do site. O exportador grava por padrão em `web/dados/`, que o git ignora, e troca a pasta inteira a cada execução (o arquivo de quem saiu da lista não fica para trás, [D026](decisoes.md#d026-só-senadores-em-exercício)).
-- **Tamanho (medido em 19/11/2026, na branch de ensaio):** 84 arquivos, 1,6 MB no total. Cada perfil tem 20 KB em média e 49 KB no máximo. O maior número de empresas num ano é 418, e o perfil leva só as 10 maiores.
+- **Tamanho:** em 19/11/2026, com os 19 anos, 84 arquivos e 1,6 MB no total; em 23/11/2026, com dois anos, 84 arquivos e 648 KB. Cada perfil tem 20 KB em média e 49 KB no máximo. O maior número de empresas num ano é 418, e o perfil leva só as 10 maiores.

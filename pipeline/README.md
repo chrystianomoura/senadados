@@ -221,7 +221,7 @@ uv run --env-file ../.env python -m senadados_pipeline.exportar
 - Grava em `web/dados/` (o git ignora) ou na pasta de `--saida`. **Troca a pasta inteira** a cada execução, então o arquivo de quem saiu da lista não fica para trás.
 - **Falha fechado:** se uma conferência quebrar (endereço repetido, soma que não fecha, algo com formato de CPF), nenhum arquivo é gravado e a pasta anterior continua.
 - Dado não provado vem como `null`; o site não mostra nada no lugar.
-- Com os dados de 18/11/2026: 84 arquivos, 1,6 MB, perfis de 20 KB em média.
+- Com os dados de 18/11/2026 (19 anos): 84 arquivos, 1,6 MB, perfis de 20 KB em média. Com dois anos (23/11/2026): 84 arquivos, 648 KB.
 
 ## Testes e qualidade
 
