@@ -1,0 +1,7 @@
+# Ferramentas de apoio (provas e conferências): ficam fora do lint do pipeline, com a mesma regra, menos as
+# linhas longas de texto (HTML e mensagens), que não valem a pena quebrar.
+line-length = 100
+
+[lint]
+select = ["E", "F", "I", "B", "UP"]
+ignore = ["E501"]
