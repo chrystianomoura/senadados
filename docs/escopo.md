@@ -2,7 +2,7 @@
 
 O que o Senadados vai entregar, tela por tela, e em que ordem. Este documento se baseia nos dados **medidos** (veja [fontes-de-dados.md](fontes-de-dados.md)) e nas decisões já tomadas (veja [decisoes.md](decisoes.md)). Onde algo ainda não foi verificado, está escrito.
 
-**Status:** revisado em 11/11/2026. Muda conforme o projeto avançar; cada mudança relevante vira uma decisão registrada.
+**Status:** escrito em 11/11/2026 e atualizado em 23/11/2026 (regra de dois anos, [D048](decisoes.md#d048-só-o-ano-atual-e-o-anterior-com-troca-de-ano-na-página-do-senador); moradia do ano anterior, [D049](decisoes.md#d049-moradia-do-ano-anterior-com-três-fontes); página "Verificações"). Muda conforme o projeto avançar; cada mudança relevante vira uma decisão registrada.
 
 ---
 
@@ -51,7 +51,7 @@ Só os **senadores em exercício**, definidos todo dia pela lista oficial do Sen
 - **Ainda não existem:** destaques que comparam senadores (seguem o "tudo ou nada" da D037) e os links para "Sobre os dados" e "Verificações", que dependem de as páginas existirem.
 
 ### 4.2 Perfil do senador (a tela principal)
-Cada senador tem endereço próprio (por exemplo, `/senador/nome`). A página tem, à esquerda e **fixa**, um cartão com a foto, o nome, o partido, a UF e os quatro dados principais. À direita, **abre com o resumo do ano em seis cartões** (salário, verba, mês de maior uso, equipe do gabinete, moradia e quem vendeu ou prestou serviço) e depois traz seis guias que se abrem, **todas fechadas** ao entrar. A "posição entre os senadores" ainda não existe (depende do ranking, 4.3).
+Cada senador tem endereço próprio (por exemplo, `/senador/nome`), e o outro ano tem o seu (`/senador/nome/2025/`): um botão perto do título do resumo troca a página inteira para o ano anterior ([D048](decisoes.md#d048-só-o-ano-atual-e-o-anterior-com-troca-de-ano-na-página-do-senador)); salário, equipe e contato só aparecem no ano atual, porque não há como provar esses dados para o outro. A página tem, à esquerda e **fixa**, um cartão com a foto, o nome, o partido, a UF e os quatro dados principais. À direita, **abre com o resumo do ano em seis cartões** (salário, verba, mês de maior uso, equipe do gabinete, moradia e quem vendeu ou prestou serviço) e depois traz seis guias que se abrem, **todas fechadas** ao entrar. A "posição entre os senadores" ainda não existe (depende do ranking, 4.3).
 
 **Molde de cada pergunta** (igual em todas, tudo recolhido por padrão):
 
@@ -117,7 +117,7 @@ Não há selos como "comprovado" ou "fonte única" na tela. As palavras técnica
 ## 6. Regras de exibição
 
 1. **Ano em andamento:** 2026 mostra "dados parciais, até [mês]".
-2. **Anos sem fornecedor:** o bloco "Quem vendeu ou prestou serviço" começa em **2009**. Em 2008 o site explica que o dado não existe.
+2. **Anos sem fornecedor:** o bloco "Quem vendeu ou prestou serviço" só existe nos anos processados, o atual e o anterior ([D048](decisoes.md#d048-só-o-ano-atual-e-o-anterior-com-troca-de-ano-na-página-do-senador)). Os anos de 2008 e 2009, em que o dado não existia, saíram do escopo.
 3. **Pessoas físicas:** nunca com nome nem CPF; sempre agrupadas ([D008](decisoes.md#d008-pessoas-físicas-agrupadas-e-cpf-nunca-exibido)).
 4. **Equipe:** só números, nunca nomes ([D007](decisoes.md#d007-equipe-do-gabinete-só-em-números)).
 5. **Linhas sem categoria:** aparecem como "Sem categoria". O total da verba inclui essas linhas, e o site explica que o resumo do Senado não as conta (59 linhas, R$ 162.260,84 em 2026, entre os senadores em exercício).
@@ -195,30 +195,30 @@ Metas a medir, não resultados já obtidos:
 
 | Item | Situação | O que fazer |
 |---|---|---|
-| Moradia: 4 casos pendentes | A lista é de novembro e a página mensal vai até outubro: períodos diferentes, causa provável, **não provada** | A verificação diária reconfere; quando a página mensal incluir novembro, o caso se resolve sozinho |
+| Moradia: 3 casos pendentes (23/11/2026; eram 4 em 18/11) | A lista é de novembro e a página mensal vai até outubro: períodos diferentes, causa provável, **não provada** | A verificação diária reconfere; quando a página mensal incluir novembro, o caso se resolve sozinho |
 | Salário | 2 suplentes que assumiram em outubro: duas matrículas com o mesmo nome e folha suplementar com valores | Ficam sem salário; a verificação diária reconfere com a folha de novembro |
-| Equipe | **Verificada por gabinete em 18/11/2026**: 80 de 81 idênticos; o gabinete de Camilo Santana tem 1 efetivo a mais no resumo | Perguntar ao Senado; quando explicarem, a equipe desse gabinete aparece sozinha na próxima verificação |
-| Cota de outros anos | **Feito em 18/11/2026** ([D035](decisoes.md#d035-verificação-automática-da-cota-por-categoria-na-mesma-foto-dos-dados)): 2010 a 2026 batiam e 2008 e 2009 não (o resumo de 2008 estava vazio e o de 2009 era menor que as despesas); **desde 23/11/2026 esses anos não são mais processados** (D048) | Perguntar ao Senado pelo canal oficial; o histórico da cota começa em 2010 |
+| Equipe | **Verificada por gabinete**: 77 de 81 idênticos em 23/11/2026 (80 de 81 em 18/11). Sem explicação: Camilo Santana (1 efetivo a mais no resumo), Esperidião Amin e Nelsinho Trad Filho (1 comissionado a mais no resumo e na tela) e Wellington Dias (voltou em 19/11; a lotação ainda não foi publicada). **A 1 caso do freio de 5%** (D037) | Perguntar ao Senado; quando explicarem, o gabinete aparece sozinho na próxima verificação. A regra do freio fica para decidir com os dados da rotina diária |
+| Cota de outros anos | **Feito em 18/11/2026** ([D035](decisoes.md#d035-verificação-automática-da-cota-por-categoria-na-mesma-foto-dos-dados)): 2010 a 2026 batiam e 2008 e 2009 não (o resumo de 2008 estava vazio e o de 2009 era menor que as despesas); **desde 23/11/2026 esses anos não são mais processados** (D048) | Nenhuma: os anos antigos saíram do escopo |
 | Linhas sem categoria | O Senado não explica por que o resumo as deixa de fora | Perguntar pelo canal oficial; mostrar com a explicação |
 | Internet Archive | Acusa cópia, mas não consegui listar | Testar de novo |
 | Virada de 2027 | Até 54 páginas saem de uma vez | Decidido: apagar os dados de quem sair (banco, arquivos brutos, site e API) |
 | Pessoas físicas ([D008](decisoes.md#d008-pessoas-físicas-agrupadas-e-cpf-nunca-exibido)) | Proteções mantidas; risco de LGPD aceito pelo mantenedor, por serem dados públicos | Nenhuma ação |
 | Limites dos planos gratuitos | Neon reconfirmado na página oficial em 19/11/2026 ([D042](decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível)); Render, Cloudflare Pages e GitHub Actions seguem em fontes secundárias | Reconfirmar os três antes de publicar |
-| Foto dos senadores | Conteúdo "de propriedade autoral do Senado" | **Implementado em 23/11/2026 (a lista da home também mostra a foto).** **Decidido em 19/11/2026 ([D045](decisoes.md#d045-foto-e-mandato-do-senador-com-o-endereço-oficial-do-senado-e-verificação-entre-duas-listas)):** carregar do endereço oficial, com o crédito "Foto oficial publicada pelo Senado Federal", sem copiar. Copiar e reduzir só se o Senado confirmar que pode (não verificado) |
+| Foto dos senadores | Carregar a foto do endereço oficial do Senado, com o crédito "Foto oficial publicada pelo Senado Federal" | **Feito.** Decidido em 19/11/2026 ([D045](decisoes.md#d045-foto-e-mandato-do-senador-com-o-endereço-oficial-do-senado-e-verificação-entre-duas-listas)); em 23/11/2026 a lista da home passou a mostrar a foto e o site passou a usar cópias reduzidas do próprio site, com o endereço oficial como reserva ([D047](decisoes.md#d047-cópias-reduzidas-das-fotos-oficiais-com-pillow)) |
 
 ## 13. Ordem de construção
 
-| # | Etapa | Estado em 18/11/2026 |
+| # | Etapa | Estado em 23/11/2026 |
 |---|---|---|
 | 1 | Pipeline de despesas, com validação e testes | **Feito** ([D033](decisoes.md#d033-coleta-local-que-só-grava-quem-está-em-exercício), [D034](decisoes.md#d034-limpeza-com-validação-em-sqlite-local-sem-nome-nem-documento-de-pessoa-física)) |
 | 2 | **Camada de verificação** (cruzamentos, relatório, falha fechada) | **Feito** para cota, equipe, moradia, contato e salário ([D035](decisoes.md#d035-verificação-automática-da-cota-por-categoria-na-mesma-foto-dos-dados) a [D041](decisoes.md#d041-verificação-automática-do-salário-pela-identidade-do-senador)) |
 | 3 | Banco e carga completa dos senadores em exercício | **Feito em 19/11/2026** (banco no ar com os dados provados de 18/11; a atualização diária automática ainda falta; [D042](decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível)) |
 | 4 | **Contrato dos dados e exportador** (arquivos JSON gerados do esquema `publico`; [contrato](contrato-dos-dados.md); [D044](decisoes.md#d044-site-antes-da-api-com-dados-em-arquivos-json-gerados-do-esquema-público)) | **Feito em 19/11/2026**, rodando contra a produção |
-| 5 | Site: perfil (salário quando provado, equipe e moradia), depois início, ranking, comparação, "Sobre os dados" e "Verificações" | **Em andamento:** a home (abertura, "Como funciona" e busca) e o perfil estão feitos (20/11/2026, [D046](decisoes.md#d046-site-em-nextjs-16-com-exportação-estática-fontes-hospedadas-e-testes-com-vitest)), com foto e mandato desde 23/11/2026 ([D045](decisoes.md#d045-foto-e-mandato-do-senador-com-o-endereço-oficial-do-senado-e-verificação-entre-duas-listas)); faltam ranking, comparação, "Verificações" e, por último, "Sobre os dados" |
+| 5 | Site: perfil (salário quando provado, equipe e moradia), depois início, ranking, comparação, "Sobre os dados" e "Verificações" | **Em andamento:** a home (abertura, "Como funciona" e busca) e o perfil estão feitos (20/11/2026, [D046](decisoes.md#d046-site-em-nextjs-16-com-exportação-estática-fontes-hospedadas-e-testes-com-vitest)), com foto e mandato desde 23/11/2026 ([D045](decisoes.md#d045-foto-e-mandato-do-senador-com-o-endereço-oficial-do-senado-e-verificação-entre-duas-listas)); a página "Verificações" e o botão para trocar de ano no perfil ([D048](decisoes.md#d048-só-o-ano-atual-e-o-anterior-com-troca-de-ano-na-página-do-senador), [D049](decisoes.md#d049-moradia-do-ano-anterior-com-três-fontes)) desde 23/11/2026; faltam ranking, comparação e, por último, "Sobre os dados" |
 | 6 | Destaque do mês de maior uso | **Feito em 20/11/2026** (cartão, gráfico e aviso no perfil) |
 | 7 | Automação diária e publicação | A fazer |
 | 8 | API (depois do site; [D044](decisoes.md#d044-site-antes-da-api-com-dados-em-arquivos-json-gerados-do-esquema-público)) | A fazer |
-| 9 | Revisão final da documentação | A fazer |
+| 9 | Revisão final da documentação | A fazer (uma revisão parcial foi feita em 23/11/2026) |
 
 A ordem foi alterada em 19/11/2026: o site vem antes da API ([D044](decisoes.md#d044-site-antes-da-api-com-dados-em-arquivos-json-gerados-do-esquema-público)).
 

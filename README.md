@@ -26,11 +26,11 @@ Para responder, em segundos, perguntas simples sobre cada senador:
 |---|---|
 | **Quem é?** | Foto, partido, estado, mandato |
 | **Quanto ganha?** | A remuneração, quando a ligação com o senador é comprovada |
-| **Quanto usou da verba (a cota)?** | O total por mês, por ano e por categoria, e a posição entre os outros senadores |
-| **Para onde vai o dinheiro?** | Os fornecedores que mais recebem (só nos anos em que o dado existe; veja as limitações) |
+| **Quanto usou da verba (a cota)?** | O total por mês e por categoria, no ano atual e no anterior (um botão troca de ano), e a posição entre os outros senadores (numa fatia futura) |
+| **Para onde vai o dinheiro?** | Os fornecedores que mais recebem, no ano atual e no anterior |
 | **Quem trabalha com ele?** | Quantas pessoas há no gabinete (só o número, sem estimativa de custo) |
 | **Como falar com ele?** | O endereço do gabinete, o telefone e o e-mail oficiais, para quem os tem |
-| **Tem benefício de moradia?** | Imóvel funcional e auxílio-moradia, mês a mês |
+| **Tem benefício de moradia?** | Imóvel funcional e auxílio-moradia, mês a mês, no ano atual e no anterior |
 | **O que faz no mandato?** | Votações, projetos e comissões (numa versão futura) |
 | **Qual foi o mês de maior valor?** | O mês de maior uso da verba, destacado no gráfico mês a mês (só o fato, sem julgamento) |
 
@@ -209,7 +209,7 @@ Documentos (índice completo em [docs/README.md](docs/README.md)):
 | **Primeiros passos** (feito) | Baixar os dados, medir o tamanho real, conferir colunas, formatos e a prova real; definir escopo e protótipo |
 | **Pipeline e prova real** (feito em 18/11/2026) | Coleta, limpeza e cinco verificações automáticas (cota, equipe, moradia, contato e salário). Resumo em [docs/andamento.md](docs/andamento.md) |
 | **Banco na nuvem** (feito em 19/11/2026) | Esquemas público e interno, papéis de menor privilégio, migrações e carga repetível dos dados provados no Neon ([D042](docs/decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível), [D043](docs/decisoes.md#d043-migrações-em-sql-puro-driver-psycopg-e-carga-que-ensaia-antes-de-gravar)) |
-| **MVP (versão 1)** | Perfil do senador, verba por categoria e mês, principais fornecedores (de 2009 em diante), número de pessoas na equipe, moradia mês a mês, salário (quando comprovado), ranking e comparação entre os senadores em exercício, destaque do maior mês e a página de verificações |
+| **MVP (versão 1)** | Perfil do senador, verba por categoria e mês, principais fornecedores (no ano atual e no anterior), número de pessoas na equipe, moradia mês a mês, salário (quando comprovado), ranking e comparação entre os senadores em exercício, destaque do maior mês e a página de verificações |
 | **Versão 2** | Atuação parlamentar (votações, projetos, comissões) e, se fizer sentido, um modelo de anomalias. O histórico desde 2008 saiu do plano em 23/11/2026: o Senadados processa só o ano atual e o anterior ([D048](docs/decisoes.md#d048-só-o-ano-atual-e-o-anterior-com-troca-de-ano-na-página-do-senador)) |
 | **Versão 3 (talvez)** | Dados de outras fontes públicas, como o TSE. Aumenta muito o escopo e a responsabilidade |
 

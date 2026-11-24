@@ -22,7 +22,7 @@ Todos gratuitos e **sem chave**.
 
 **Como o Senado descreve a moradia** (página de transparência): o auxílio-moradia é para quem "não ocupa apartamentos funcionais", "com a finalidade de cobrir despesas com aluguel ou diária de hotel". A página **não diz** que o imóvel fica em Brasília.
 
-**Desde 23/11/2026 o Senadados processa só o ano atual e o anterior ([D048](decisoes.md#d048-só-o-ano-atual-e-o-anterior-com-troca-de-ano-na-página-do-senador)).** Os resultados de 2008 a 2024 abaixo são **registro histórico**: foram medidos em 18/11/2026 e não são mais refeitos.
+**Desde 23/11/2026 o Senadados processa só o ano atual e o anterior ([D048](decisoes.md#d048-só-o-ano-atual-e-o-anterior-com-troca-de-ano-na-página-do-senador)).** Os resultados desta seção são **de 18/11/2026**, e os de 2008 a 2024 são **registro histórico** que não é mais refeito. Os números mais recentes (23/11/2026, só 2025 e 2026) estão no fim, em [Recarga de 23/11/2026](#recarga-de-23112026).
 
 ## Resultados
 
