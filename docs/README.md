@@ -16,6 +16,7 @@ Leia nesta ordem se for a primeira vez no projeto.
 | [../design/README.md](../design/README.md) | Protótipo da página e identidade visual |
 | [../data/README.md](../data/README.md) | O que fica em `data/raw/` (fora do git) |
 | [../pipeline/README.md](../pipeline/README.md) | O código que coleta, limpa e verifica os dados, e como rodá-lo |
+| [../ferramentas/README.md](../ferramentas/README.md) | Scripts de apoio: refazer as imagens de prova, conferir os dados de ponta a ponta e as pesquisas |
 
 ## Regra de manutenção
 

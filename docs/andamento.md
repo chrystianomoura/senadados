@@ -141,7 +141,7 @@ Os números da cota são os de 2026 contra o resumo do Senado **do mesmo dia**. 
 
 **Pontos pequenos:**
 
-- **Prints do documento de divergências:** são de 23/11/2026 e **não se atualizam sozinhos**; se o Senado corrigir um caso, as imagens precisam ser refeitas à mão. Esperidião Amin e Nelsinho Trad Filho ainda não têm print.
+- **Prints do documento de divergências:** são de 23/11/2026 e **não se atualizam sozinhos**; se o Senado corrigir um caso, as imagens são refeitas com [ferramentas/provas/](../ferramentas/README.md#provas-refazer-as-imagens-da-página-verificações) e os números do texto conferidos à mão. Esperidião Amin e Nelsinho Trad Filho ainda não têm print.
 - **Foto:** o crédito aparece só ao passar o mouse (não em telas de toque). O piscar das fotos ao rolar não teve a causa confirmada.
 - **Navegadores:** Safari e Firefox não foram verificados no site.
 - **Cópias das fotos:** falta rodar o passo na rotina diária e no build de publicação.
