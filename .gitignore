@@ -37,5 +37,8 @@ web/tsconfig.tsbuildinfo
 # Cópias reduzidas das fotos oficiais, geradas pelo pipeline (D047); nascem do banco a cada build
 web/public/fotos/
 
+# Arquivos temporários das ferramentas de prova e conferência
+ferramentas/saida/
+
 # Imagens de prova copiadas de docs/evidencias/ a cada dev e build (D038)
 web/public/evidencias/

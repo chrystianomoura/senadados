@@ -134,6 +134,7 @@ senadados/
 ├── pipeline/        # coleta, limpeza, verificações, migrações e carga do banco (Python, uv)
 ├── api/             # (a criar) FastAPI
 ├── web/             # site (Next.js, TypeScript): home, perfil do senador e verificações
+├── ferramentas/     # scripts de apoio: refazer as imagens de prova, conferir os dados e pesquisas
 └── .github/         # (a criar) automações
 ```
 
