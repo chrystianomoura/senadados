@@ -10,6 +10,19 @@ Instruções para qualquer agente (humano ou de IA) que trabalhe neste repositó
 
 **Estado atual (23/11/2026, à noite):** escopo, regras e protótipo da página fechados; fontes e conferências documentadas; **a coleta, a validação e a limpeza do pipeline existem** (veja [pipeline/README.md](pipeline/README.md)); a **verificação automática da cota** (D035), a **da equipe do gabinete** (D036), a **da moradia** (D039), a **do contato** (D040) e a **do salário** (D041) e a **do perfil** (foto e mandato, D045) também, e as verificações estão completas; o **banco no Neon está no ar desde 19/11/2026**, com os dados provados de 23/11 (a migração 004, do perfil, foi aplicada nesse dia; desenho na [D042](docs/decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível), aceita), e ainda faltam o site, a atualização diária automática e a API. O exportador dos dados do site (contrato em [docs/contrato-dos-dados.md](docs/contrato-dos-dados.md)) está pronto e roda contra a produção (migração 003 aplicada em 19/11/2026). Hoje o pipeline processa só o **ano atual e o anterior** ([D048](docs/decisoes.md#d048-só-o-ano-atual-e-o-anterior-com-troca-de-ano-na-página-do-senador)), e o site tem a home (abertura com retratos sorteados, "Como funciona" e busca com filtros, com a foto oficial de cada senador), a página "Verificações" e o perfil do senador, com a foto, o mandato, o resumo do ano, as guias e um botão para trocar para o outro ano (a verba, os fornecedores e a moradia mudam com o ano, [D049](docs/decisoes.md#d049-moradia-do-ano-anterior-com-três-fontes)) ([D046](docs/decisoes.md#d046-site-em-nextjs-16-com-exportação-estática-fontes-hospedadas-e-testes-com-vitest)). Próximo passo: o ranking, a comparação e, por último, "Sobre os dados", que vêm antes da API ([D044](docs/decisoes.md#d044-site-antes-da-api-com-dados-em-arquivos-json-gerados-do-esquema-público)); ordem de construção em [docs/escopo.md](docs/escopo.md)). Índice dos documentos em [docs/README.md](docs/README.md).
 
+## 1.1 Leia tudo antes de começar
+
+**Todo agente (humano ou de IA) que entrar no projeto deve ler o projeto inteiro antes de trabalhar**, sem exceção e sem pular partes. Só depois de ler pode propor, editar ou executar qualquer coisa. Isso inclui:
+
+- este `AGENTS.md` e o [README.md](README.md);
+- todos os documentos de [docs/](docs/README.md), em especial `escopo.md`, `decisoes.md`, `fontes-de-dados.md`, `verificacoes.md`, `contrato-dos-dados.md`, `divergencias-nos-dados-do-senado.md` e `andamento.md`;
+- os `README.md` de cada pasta (`data/`, `design/`, `pipeline/`, `web/`, `ferramentas/`);
+- o código de `pipeline/`, `web/` e `ferramentas/`, as migrações em `pipeline/migracoes/` e os testes.
+
+Arquivos com segredos (`.env` e parecidos) **não** são lidos: o agente nunca os abre nem os repete. Se algo não puder ser lido, o agente diz o que ficou de fora, em vez de supor o conteúdo (princípio 3).
+
+**Por quê:** as regras deste projeto estão espalhadas (cada decisão tem um porquê em `decisoes.md`, e o código segue regras que só os documentos explicam). Quem trabalha sem ler tudo repete decisões já descartadas, quebra regras de exibição (D025, D037) ou deixa documentos desatualizados.
+
 ## 2. Princípios inegociáveis
 
 1. **Tudo tem um porquê escrito.** Nenhuma decisão técnica, regra de limpeza ou escolha de modelo entra sem justificativa registrada em `docs/decisoes.md` (ou no commit, se for pequena).
