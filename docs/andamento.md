@@ -2,11 +2,11 @@
 
 Resumo do que existe, do que foi provado e do que vem a seguir. É o documento para quem chega agora e quer saber **em que pé o projeto está**. Os detalhes de cada decisão estão em [decisoes.md](decisoes.md), e os de cada conferência, em [verificacoes.md](verificacoes.md).
 
-**Última atualização:** 23/11/2026 (revisão geral depois da foto e do mandato, da regra de dois anos, da moradia de 2025 e da página "Verificações"; pendências refeitas).
+**Última atualização:** 24/11/2026 (comparação de dois senadores, D050); antes, 23/11/2026 (revisão geral depois da foto e do mandato, da regra de dois anos, da moradia de 2025 e da página "Verificações"; pendências refeitas).
 
 ## Em uma frase
 
-O pipeline que coleta, limpa e **prova** os dados do Senado está pronto e roda do zero em poucos minutos (cerca de 6 com os 19 anos de 18/11/2026; hoje só 2 anos, [D048](decisoes.md#d048-só-o-ano-atual-e-o-anterior-com-troca-de-ano-na-página-do-senador)), e os dados provados já estão no banco da Neon (19/11/2026). O site já tem a home, o perfil do senador (com a troca para o ano anterior) e a página "Verificações", lendo os JSON gerados do banco; ainda não há API nem atualização diária automática. Próximo passo: o ranking e a comparação, depois "Sobre os dados", a rotina diária e a API ([D044](decisoes.md#d044-site-antes-da-api-com-dados-em-arquivos-json-gerados-do-esquema-público)).
+O pipeline que coleta, limpa e **prova** os dados do Senado está pronto e roda do zero em poucos minutos (cerca de 6 com os 19 anos de 18/11/2026; hoje só 2 anos, [D048](decisoes.md#d048-só-o-ano-atual-e-o-anterior-com-troca-de-ano-na-página-do-senador)), e os dados provados já estão no banco da Neon (19/11/2026). O site já tem a home, o perfil do senador (com a troca para o ano anterior), a comparação de dois senadores ([D050](decisoes.md#d050-comparação-de-dois-senadores-lado-a-lado), 24/11/2026) e a página "Verificações", lendo os JSON gerados do banco; ainda não há API nem atualização diária automática. Próximo passo: o ranking, depois "Sobre os dados", a rotina diária e a API ([D044](decisoes.md#d044-site-antes-da-api-com-dados-em-arquivos-json-gerados-do-esquema-público)).
 
 ## O que existe hoje
 
@@ -24,7 +24,7 @@ O pipeline que coleta, limpa e **prova** os dados do Senado está pronto e roda 
 | Documento público de divergências nos dados do Senado | Pronto |
 | Banco no Neon | **No ar, recarregado em 23/11/2026 com os dados provados do ano atual e do anterior (2025 e 2026, [D048](decisoes.md#d048-só-o-ano-atual-e-o-anterior-com-troca-de-ano-na-página-do-senador)), com a moradia dos dois anos ([D049](decisoes.md#d049-moradia-do-ano-anterior-com-três-fontes)) (migração 004 aplicada em 23/11)**. Antes: dados de 18/11/2026 (20 MB, 18 tabelas, permissões testadas). A migração 003 (`moradia_verificada`) foi aplicada na produção em 19/11/2026 ([D042](decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível), [D043](decisoes.md#d043-migrações-em-sql-puro-driver-psycopg-e-carga-que-ensaia-antes-de-gravar)). Atualização diária ainda manual |
 | Exportador dos JSON do site | **Pronto e rodando contra a produção** (84 arquivos, 648 KB com os dois anos, contra 1,6 MB com os 19 anos de 18/11; [contrato](contrato-dos-dados.md), versão 2). A saída da produção é igual à do ensaio, exceto pela hora da carga |
-| Site (`web/`) | **Home (abertura, "Como funciona" e busca com filtros), perfil do senador (resumo do ano, seis guias e botão para trocar para o outro ano) e página "Verificações" prontos**, com os dados reais ([D046](decisoes.md#d046-site-em-nextjs-16-com-exportação-estática-fontes-hospedadas-e-testes-com-vitest)). A foto aparece na lista e no perfil, e o mandato no cartão do perfil, vindos da verificação "perfil". Faltam ranking, comparação e "Sobre os dados" |
+| Site (`web/`) | **Home (abertura, "Como funciona" e busca com filtros), perfil do senador (resumo do ano, seis guias e botão para trocar para o outro ano) a comparação de dois senadores (`/comparar/`, [D050](decisoes.md#d050-comparação-de-dois-senadores-lado-a-lado)) e a página "Verificações" prontos**, com os dados reais ([D046](decisoes.md#d046-site-em-nextjs-16-com-exportação-estática-fontes-hospedadas-e-testes-com-vitest)). A foto aparece na lista e no perfil, e o mandato no cartão do perfil, vindos da verificação "perfil". Faltam o ranking e "Sobre os dados" |
 | API, automação diária | **Não começaram** |
 
 O código está em [pipeline/](../pipeline/README.md), com 399 testes de Python (270 em 18/11, 70 da carga, das migrações, dos papéis e do exportador, e 59 da verificação do perfil, das fotos, dos anos e da moradia do ano anterior) e 35 de TypeScript no site e 95% de cobertura nos módulos de verificação (a cobertura é de 18/11 e não foi medida de novo). Os dados ficam em `data/` e **não vão para o git**.
@@ -117,7 +117,7 @@ Os números da cota são os de 2026 contra o resumo do Senado **do mesmo dia**. 
 
 **Telas e infraestrutura que faltam** (a ordem está em [escopo.md](escopo.md#13-ordem-de-construção)):
 
-- **Ranking e comparação entre senadores:** dependem de decidir quem entra no grupo de comparação (quem não tem despesa no ano, como Wellington Dias e Jorge Kajuru, não tem valor para comparar; D037, tudo ou nada). A "posição entre os senadores" do perfil vem junto.
+- **Ranking entre senadores** (a comparação de dois senadores já existe, D050): depende de decidir quem entra no grupo de comparação (quem não tem despesa no ano, como Wellington Dias e Jorge Kajuru, não tem valor para comparar; D037, tudo ou nada). A "posição entre os senadores" do perfil vem junto.
 - **Página "Sobre os dados":** fica para o fim do projeto. Deve repetir a frase "Verificamos se as bases do Senado concordam entre si. Não auditamos os dados" (hoje ela está na página "Verificações").
 - **Página "Verificações":** faltam o canal para reportar um erro e o registro de correções (escopo §4.5).
 - **Rotina diária (GitHub Actions):** o pipeline roda à mão. A rotina deve repetir coleta, limpeza, verificações, carga, exportação, cópias das fotos e build. Fica para o fim.
@@ -150,7 +150,7 @@ Os números da cota são os de 2026 contra o resumo do Senado **do mesmo dia**. 
 
 Etapa 3 da ordem de construção, concluída: o projeto `senadados` na Neon (plano gratuito, `aws-us-east-2`, PostgreSQL 18) tem os esquemas `publico` e `interno`, os papéis `sd_carga` (escreve) e `sd_leitura` (só lê o `publico`), as migrações 001 e 002 e os dados provados de 18/11/2026. As decisões estão na [D042](decisoes.md#d042-banco-no-neon-só-dados-agregados-dois-esquemas-e-carga-repetível) e na [D043](decisoes.md#d043-migrações-em-sql-puro-driver-psycopg-e-carga-que-ensaia-antes-de-gravar); o que foi conferido na produção (permissões, soma das despesas igual à do SQLite, 20 MB) está na D043.
 
-## Próximo passo: ranking e comparação (etapa 5)
+## Próximo passo: ranking (etapa 5)
 
 O site vem antes da API ([D044](decisoes.md#d044-site-antes-da-api-com-dados-em-arquivos-json-gerados-do-esquema-público)). A ordem:
 
@@ -161,7 +161,8 @@ O site vem antes da API ([D044](decisoes.md#d044-site-antes-da-api-com-dados-em-
 5. **Foto e mandato** (**feito em 23/11/2026**, [D045](decisoes.md#d045-foto-e-mandato-do-senador-com-o-endereço-oficial-do-senado-e-verificação-entre-duas-listas)): verificação "perfil", migração 004, carga, exportador e o site (foto na lista e no perfil, mandato no cartão).
 6. **Página "Verificações"** (**feita em 23/11/2026**): a tabela de conferências, os motivos, a frase fixa e as 5 divergências com as 11 imagens refeitas em 23/11.
 7. **Regra de dois anos e moradia de 2025** (**feitas em 23/11/2026**, [D048](decisoes.md#d048-só-o-ano-atual-e-o-anterior-com-troca-de-ano-na-página-do-senador) e [D049](decisoes.md#d049-moradia-do-ano-anterior-com-três-fontes)): o perfil ganhou o botão para trocar de ano.
-8. **Depois, em fatias:** o ranking e a comparação (antes, decidir quem entra no grupo) e, por último, "Sobre os dados".
+8. **Comparação de dois senadores** (**feita em 24/11/2026**, [D050](decisoes.md#d050-comparação-de-dois-senadores-lado-a-lado)): `/comparar/`, lado a lado, com busca, link da escolha, barra fixa com os dois e botão no perfil.
+9. **Depois, em fatias:** o ranking (antes, decidir quem entra no grupo) e, por último, "Sobre os dados".
 
 **A atualização diária** (etapa 7) é uma rotina do GitHub Actions que repete coleta, limpeza, verificações, carga e exportação; as URLs de `sd_carga` e `sd_leitura` viram segredos do repositório. Antes de publicar, reconfirmar os limites do Cloudflare Pages e do GitHub Actions. A API fica depois do site, e a hospedagem dela só precisa ser decidida então (a D004 escolheu a Render, com os limites lidos em 19/11/2026).
 

@@ -62,6 +62,7 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 | D047 | Cópias reduzidas das fotos oficiais, com Pillow | Aceita (implementada em 23/11/2026) |
 | D048 | Só o ano atual e o anterior, com troca de ano na página do senador | Aceita (implementada em 23/11/2026; altera a D026) |
 | D049 | Moradia do ano anterior, com três fontes | Aceita (implementada em 23/11/2026; completa a D048 e a D039) |
+| D050 | Comparação de dois senadores, lado a lado | Aceita (implementada em 24/11/2026; detalha a D021) |
 
 ---
 
@@ -684,4 +685,22 @@ Data das decisões iniciais: 11/11/2026. As atualizações trazem a própria dat
 - **Resultado em 23/11/2026:** 2025: **80 idênticos e 1 explicado, e a moradia aparece para 81**; 72 senadores usaram algum benefício. 2026: 77 idênticos, 1 explicado e 3 pendentes (como antes). Ensaio da carga na produção: `moradia_verificada` 78 → 159 linhas, `moradia_meses` 1.559.
 - **Limite:** com três fontes em vez de quatro, a prova do ano anterior é um pouco mais fraca: não há como saber se a página mensal estava atrasada em relação ao fim do ano. As três fontes vêm do mesmo sistema do Senado (D027). **Não verificado:** se o Senado corrige a página mensal de 2025 depois; o pipeline reconfere todo dia.
 - **Não entram:** o salário de 2025 (em nenhum mês de 2025 as cinco provas da D041 passam: de 8 a 35 senadores por mês têm folha suplementar com valores, contra 2 em outubro de 2026) e a equipe de 2025 (a conferência do resumo contra a tela dá 67 iguais, 6 diferentes e 8 sem dado, e 6 de 73 passa do freio de 5%; também **não verificado** a que data de 2025 o resumo se refere).
+- **Status:** aceita.
+
+## D050: Comparação de dois senadores, lado a lado
+
+- **Contexto:** a [D021](#d021-comparação-lado-a-lado-entra-no-mvp) pôs a comparação de dois senadores no MVP, e o público do Senadados é quem "não entende nada" de dados. Em 24/11/2026 montei seis formas de mostrar a mesma comparação (lado a lado, só frases, barras pareadas, a diferença em destaque, uma pergunta por vez, e régua com os meses) numa tela de teste, e o mantenedor escolheu a **lado a lado**.
+- **Decisão (24/11/2026, do mantenedor):**
+  1. **A tela é `/comparar/`**, com os dois senadores escolhidos por busca de nome. O endereço guarda a escolha (`?a=alan-rick&b=ana-paula-lobato`), para o link da comparação poder ser copiado e compartilhado; como o site é estático, a escolha é lida no navegador, e não há uma página por par (seriam 6.480). O perfil ganhou o botão "Comparar com outro senador →".
+  2. **Uma barra fixa abaixo do cabeçalho** mostra sempre os dois senadores (foto e nome) e o botão de trocá-los de lugar, para que no celular nunca se perca quem é quem.
+  3. **Seis cartões, um por guia do perfil**, na mesma ordem: salário, verba, em que usou, quem vendeu ou prestou serviço, gabinete e moradia. O contato fica de fora, porque endereço e telefone não se comparam. Cada cartão traz os dois valores, uma barra pareada na mesma escala (onde há um número comparável), a diferença, quem tem o maior número e uma frase pronta. A verba traz ainda o gráfico mês a mês dos dois e o mês de maior uso de cada um; "em que usou" traz todas as categorias, cada uma com as duas barras; "quem vendeu" traz as três empresas que mais receberam de cada um; a moradia traz os dois benefícios de cada um.
+  4. **Só o ano dos dados**, igual para os dois. Dado que não vale para o ano (salário e gabinete só existem no ano dos dados, [D048](#d048-só-o-ano-atual-e-o-anterior-com-troca-de-ano-na-página-do-senador)) fica sem valor.
+  5. **Só o comprovado (D025):** o que um dos dois não tem vira "Sem dado", e a frase diz de quem é a falta. Nada é estimado nem preenchido.
+  6. **Sem julgamento (D010, D024):** a frase diz "a mais" e "a menos", nunca "gastou demais"; o destaque marca só o número maior, sem cor de "bom" ou "ruim". As duas cores são o preto e o verde-limão com contorno, que se distinguem sem depender do tom. Quando os períodos com notas são diferentes (um senador com notas até outubro e outro até novembro), a frase avisa e o cartão mostra a média por mês.
+  7. **Os dois senadores têm de ser diferentes:** a lista não deixa escolher o mesmo duas vezes.
+- **Por quê:** o lado a lado é a forma mais parecida com o que as pessoas já conhecem de uma tabela de comparação, e a barra pareada e a frase tiram a necessidade de fazer conta. As regras 4 a 6 só repetem, para a comparação, o que o resto do site já exige.
+- **Não entra nesta decisão:** a posição entre os senadores, o ranking e a comparação com a média do grupo. Eles comparam com o grupo todo e seguem o "tudo ou nada" da [D037](#d037-exibição-por-tipo-de-dado-e-freio-de-segurança), que ainda depende de definir quem entra no grupo. A comparação de dois senadores não depende disso.
+- **Descartado:** as outras cinco formas (só frases, barras pareadas isoladas, diferença em destaque, uma pergunta por vez, régua); uma página por par de senadores (6.480 páginas); um aviso sobre "limites por estado" (seria uma afirmação sobre regra, [D022](#d022-ranking-nacional-com-contexto-de-estado-e-região)).
+- **Não verificado:** Safari e Firefox, leitor de tela e o contraste medido.
+- **Implementação:** `web/src/lib/comparar.ts` (regras, com testes), `web/src/components/Comparador.tsx` e `web/src/app/comparar/page.tsx`.
 - **Status:** aceita.

@@ -274,3 +274,103 @@ dd, .v, .hb .n { overflow-wrap: break-word; }
 .anos { display: flex; gap: 8px; flex-wrap: wrap; }
 .ver-ano { font-weight: 800; font-size: 1rem; color: var(--ink); text-decoration: none; background: var(--card); border: 1.5px solid var(--ink); border-radius: 999px; padding: 7px 14px; }
 .ver-ano:hover, .ver-ano:focus-visible { background: var(--limesoft); }
+
+/* ===== comparar dois senadores (D021, D050) ===== */
+.comp { max-width: 900px; margin: 0 auto; padding: 22px 22px 80px; }
+.comp h1 { font: 800 clamp(1.8rem, 4vw, 2.6rem) / 1.1 var(--serif); margin: 0 0 8px; }
+.comp .lead { color: var(--ink2); max-width: 62ch; margin: 0 0 18px; }
+
+/* barra com os dois senadores, fixa abaixo do cabeçalho: no celular eles ficam sempre à vista */
+.cmp-bar { position: sticky; top: var(--cab); z-index: 40; display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px; align-items: center; background: var(--bg); margin: 0 -22px; padding: 10px 22px; border-bottom: 1.5px solid var(--ink); }
+.cmp-esc { position: relative; min-width: 0; }
+.cmp-pk { width: 100%; display: flex; gap: 10px; align-items: center; text-align: left; background: var(--card); border: 1.5px solid var(--ink); border-radius: 16px; padding: 7px 10px 7px 7px; cursor: pointer; font: inherit; color: var(--ink); min-width: 0; }
+.cmp-pk:hover, .cmp-pk[aria-expanded="true"] { background: var(--limesoft); }
+.cmp-av { flex: none; width: 44px; aspect-ratio: 4 / 5; border-radius: 10px; overflow: hidden; background: var(--limesoft); border: 1.5px solid var(--ink); display: grid; place-items: center; font: 800 1rem var(--serif); }
+.cmp-av img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+.cmp-pt { display: flex; flex-direction: column; min-width: 0; line-height: 1.2; }
+.cmp-pt b { font: 700 1rem var(--serif); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cmp-pt small { font-size: 0.78rem; color: var(--ink2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cmp-rot { font: 800 0.66rem var(--sans); letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); }
+.cmp-pk .ic { flex: none; margin-left: auto; font-size: 1.1rem; color: var(--ink2); }
+.cmp-troca { width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid var(--ink); background: var(--lime); color: var(--ink); cursor: pointer; display: grid; place-items: center; font-size: 1.15rem; padding: 0; }
+.cmp-troca:hover { background: var(--limesoft); }
+.cmp-dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid var(--ink); margin-right: 6px; vertical-align: -1px; }
+.cmp-dot.a { background: var(--ink); }
+.cmp-dot.b { background: var(--lime); }
+
+.cmp-pop { position: absolute; left: 0; top: calc(100% + 6px); width: min(320px, 88vw); background: var(--card); border: 1.5px solid var(--ink); border-radius: 16px; padding: 10px; box-shadow: 0 14px 34px -18px #14110d99; z-index: 60; }
+.cmp-esc.b .cmp-pop { left: auto; right: 0; }
+.cmp-pop input { width: 100%; font: 500 1rem var(--sans); color: var(--ink); background: var(--card); border: 1.5px solid var(--ink); border-radius: 10px; padding: 9px 12px; margin-bottom: 8px; }
+.cmp-pop ul { list-style: none; margin: 0; padding: 0; max-height: 260px; overflow: auto; }
+.cmp-pop li button { width: 100%; display: flex; justify-content: space-between; gap: 8px; align-items: baseline; text-align: left; background: none; border: 0; border-radius: 8px; padding: 8px 10px; font: 600 0.95rem var(--sans); color: var(--ink); cursor: pointer; }
+.cmp-pop li button small { font-weight: 500; font-size: 0.78rem; color: var(--muted); white-space: nowrap; }
+.cmp-pop li button:hover:not(:disabled), .cmp-pop li button[aria-selected="true"] { background: var(--limesoft); }
+.cmp-pop li button:disabled { color: var(--muted); cursor: not-allowed; }
+.cmp-pop .nada { padding: 8px 10px; color: var(--ink2); font-size: 0.92rem; }
+
+.cmp-meta { display: flex; justify-content: space-between; align-items: center; gap: 8px 14px; flex-wrap: wrap; margin: 14px 0; font-size: 0.9rem; color: var(--ink2); }
+.cmp-copiar { font: 800 0.85rem var(--sans); color: var(--ink); background: var(--card); border: 1.5px solid var(--ink); border-radius: 999px; padding: 6px 14px; cursor: pointer; }
+.cmp-copiar:hover { background: var(--limesoft); }
+
+.cmp-card { background: var(--card); border: 1.5px solid var(--ink); border-radius: 18px; padding: 18px 20px; margin-bottom: 14px; }
+.cmp-card h3 { font: 700 1.2rem / 1.2 var(--serif); margin: 0 0 14px; }
+.cmp-par { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.cmp-lado { min-width: 0; }
+.cmp-lado .quem, .cmp-emp .quem { font: 800 0.72rem var(--sans); letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); }
+.cmp-lado .v { font: 800 clamp(1.3rem, 3.2vw, 1.9rem) / 1.15 var(--serif); letter-spacing: -0.02em; margin-top: 6px; overflow-wrap: break-word; }
+.cmp-lado .v.sem { color: var(--muted); font-size: 1.1rem; font-weight: 600; }
+.cmp-lado .s { font-size: 0.86rem; color: var(--ink2); margin-top: 3px; }
+
+.cmp-barras { margin-top: 14px; }
+.cmp-b { display: grid; grid-template-columns: minmax(64px, 120px) 1fr; gap: 10px; align-items: center; margin: 5px 0; font-size: 0.85rem; }
+.cmp-b .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink2); }
+.cmp-b .t, .cmp-b2 .t { height: 20px; background: var(--track); }
+.cmp-b .t i, .cmp-b2 .t i { display: block; height: 100%; border: 1.5px solid var(--ink); }
+.cmp-b .t i.a, .cmp-b2 .t i.a { background: var(--ink); }
+.cmp-b .t i.b, .cmp-b2 .t i.b { background: var(--lime); }
+
+.cmp-dif { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin: 16px 0 0; padding-top: 12px; border-top: 1px dashed rgba(20, 17, 13, 0.25); font-size: 0.92rem; color: var(--ink2); }
+.cmp-dif .pill { background: var(--limesoft); border: 1.5px solid var(--ink); border-radius: 999px; padding: 2px 12px; font-weight: 800; color: var(--ink); }
+.cmp-frase { margin: 12px 0 0; font-size: 1rem; line-height: 1.5; }
+
+.cmp-mes, .cmp-fatias { margin-top: 18px; }
+.cmp-mc { display: flex; gap: 6px; margin-top: 8px; }
+.cmp-mc .g { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; }
+.cmp-mc .p { display: flex; align-items: flex-end; justify-content: center; gap: 2px; width: 100%; height: 120px; border-bottom: 1.5px solid var(--ink); }
+.cmp-mc .p i { display: block; width: min(14px, 44%); border: 1.5px solid var(--ink); border-bottom: 0; border-radius: 3px 3px 0 0; }
+.cmp-mc .p i.a { background: var(--ink); }
+.cmp-mc .p i.b { background: var(--lime); }
+.cmp-mc .l { font-size: 0.68rem; color: var(--muted); margin-top: 4px; }
+.cmp-maiores { list-style: none; margin: 12px 0 0; padding: 0; font-size: 0.9rem; color: var(--ink2); }
+.cmp-maiores li { margin: 3px 0; }
+.cmp-maiores b { color: var(--ink); }
+
+.cmp-fat { margin-top: 12px; }
+.cmp-fat .n { font-size: 0.92rem; line-height: 1.25; margin-bottom: 3px; }
+.cmp-b2 { display: grid; grid-template-columns: 1fr 132px; gap: 8px; align-items: center; margin: 3px 0; }
+.cmp-b2 .t { height: 14px; }
+.cmp-b2 .v { font-size: 0.8rem; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--ink2); }
+
+.cmp-emp { margin-top: 16px; }
+.cmp-emp ol { margin: 6px 0 0; padding-left: 1.2rem; font-size: 0.88rem; line-height: 1.3; }
+.cmp-emp li { margin-bottom: 5px; overflow-wrap: break-word; }
+.cmp-emp li b { white-space: nowrap; }
+.cmp-emp .s { font-size: 0.88rem; color: var(--ink2); margin: 6px 0 0; }
+.cmp-chips { margin-top: 14px; }
+.cmp-chips .chip { font-size: 0.8rem; padding: 2px 10px; }
+
+@media (max-width: 560px) {
+  .comp { padding: 16px 16px 70px; }
+  .cmp-bar { margin: 0 -16px; padding: 8px 16px; gap: 6px; }
+  .cmp-pk { padding: 5px 8px 5px 5px; gap: 7px; border-radius: 14px; }
+  .cmp-av { width: 34px; border-radius: 8px; }
+  .cmp-pt b { font-size: 0.88rem; }
+  .cmp-pt small, .cmp-rot { display: none; }
+  .cmp-pk .ic { display: none; }
+  .cmp-troca { width: 34px; height: 34px; }
+  .cmp-card { padding: 16px 14px; }
+  .cmp-par { gap: 12px; }
+  .cmp-b { grid-template-columns: 76px 1fr; }
+  .cmp-b2 { grid-template-columns: 1fr 108px; }
+  .cmp-b2 .v { font-size: 0.74rem; }
+}

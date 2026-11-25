@@ -175,17 +175,18 @@ export function PerfilPagina({
           <>
             <div className="sumhead">
               <h2>Resumo de {anoResumo}</h2>
-              {anos.length > 1 ? (
-                <nav className="anos" aria-label="Trocar o ano dos dados">
-                  {anos
-                    .filter((a) => a !== ano)
-                    .map((a) => (
-                      <Link key={a} href={enderecoDoAno(perfil.slug, a, padrao)} className="ver-ano">
-                        Ver os dados de {a} →
-                      </Link>
-                    ))}
-                </nav>
-              ) : null}
+              <nav className="anos" aria-label="Trocar o ano dos dados ou comparar com outro senador">
+                {anos
+                  .filter((a) => a !== ano)
+                  .map((a) => (
+                    <Link key={a} href={enderecoDoAno(perfil.slug, a, padrao)} className="ver-ano">
+                      Ver os dados de {a} →
+                    </Link>
+                  ))}
+                <Link href={`/comparar/?a=${perfil.slug}`} className="ver-ano">
+                  Comparar com outro senador →
+                </Link>
+              </nav>
             </div>
             <div className="sum">
               {salario ? (
